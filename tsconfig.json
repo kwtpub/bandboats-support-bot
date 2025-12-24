@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    // Папки проекта
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Цель компиляции
+    "target": "ES2020",
+    "module": "nodenext",               
+
+    // Node.js типы
+    "lib": ["ESNext"],
+    "types": ["node"],
+
+    // Строгая типизация
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Удобство разработки
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // ESM специфические
+    "moduleResolution": "nodenext",
+    "isolatedModules": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
