@@ -94,11 +94,12 @@ $(function(){initNavTree('class_ticket_message.html','','class_ticket_message-me
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Открытые члены</h2></td></tr>
-<tr class="memitem:a530d27359ca050a26f4f2a8c7c9adfc5" id="r_a530d27359ca050a26f4f2a8c7c9adfc5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a530d27359ca050a26f4f2a8c7c9adfc5">constructor</a> (readonly id:number, readonly ticketId:number, readonly authorId:number, readonly content:string, readonly createAt:Date)</td></tr>
+<tr class="memitem:ac0e3b095e2bafa0439bc79058a2cc000" id="r_ac0e3b095e2bafa0439bc79058a2cc000"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac0e3b095e2bafa0439bc79058a2cc000">constructor</a> (readonly id:number, readonly ticketId:number, readonly authorId:number, readonly content:string, readonly createAt:Date,)</td></tr>
+<tr class="memdesc:ac0e3b095e2bafa0439bc79058a2cc000"><td class="mdescLeft">&#160;</td><td class="mdescRight">Создаёт новое сообщение тикета.  <br /></td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Методы</h2>
-<a id="a530d27359ca050a26f4f2a8c7c9adfc5" name="a530d27359ca050a26f4f2a8c7c9adfc5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a530d27359ca050a26f4f2a8c7c9adfc5">&#9670;&#160;</a></span>constructor()</h2>
+<a id="ac0e3b095e2bafa0439bc79058a2cc000" name="ac0e3b095e2bafa0439bc79058a2cc000"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0e3b095e2bafa0439bc79058a2cc000">&#9670;&#160;</a></span>constructor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -139,10 +140,22 @@ $(function(){initNavTree('class_ticket_message.html','','class_ticket_message-me
 </table>
 </div><div class="memdoc">
 
+<p>Создаёт новое сообщение тикета. </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>- Уникальный идентификатор сообщения. </td></tr>
+    <tr><td class="paramname">ticketId</td><td>- Идентификатор тикета, к которому относится сообщение. </td></tr>
+    <tr><td class="paramname">authorId</td><td>- Идентификатор автора сообщения. </td></tr>
+    <tr><td class="paramname">content</td><td>- Текст сообщения. </td></tr>
+    <tr><td class="paramname">createAt</td><td>- Дата создания сообщения. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <hr/>Объявления и описания членов класса находятся в файле:<ul>
-<li>core/domains/Ticket/<a class="el" href="ticket_message_8ts.html">ticketMessage.ts</a></li>
+<li>domain/entities/Ticket/<a class="el" href="ticket_message_8entity_8ts.html">ticketMessage.entity.ts</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

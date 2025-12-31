@@ -1,11 +1,19 @@
 \doxysection{Класс User}
 \hypertarget{class_user}{}\label{class_user}\index{User@{User}}
+
+
+Entity пользователя.  
+
+
 \doxysubsubsection*{Открытые члены}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{class_user_a3278412ef2ff8df30ac034e561009ea5}{constructor}} (readonly id\+:number, readonly telegram\+Id\+:string, readonly name\+:string, readonly role\+:\+ROLE, readonly create\+At\+:\+Date,)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Создаёт нового пользователя. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\doxysubsection{Подробное описание}
+Entity пользователя. 
 
 \label{doc-func-members}
 \Hypertarget{class_user_doc-func-members}
@@ -18,6 +26,23 @@ User\+::constructor (\begin{DoxyParamCaption}\item[{}]{readonly id\+:number}{, }
 
 
 
+Создаёт нового пользователя. 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em id} & -\/ Уникальный идентификатор пользователя. \\
+\hline
+{\em telegram\+Id} & -\/ Идентификатор пользователя в Telegram. \\
+\hline
+{\em name} & -\/ Имя пользователя. \\
+\hline
+{\em role} & -\/ Роль пользователя в системе. \\
+\hline
+{\em create\+At} & -\/ Дата создания пользователя. \\
+\hline
+\end{DoxyParams}
+
+
 Объявления и описания членов класса находятся в файле\+:\begin{DoxyCompactItemize}
 \item 
-core/domains/\+User/\mbox{\hyperlink{user_8ts}{user.\+ts}}\end{DoxyCompactItemize}
+core/entities/\+User/\mbox{\hyperlink{user_8entity_8ts}{user.\+entity.\+ts}}\end{DoxyCompactItemize}

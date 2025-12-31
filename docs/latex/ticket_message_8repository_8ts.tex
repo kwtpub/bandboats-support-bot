@@ -1,0 +1,49 @@
+\doxysection{Файл core/repositories/\+Ticket/ticket\+Message.repository.\+ts}
+\hypertarget{ticket_message_8repository_8ts}{}\label{ticket_message_8repository_8ts}\index{core/repositories/Ticket/ticketMessage.repository.ts@{core/repositories/Ticket/ticketMessage.repository.ts}}
+
+
+Репозиторий для работы с сообщениями тикетов.  
+
+
+\doxysubsubsection*{Переменные}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{ticket_message_8repository_8ts_a59be084da8908b7d77ff34b25cd84488}{import}} \{ \mbox{\hyperlink{class_ticket_message}{Ticket\+Message}} \} from \textquotesingle{}../../entities/\mbox{\hyperlink{class_ticket}{Ticket}}/ticket\+Message.\+entity\textquotesingle{}
+\item 
+export interface \mbox{\hyperlink{ticket_message_8repository_8ts_a62a6b592d773aae4a08bd9c9de3ed703}{Ticket\+Message\+Repository}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Подробное описание}
+Репозиторий для работы с сообщениями тикетов. 
+
+Интерфейс определяет методы для сохранения, поиска и получения сообщений в рамках тикета.
+
+\begin{DoxyRemark}{Прим.}
+Интерфейс находится в Application/\+Domain слое. Реализация методов выполняется в Infrastructure слое. 
+\end{DoxyRemark}
+
+
+\label{doc-var-members}
+\Hypertarget{ticket_message_8repository_8ts_doc-var-members}
+\doxysubsection{Переменные}
+\Hypertarget{ticket_message_8repository_8ts_a59be084da8908b7d77ff34b25cd84488}\index{ticketMessage.repository.ts@{ticketMessage.repository.ts}!import@{import}}
+\index{import@{import}!ticketMessage.repository.ts@{ticketMessage.repository.ts}}
+\doxysubsubsection{\texorpdfstring{import}{import}}
+{\footnotesize\ttfamily \label{ticket_message_8repository_8ts_a59be084da8908b7d77ff34b25cd84488} 
+import \{ \mbox{\hyperlink{class_ticket_message}{Ticket\+Message}} \} from \textquotesingle{}../../entities/\mbox{\hyperlink{class_ticket}{Ticket}}/ticket\+Message.\+entity\textquotesingle{}}
+
+\Hypertarget{ticket_message_8repository_8ts_a62a6b592d773aae4a08bd9c9de3ed703}\index{ticketMessage.repository.ts@{ticketMessage.repository.ts}!TicketMessageRepository@{TicketMessageRepository}}
+\index{TicketMessageRepository@{TicketMessageRepository}!ticketMessage.repository.ts@{ticketMessage.repository.ts}}
+\doxysubsubsection{\texorpdfstring{TicketMessageRepository}{TicketMessageRepository}}
+{\footnotesize\ttfamily \label{ticket_message_8repository_8ts_a62a6b592d773aae4a08bd9c9de3ed703} 
+export interface Ticket\+Message\+Repository}
+
+{\bfseries Инициализатор}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ }
+\DoxyCodeLine{\ \ save(message:\ \mbox{\hyperlink{class_ticket_message}{TicketMessage}}):\ Promise<void>}
+
+\end{DoxyCode}

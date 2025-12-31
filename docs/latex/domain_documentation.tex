@@ -1,0 +1,132 @@
+\chapter{Domain Layer Documentation }
+\hypertarget{domain_documentation}{}\label{domain_documentation}\index{Domain Layer Documentation@{Domain Layer Documentation}}
+Подробная документация доменного слоя
+
+См. \doxylink{domain_8dox}{domain/domain.\+dox}\hypertarget{domain_documentation_domain_overview}{}\doxysection{\texorpdfstring{Обзор}{Обзор}}\label{domain_documentation_domain_overview}
+Domain Layer — это {\bfseries{сердце приложения}}, содержащее всю бизнес-\/логику. Этот слой полностью независим от технологий, фреймворков и способов доставки данных.\hypertarget{domain_documentation_domain_responsibility}{}\doxysection{\texorpdfstring{Ответственность Domain Layer}{Ответственность Domain Layer}}\label{domain_documentation_domain_responsibility}
+
+\begin{DoxyItemize}
+\item Описание бизнес-\/сущностей и их поведения
+\item Реализация бизнес-\/правил и инвариантов
+\item Определение интерфейсов для работы с данными
+\item Доменные события и их обработка
+\end{DoxyItemize}\hypertarget{domain_documentation_domain_structure}{}\doxysection{\texorpdfstring{Структура Domain Layer}{Структура Domain Layer}}\label{domain_documentation_domain_structure}
+\hypertarget{domain_documentation_domain_entities}{}\doxysubsection{\texorpdfstring{entities/}{entities/}}\label{domain_documentation_domain_entities}
+{\bfseries{Описание\+:}} Бизнес-\/сущности с уникальными идентификаторами
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Entity классы (User, \doxylink{class_ticket}{Ticket}, \doxylink{class_ticket_message}{Ticket\+Message} и т.\+д.)
+\item Enum для статусов и ролей
+\item Методы изменения состояния сущностей
+\item Валидация бизнес-\/правил внутри сущностей
+\end{DoxyItemize}
+
+{\bfseries{Характеристики Entity\+:}}
+\begin{DoxyItemize}
+\item Имеет уникальный идентификатор (id)
+\item Может изменять своё состояние
+\item Инкапсулирует бизнес-\/логику работы с собой
+\item Две entity равны, если у них одинаковые ID
+\end{DoxyItemize}\hypertarget{domain_documentation_domain_aggregates}{}\doxysubsection{\texorpdfstring{aggregates/}{aggregates/}}\label{domain_documentation_domain_aggregates}
+{\bfseries{Описание\+:}} Группы связанных entities, обрабатываемые как единое целое
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Aggregate Root классы
+\item Вложенные entities (если агрегат содержит коллекции)
+\item Методы управления вложенными объектами
+\item Защита границ консистентности
+\end{DoxyItemize}
+
+{\bfseries{Характеристики Aggregate\+:}}
+\begin{DoxyItemize}
+\item Aggregate Root — главная entity для доступа
+\item Изменения только через Aggregate Root
+\item Гарантирует консистентность данных внутри границ
+\item Определяет границы транзакций
+\end{DoxyItemize}\hypertarget{domain_documentation_domain_value_objects}{}\doxysubsection{\texorpdfstring{value-\/objects/}{value-\/objects/}}\label{domain_documentation_domain_value_objects}
+{\bfseries{Описание\+:}} Неизменяемые объекты без идентификатора
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Value Object классы (Email, Phone, Money и т.\+д.)
+\item Типобезопасные обёртки над примитивами
+\item Валидация значений
+\end{DoxyItemize}
+
+{\bfseries{Характеристики Value Object\+:}}
+\begin{DoxyItemize}
+\item Не имеет идентификатора
+\item Неизменяемый (immutable)
+\item Равенство по значению, а не по ссылке
+\end{DoxyItemize}\hypertarget{domain_documentation_domain_repositories}{}\doxysubsection{\texorpdfstring{repositories/}{repositories/}}\label{domain_documentation_domain_repositories}
+{\bfseries{Описание\+:}} Интерфейсы для работы с хранилищем данных
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Интерфейсы Repository (только объявления)
+\item Методы для сохранения и загрузки aggregates
+\item Методы поиска по критериям
+\end{DoxyItemize}
+
+{\bfseries{Важно\+:}} Только интерфейсы! Реализация в Infrastructure Layer\hypertarget{domain_documentation_domain_services}{}\doxysubsection{\texorpdfstring{services/}{services/}}\label{domain_documentation_domain_services}
+{\bfseries{Описание\+:}} Доменная логика между несколькими объектами
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Domain Service классы
+\item Логика, не принадлежащая одной entity
+\item Операции над несколькими aggregates
+\item Сложные вычисления и алгоритмы
+\end{DoxyItemize}
+
+{\bfseries{Когда использовать\+:}}
+\begin{DoxyItemize}
+\item Операция затрагивает несколько aggregates
+\item Логика не является "{}поведением"{} одного объекта
+\item Сложные бизнес-\/правила
+\end{DoxyItemize}\hypertarget{domain_documentation_domain_events}{}\doxysubsection{\texorpdfstring{events/}{events/}}\label{domain_documentation_domain_events}
+{\bfseries{Описание\+:}} События, происходящие в домене
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Domain Event классы
+\item Описания событий (Ticket\+Created, Ticket\+Closed и т.\+д.)
+\item Интерфейсы обработчиков событий
+\end{DoxyItemize}\hypertarget{domain_documentation_domain_rules}{}\doxysection{\texorpdfstring{Правила Domain Layer}{Правила Domain Layer}}\label{domain_documentation_domain_rules}
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Независимость\+:}} Не зависит от других слоёв
+\item {\bfseries{Чистота\+:}} Нет зависимостей от фреймворков, БД, UI
+\item {\bfseries{Бизнес-\/логика\+:}} Вся логика здесь, не в сервисах приложения
+\item {\bfseries{Инварианты\+:}} Всегда защищает свои бизнес-\/правила
+\item {\bfseries{Тестируемость\+:}} Легко тестировать без внешних зависимостей
+\end{DoxyEnumerate}\hypertarget{domain_documentation_domain_concepts}{}\doxysection{\texorpdfstring{Ключевые концепции}{Ключевые концепции}}\label{domain_documentation_domain_concepts}
+{\bfseries{Entity vs Value Object\+:}}
+\begin{DoxyItemize}
+\item Entity имеет идентификатор, Value Object — нет
+\item Entity изменяема, Value Object — неизменяем
+\item Entity сравнивается по ID, Value Object — по значению
+\end{DoxyItemize}
+
+{\bfseries{Aggregate\+:}}
+\begin{DoxyItemize}
+\item Граница консистентности для группы объектов
+\item Доступ только через Aggregate Root
+\item Определяет границы транзакций
+\end{DoxyItemize}
+
+{\bfseries{Domain Service\+:}}
+\begin{DoxyItemize}
+\item Stateless (без состояния)
+\item Работает с несколькими объектами
+\item Содержит логику, не влезающую в entity
+\end{DoxyItemize}
+
+{\bfseries{Repository\+:}}
+\begin{DoxyItemize}
+\item Абстракция над хранилищем
+\item Работает с целыми aggregates
+\item Скрывает детали персистентности 
+\end{DoxyItemize}

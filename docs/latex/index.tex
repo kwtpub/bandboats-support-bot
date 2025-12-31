@@ -1,0 +1,112 @@
+\chapter{Bandboats Support Bot -\/ DDD Architecture }
+\hypertarget{index}{}\label{index}\index{Bandboats Support Bot -\/ DDD Architecture@{Bandboats Support Bot -\/ DDD Architecture}}
+\hypertarget{index_intro}{}\doxysection{\texorpdfstring{Введение}{Введение}}\label{index_intro}
+Это бот техподдержки, построенный на принципах Domain-\/\+Driven Design (DDD). Архитектура позволяет легко заменять способ взаимодействия с пользователем (Telegram Bot → Web → API) без изменения бизнес-\/логики.\hypertarget{index_architecture}{}\doxysection{\texorpdfstring{Архитектура приложения}{Архитектура приложения}}\label{index_architecture}
+Приложение разделено на 4 слоя согласно DDD\+:\hypertarget{index_domain_layer}{}\doxysubsection{\texorpdfstring{1. Domain Layer (Доменный слой)}{1. Domain Layer (Доменный слой)}}\label{index_domain_layer}
+{\bfseries{Местоположение\+:}} {\ttfamily src/domain/}
+
+{\bfseries{Ответственность\+:}}
+\begin{DoxyItemize}
+\item Бизнес-\/логика приложения
+\item Сущности (Entities) и агрегаты (Aggregates)
+\item Доменные сервисы (Domain Services)
+\item Интерфейсы репозиториев (Repository Interfaces)
+\item Доменные события (Domain Events)
+\end{DoxyItemize}
+
+{\bfseries{Важно\+:}} Этот слой НЕ зависит от других слоёв и технологий!
+
+\begin{DoxySeeAlso}{См. также}
+\doxysectlink{domain_documentation}{Domain Layer Documentation}{0}
+\end{DoxySeeAlso}
+\hypertarget{index_application_layer}{}\doxysubsection{\texorpdfstring{2. Application Layer (Слой приложения)}{2. Application Layer (Слой приложения)}}\label{index_application_layer}
+{\bfseries{Местоположение\+:}} {\ttfamily src/application/}
+
+{\bfseries{Ответственность\+:}}
+\begin{DoxyItemize}
+\item Сценарии использования (Use Cases)
+\item Оркестрация операций
+\item Управление транзакциями
+\item DTO для входных/выходных данных
+\end{DoxyItemize}
+
+{\bfseries{Не содержит\+:}} Бизнес-\/логику (она в Domain Layer)
+
+\begin{DoxySeeAlso}{См. также}
+\doxysectlink{application_documentation}{Application Layer (Слой приложения)}{0}
+\end{DoxySeeAlso}
+\hypertarget{index_infrastructure_layer}{}\doxysubsection{\texorpdfstring{3. Infrastructure Layer (Слой инфраструктуры)}{3. Infrastructure Layer (Слой инфраструктуры)}}\label{index_infrastructure_layer}
+{\bfseries{Местоположение\+:}} {\ttfamily src/infrastructure/}
+
+{\bfseries{Ответственность\+:}}
+\begin{DoxyItemize}
+\item Реализация репозиториев (работа с БД)
+\item Интеграция с внешними сервисами
+\item Работа с файловой системой
+\item Email, SMS, Telegram API
+\end{DoxyItemize}
+
+\begin{DoxySeeAlso}{См. также}
+\doxysectlink{infrastructure_documentation}{Infrastructure Layer Documentation}{0}
+\end{DoxySeeAlso}
+\hypertarget{index_presentation_layer}{}\doxysubsection{\texorpdfstring{4. Presentation Layer (Слой представления)}{4. Presentation Layer (Слой представления)}}\label{index_presentation_layer}
+{\bfseries{Местоположение\+:}} {\ttfamily src/presentation/}
+
+{\bfseries{Ответственность\+:}}
+\begin{DoxyItemize}
+\item Интерфейсы взаимодействия с пользователем
+\item Telegram Bot handlers
+\item Web controllers (в будущем)
+\item REST API endpoints (в будущем)
+\end{DoxyItemize}
+
+{\bfseries{Важно\+:}} Разные презентационные слои используют одни и те же Use Cases!
+
+\begin{DoxySeeAlso}{См. также}
+\doxysectlink{presentation_documentation}{Presentation Layer Documentation}{0}
+\end{DoxySeeAlso}
+\hypertarget{index_dependencies}{}\doxysection{\texorpdfstring{Зависимости между слоями}{Зависимости между слоями}}\label{index_dependencies}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Presentation\ Layer}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ↓}
+\DoxyCodeLine{Application\ Layer}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ↓}
+\DoxyCodeLine{\ \ Domain\ Layer}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ↑}
+\DoxyCodeLine{Infrastructure\ Layer\ (реализует\ интерфейсы\ из\ Domain)}
+
+\end{DoxyCode}
+
+
+{\bfseries{Правило\+:}} Зависимости направлены только ВНУТРЬ к Domain Layer. Domain Layer не зависит ни от чего!\hypertarget{index_principles}{}\doxysection{\texorpdfstring{Принципы разработки}{Принципы разработки}}\label{index_principles}
+\hypertarget{index_solid}{}\doxysubsection{\texorpdfstring{SOLID принципы}{SOLID принципы}}\label{index_solid}
+
+\begin{DoxyItemize}
+\item \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\+S\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}ingle Responsibility -\/ один класс = одна ответственность
+\item \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\+O\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}pen/\+Closed -\/ открыт для расширения, закрыт для модификации
+\item \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\+L\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}iskov Substitution -\/ подтипы должны заменять базовые типы
+\item \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\+I\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}nterface Segregation -\/ много специализированных интерфейсов
+\item \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\+D\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}ependency Inversion -\/ зависимость от абстракций, а не реализаций
+\end{DoxyItemize}\hypertarget{index_ddd_patterns}{}\doxysubsection{\texorpdfstring{DDD паттерны}{DDD паттерны}}\label{index_ddd_patterns}
+
+\begin{DoxyItemize}
+\item {\bfseries{Entity}} -\/ объект с уникальным идентификатором
+\item {\bfseries{Value Object}} -\/ неизменяемый объект без идентификатора
+\item {\bfseries{Aggregate}} -\/ группа связанных entities с корнем (Aggregate Root)
+\item {\bfseries{Repository}} -\/ абстракция для доступа к хранилищу
+\item {\bfseries{Domain Service}} -\/ бизнес-\/логика между несколькими aggregates
+\item {\bfseries{Use Case}} -\/ сценарий использования системы
+\end{DoxyItemize}\hypertarget{index_getting_started}{}\doxysection{\texorpdfstring{Начало работы}{Начало работы}}\label{index_getting_started}
+
+\begin{DoxyEnumerate}
+\item Изучите структуру Domain Layer
+\item Посмотрите на Use Cases в Application Layer
+\item Изучите реализацию репозиториев в Infrastructure Layer
+\item Изучите Telegram Bot handlers в Presentation Layer
+\end{DoxyEnumerate}\hypertarget{index_commands}{}\doxysection{\texorpdfstring{Полезные команды}{Полезные команды}}\label{index_commands}
+Проверка соблюдения принципов\+:
+\begin{DoxyItemize}
+\item {\ttfamily /check-\/solid} -\/ проверка SOLID принципов
+\item {\ttfamily /check-\/ddd} -\/ проверка DDD архитектуры 
+\end{DoxyItemize}

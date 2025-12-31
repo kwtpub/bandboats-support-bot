@@ -1,10 +1,11 @@
 var searchData=
 [
-  ['ticket_0',['Ticket',['../class_ticket.html',1,'']]],
-  ['ticket_2erepository_2ets_1',['ticket.repository.ts',['../ticket_8repository_8ts.html',1,'']]],
-  ['ticket_2ets_2',['ticket.ts',['../ticket_8ts.html',1,'']]],
-  ['ticketmessage_3',['TicketMessage',['../class_ticket_message.html',1,'']]],
-  ['ticketmessage_2ets_4',['ticketMessage.ts',['../ticket_message_8ts.html',1,'']]],
-  ['ticketrepository_5',['TicketRepository',['../ticket_8repository_8ts.html#a599f381e3dfe297bf75e73967c750fa9',1,'ticket.repository.ts']]],
-  ['ticketstatus_6',['TicketStatus',['../ticket_8ts.html#ae4ad5c9a1b71b87331ca7c0cd486446d',1,'ticket.ts']]]
+  ['aggregates_0',['aggregates/',['../domain_documentation.html#domain_aggregates',1,'']]],
+  ['api_1',['api/',['../presentation_documentation.html#pres_api',1,'']]],
+  ['application_20layer_2',['Application Layer',['../application_documentation.html#app_responsibility',1,'Ответственность Application Layer'],['../application_documentation.html#app_rules',1,'Правила Application Layer'],['../application_documentation.html#app_structure',1,'Структура Application Layer']]],
+  ['application_20layer_20слой_20приложения_3',['Application Layer Слой приложения',['../index.html#application_layer',1,'2. Application Layer (Слой приложения)'],['../application_documentation.html',1,'Application Layer (Слой приложения)']]],
+  ['application_2edox_4',['application.dox',['../application_8dox.html',1,'']]],
+  ['architecture_5',['Bandboats Support Bot - DDD Architecture',['../index.html',1,'']]],
+  ['architecture_2edox_6',['architecture.dox',['../architecture_8dox.html',1,'']]],
+  ['assignticketdto_7',['AssignTicketDto',['../ticket_8dto_8ts.html#ab089b0b419ca944658b6687476c642ad',1,'ticket.dto.ts']]]
 ];

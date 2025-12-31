@@ -1,0 +1,124 @@
+/**
+ * @page application_documentation Application Layer (Слой приложения)
+ * 
+ * @section app_overview Обзор
+ * 
+ * Application Layer — это **оркестратор** приложения.
+ * Координирует выполнение бизнес-операций, но НЕ содержит бизнес-логику.
+ * 
+ * @section app_responsibility Ответственность Application Layer
+ * 
+ * - Реализация сценариев использования (Use Cases)
+ * - Координация работы Domain Layer
+ * - Управление транзакциями
+ * - Преобразование данных (DTO)
+ * - Вызов Infrastructure сервисов
+ * 
+ * **НЕ содержит:**
+ * - Бизнес-логику (она в Domain Layer)
+ * - Детали UI (они в Presentation Layer)
+ * - Детали БД (они в Infrastructure Layer)
+ * 
+ * @section app_structure Структура Application Layer
+ * 
+ * @subsection app_usecases use-cases/
+ * **Описание:** Сценарии использования системы
+ * 
+ * **Содержит:**
+ * - Use Case классы
+ * - Один Use Case = одна операция пользователя
+ * - Оркестрация вызовов Domain и Infrastructure
+ * - Управление транзакциями
+ * 
+ * **Характеристики Use Case:**
+ * - Не содержит бизнес-логику (делегирует в Domain)
+ * - Координирует выполнение операции
+ * - Независим от способа вызова (бот, веб, API)
+ * - Один метод execute() на Use Case
+ * 
+ * **Примеры Use Cases:**
+ * - CreateTicketUseCase
+ * - AssignTicketUseCase
+ * - CloseTicketUseCase
+ * - SendMessageToTicketUseCase
+ * 
+ * @subsection app_dto dto/
+ * **Описание:** Объекты передачи данных между слоями
+ * 
+ * **Содержит:**
+ * - Интерфейсы DTO для входных данных
+ * - Интерфейсы DTO для выходных данных
+ * - Типы для Request/Response
+ * 
+ * **Типы DTO:**
+ * - Input DTO (CreateTicketDto, AssignTicketDto)
+ * - Output DTO (TicketResponseDto, UserResponseDto)
+ * - Query DTO (для фильтрации и поиска)
+ * 
+ * @subsection app_ports ports/
+ * **Описание:** Интерфейсы для внешних сервисов
+ * 
+ * **Содержит:**
+ * - Интерфейсы сервисов (только объявления)
+ * - Ports для уведомлений, email, SMS
+ * - Адаптеры для внешних API
+ * 
+ * **Примеры Ports:**
+ * - NotificationService
+ * - EmailService
+ * - FileStorageService
+ * 
+ * **Важно:** Application определяет интерфейсы, Infrastructure реализует
+ * 
+ * @subsection app_mappers mappers/
+ * **Описание:** Преобразование между Domain entities и DTO
+ * 
+ * **Содержит:**
+ * - Mapper классы
+ * - Методы toDto() и toDomain()
+ * - Логика преобразования данных
+ * 
+ * @section app_flow Поток выполнения Use Case
+ * 
+ * **Типичная последовательность:**
+ * 1. Получение данных из Repository
+ * 2. Вызов методов Domain Aggregate (бизнес-логика)
+ * 3. Сохранение изменений через Repository
+ * 4. Вызов Infrastructure сервисов (уведомления)
+ * 5. Возврат DTO в Presentation Layer
+ * 
+ * @section app_rules Правила Application Layer
+ * 
+ * 1. **Оркестрация, не логика:** Координирует, но не решает бизнес-правила
+ * 2. **Один Use Case = одна операция:** Не смешивайте несколько сценариев
+ * 3. **Независимость от UI:** Не знает, откуда пришёл запрос
+ * 4. **Управление транзакциями:** Определяет границы транзакций
+ * 5. **Тонкий слой:** Должен быть простым, вся сложность в Domain
+ * 
+ * @section app_concepts Ключевые концепции
+ * 
+ * **Use Case:**
+ * - Один сценарий использования системы
+ * - Не содержит бизнес-логику
+ * - Использует Domain для выполнения операций
+ * - Возвращает DTO, а не Domain entities
+ * 
+ * **DTO (Data Transfer Object):**
+ * - Простые объекты для передачи данных
+ * - Не содержат логику
+ * - Используются на границах слоёв
+ * - Изолируют Domain от Presentation
+ * 
+ * **Port (Hexagonal Architecture):**
+ * - Интерфейс для внешнего сервиса
+ * - Определяется в Application
+ * - Реализуется в Infrastructure
+ * - Позволяет заменять реализации
+ * 
+ * @section app_benefits Преимущества
+ * 
+ * - **Переиспользование:** Один Use Case для бота, веба и API
+ * - **Тестируемость:** Легко тестировать с моками
+ * - **Ясность:** Каждый файл = один сценарий
+ * - **Изоляция:** Изменение UI не затрагивает Use Cases
+ */

@@ -1,0 +1,157 @@
+/**
+ * @page infrastructure_documentation Infrastructure Layer (Слой инфраструктуры)
+ * 
+ * @section infra_overview Обзор
+ * 
+ * Infrastructure Layer — это **технический слой**, который реализует
+ * детали работы с внешними системами, БД, файлами и сервисами.
+ * 
+ * @section infra_responsibility Ответственность Infrastructure Layer
+ * 
+ * - Реализация Repository интерфейсов из Domain Layer
+ * - Работа с базами данных (SQL, NoSQL)
+ * - Интеграция с внешними API (Telegram, Email, SMS)
+ * - Работа с файловой системой
+ * - Кэширование, очереди, логирование
+ * 
+ * **Важно:** Реализует интерфейсы из Domain Layer, но Domain не зависит от Infrastructure!
+ * 
+ * @section infra_structure Структура Infrastructure Layer
+ * 
+ * @subsection infra_persistence persistence/
+ * **Описание:** Работа с базами данных и персистентностью
+ * 
+ * **Содержит:**
+ * - Реализации Repository интерфейсов
+ * - ORM конфигурация (Prisma, TypeORM и т.д.)
+ * - Миграции базы данных
+ * - Mapper классы для преобразования данных
+ * 
+ * **Подпапки:**
+ * - `repositories/` - реализации TicketRepositoryImpl, UserRepositoryImpl
+ * - `prisma/` или `typeorm/` - конфигурация ORM
+ * - `mappers/` - преобразование Domain Entity ↔ DB Model
+ * - `migrations/` - миграции схемы БД
+ * 
+ * @subsection infra_services services/
+ * **Описание:** Интеграция с внешними сервисами
+ * 
+ * **Содержит:**
+ * - Реализации Port интерфейсов из Application
+ * - Клиенты для внешних API
+ * - Обёртки над библиотеками
+ * 
+ * **Примеры сервисов:**
+ * - TelegramNotificationService
+ * - EmailService
+ * - SmsService
+ * - FileStorageService
+ * - CacheService
+ * 
+ * @subsection infra_messaging messaging/
+ * **Описание:** Работа с очередями сообщений и событиями
+ * 
+ * **Содержит:**
+ * - Публикация событий в очередь
+ * - Подписка на события
+ * - Интеграция с RabbitMQ, Kafka и т.д.
+ * 
+ * @subsection infra_config config/
+ * **Описание:** Конфигурация приложения
+ * 
+ * **Содержит:**
+ * - Настройки подключения к БД
+ * - API ключи и секреты
+ * - Переменные окружения
+ * - Конфигурация сервисов
+ * 
+ * **Файлы конфигурации:**
+ * - database.config.ts
+ * - telegram.config.ts
+ * - email.config.ts
+ * - app.config.ts
+ * 
+ * @subsection infra_di di/
+ * **Описание:** Dependency Injection контейнер
+ * 
+ * **Содержит:**
+ * - Настройка DI контейнера
+ * - Регистрация зависимостей
+ * - Binding интерфейсов к реализациям
+ * 
+ * @section infra_mapping Маппинг данных
+ * 
+ * **Направления преобразования:**
+ * - Domain Entity ↔ Database Model
+ * - Domain Entity ↔ API Response
+ * - Domain Entity ↔ DTO
+ * 
+ * **Ответственность Mapper:**
+ * - Преобразование между разными представлениями
+ * - Изоляция Domain от деталей БД
+ * - Сохранение типобезопасности
+ * 
+ * @section infra_repositories Repository Implementation
+ * 
+ * **Задачи Repository Implementation:**
+ * - Сохранение и загрузка Aggregates
+ * - Маппинг Domain Entity → DB Model
+ * - Выполнение SQL/NoSQL запросов
+ * - Обработка транзакций на уровне БД
+ * 
+ * **Паттерны:**
+ * - Repository Pattern
+ * - Data Mapper Pattern
+ * - Unit of Work (для управления транзакциями)
+ * 
+ * @section infra_rules Правила Infrastructure Layer
+ * 
+ * 1. **Реализует интерфейсы:** Из Domain и Application слоёв
+ * 2. **Детали технологий:** Вся специфика БД, API здесь
+ * 3. **Заменяемость:** Легко заменить Prisma на TypeORM, PostgreSQL на MongoDB
+ * 4. **Изоляция:** Domain не знает о существовании Infrastructure
+ * 5. **Тестирование:** Можно подменять на in-memory реализации
+ * 
+ * @section infra_concepts Ключевые концепции
+ * 
+ * **Repository Implementation:**
+ * - Конкретная реализация Repository интерфейса
+ * - Работает с конкретной БД (PostgreSQL, MongoDB)
+ * - Использует ORM или сырые запросы
+ * - Преобразует данные между Domain и БД
+ * 
+ * **Data Mapper:**
+ * - Разделяет Domain Model и Database Schema
+ * - Позволяет менять БД без изменения Domain
+ * - Инкапсулирует логику преобразования
+ * 
+ * **External Service Adapter:**
+ * - Реализация Port интерфейса
+ * - Интеграция с внешним API
+ * - Обработка специфики внешней системы
+ * 
+ * @section infra_technologies Возможные технологии
+ * 
+ * **Базы данных:**
+ * - PostgreSQL, MySQL, SQLite
+ * - MongoDB, Redis
+ * - Prisma ORM, TypeORM, Mongoose
+ * 
+ * **Внешние сервисы:**
+ * - Telegram Bot API
+ * - SendGrid, Mailgun (Email)
+ * - Twilio (SMS)
+ * - AWS S3 (файлы)
+ * 
+ * **Инфраструктура:**
+ * - RabbitMQ, Kafka (очереди)
+ * - Redis (кэш)
+ * - Winston, Pino (логирование)
+ * 
+ * @section infra_benefits Преимущества
+ * 
+ * - **Изоляция технологий:** Можно менять БД без изменения бизнес-логики
+ * - **Тестируемость:** Легко подменять на моки или in-memory
+ * - **Гибкость:** Разные реализации для прода, тестов, разработки
+ * - **Чистота Domain:** Domain остаётся чистым от технических деталей
+ */

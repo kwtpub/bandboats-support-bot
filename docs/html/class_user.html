@@ -91,12 +91,18 @@ $(function(){initNavTree('class_user.html','','class_user-members'); });
   <div class="headertitle"><div class="title">Класс User</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Entity пользователя.  
+ <a href="#details">Подробнее...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Открытые члены</h2></td></tr>
 <tr class="memitem:a3278412ef2ff8df30ac034e561009ea5" id="r_a3278412ef2ff8df30ac034e561009ea5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3278412ef2ff8df30ac034e561009ea5">constructor</a> (readonly id:number, readonly telegramId:string, readonly name:string, readonly role:ROLE, readonly createAt:Date,)</td></tr>
+<tr class="memdesc:a3278412ef2ff8df30ac034e561009ea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Создаёт нового пользователя.  <br /></td></tr>
 </table>
-<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Методы</h2>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Подробное описание</h2>
+<div class="textblock"><p>Entity пользователя. </p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Методы</h2>
 <a id="a3278412ef2ff8df30ac034e561009ea5" name="a3278412ef2ff8df30ac034e561009ea5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3278412ef2ff8df30ac034e561009ea5">&#9670;&#160;</a></span>constructor()</h2>
 
@@ -139,10 +145,22 @@ $(function(){initNavTree('class_user.html','','class_user-members'); });
 </table>
 </div><div class="memdoc">
 
+<p>Создаёт нового пользователя. </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>- Уникальный идентификатор пользователя. </td></tr>
+    <tr><td class="paramname">telegramId</td><td>- Идентификатор пользователя в Telegram. </td></tr>
+    <tr><td class="paramname">name</td><td>- Имя пользователя. </td></tr>
+    <tr><td class="paramname">role</td><td>- Роль пользователя в системе. </td></tr>
+    <tr><td class="paramname">createAt</td><td>- Дата создания пользователя. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <hr/>Объявления и описания членов класса находятся в файле:<ul>
-<li>core/domains/User/<a class="el" href="user_8ts.html">user.ts</a></li>
+<li>core/entities/User/<a class="el" href="user_8entity_8ts.html">user.entity.ts</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -91,12 +91,18 @@ $(function(){initNavTree('class_ticket.html','','class_ticket-members'); });
   <div class="headertitle"><div class="title">Класс Ticket</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Entity тикета.  
+ <a href="#details">Подробнее...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Открытые члены</h2></td></tr>
 <tr class="memitem:a70e1c5fbacc79e32c7fe42c49d08cd04" id="r_a70e1c5fbacc79e32c7fe42c49d08cd04"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70e1c5fbacc79e32c7fe42c49d08cd04">constructor</a> (readonly id:number, readonly authorId:number, readonly assigneeId:number, readonly title:string, readonly messages:TicketMessage[], readonly status:TicketStatus,)</td></tr>
+<tr class="memdesc:a70e1c5fbacc79e32c7fe42c49d08cd04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Создаёт новый тикет.  <br /></td></tr>
 </table>
-<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Методы</h2>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Подробное описание</h2>
+<div class="textblock"><p>Entity тикета. </p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Методы</h2>
 <a id="a70e1c5fbacc79e32c7fe42c49d08cd04" name="a70e1c5fbacc79e32c7fe42c49d08cd04"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a70e1c5fbacc79e32c7fe42c49d08cd04">&#9670;&#160;</a></span>constructor()</h2>
 
@@ -144,10 +150,23 @@ $(function(){initNavTree('class_ticket.html','','class_ticket-members'); });
 </table>
 </div><div class="memdoc">
 
+<p>Создаёт новый тикет. </p>
+<dl class="params"><dt>Аргументы</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>- Уникальный идентификатор тикета. </td></tr>
+    <tr><td class="paramname">authorId</td><td>- Идентификатор пользователя, создавшего тикет. </td></tr>
+    <tr><td class="paramname">assigneeId</td><td>- Идентификатор пользователя, которому назначен тикет. </td></tr>
+    <tr><td class="paramname">title</td><td>- Заголовок тикета. </td></tr>
+    <tr><td class="paramname">messages</td><td>- Список сообщений, относящихся к тикету. </td></tr>
+    <tr><td class="paramname">status</td><td>- Статус тикета. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <hr/>Объявления и описания членов класса находятся в файле:<ul>
-<li>core/domains/Ticket/<a class="el" href="ticket_8ts.html">ticket.ts</a></li>
+<li>domain/entities/Ticket/<a class="el" href="ticket_8entity_8ts.html">ticket.entity.ts</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

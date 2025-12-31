@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.15.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Bandboats Support Bot: Файл core/domainServices/Ticket/ticket.repository.ts</title>
+<title>Bandboats Support Bot: Файл core/repositories/Ticket/ticket.repository.ts</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -94,7 +94,7 @@ $(function(){initNavTree('ticket_8repository_8ts.html','',''); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Переменные</h2></td></tr>
-<tr class="memitem:a59be084da8908b7d77ff34b25cd84488" id="r_a59be084da8908b7d77ff34b25cd84488"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59be084da8908b7d77ff34b25cd84488">import</a> { <a class="el" href="class_ticket.html">Ticket</a> } from &quot;../../domains/<a class="el" href="class_ticket.html">Ticket</a>/ticket&quot;</td></tr>
+<tr class="memitem:a59be084da8908b7d77ff34b25cd84488" id="r_a59be084da8908b7d77ff34b25cd84488"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59be084da8908b7d77ff34b25cd84488">import</a> { <a class="el" href="class_ticket.html">Ticket</a> } from '../../entities/<a class="el" href="class_ticket.html">Ticket</a>/ticket.entity'</td></tr>
 <tr class="memitem:a599f381e3dfe297bf75e73967c750fa9" id="r_a599f381e3dfe297bf75e73967c750fa9"><td class="memItemLeft" align="right" valign="top">export interface&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a599f381e3dfe297bf75e73967c750fa9">TicketRepository</a></td></tr>
 </table>
 <a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Переменные</h2>
@@ -105,7 +105,7 @@ $(function(){initNavTree('ticket_8repository_8ts.html','',''); });
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">import { <a class="el" href="class_ticket.html">Ticket</a> } from &quot;../../domains/<a class="el" href="class_ticket.html">Ticket</a>/ticket&quot;</td>
+          <td class="memname">import { <a class="el" href="class_ticket.html">Ticket</a> } from '../../entities/<a class="el" href="class_ticket.html">Ticket</a>/ticket.entity'</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -124,10 +124,10 @@ $(function(){initNavTree('ticket_8repository_8ts.html','',''); });
       </table>
 </div><div class="memdoc">
 <b>Инициализатор</b><div class="fragment"><div class="line">{</div>
+<div class="line"> </div>
 <div class="line">  </div>
-<div class="line">  add(dto: <a class="code hl_class" href="class_add_ticket_dto.html">AddTicketDto</a>): <a class="code hl_class" href="class_ticket.html">Ticket</a></div>
-<div class="ttc" id="aclass_add_ticket_dto_html"><div class="ttname"><a href="class_add_ticket_dto.html">AddTicketDto</a></div><div class="ttdef"><b>Определения</b> addTicket.dto.ts:1</div></div>
-<div class="ttc" id="aclass_ticket_html"><div class="ttname"><a href="class_ticket.html">Ticket</a></div><div class="ttdef"><b>Определения</b> ticket.ts:10</div></div>
+<div class="line">  save(ticket: <a class="code hl_class" href="class_ticket.html">Ticket</a>): Promise&lt;void&gt;</div>
+<div class="ttc" id="aclass_ticket_html"><div class="ttname"><a href="class_ticket.html">Ticket</a></div><div class="ttdoc">Entity тикета.</div><div class="ttdef"><b>Определения</b> ticket.entity.ts:25</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -144,7 +144,7 @@ $(function(){initNavTree('ticket_8repository_8ts.html','',''); });
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a href="dir_4270bfced15e0e73154b13468c7c9ad9.html">core</a></li><li class="navelem"><a href="dir_644010f35d41676b28fab6d56f593dc6.html">domainServices</a></li><li class="navelem"><a href="dir_fe0ae4f722170b2daaf54025770a76f1.html">Ticket</a></li><li class="navelem"><a href="ticket_8repository_8ts.html">ticket.repository.ts</a></li>
+    <li class="navelem"><a href="dir_4270bfced15e0e73154b13468c7c9ad9.html">core</a></li><li class="navelem"><a href="dir_a49b247473ea54e61142acfcc9f91989.html">repositories</a></li><li class="navelem"><a href="dir_35ba3d8ef7b5170456420ed5c059eda8.html">Ticket</a></li><li class="navelem"><a href="ticket_8repository_8ts.html">ticket.repository.ts</a></li>
     <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
   </ul>
 </div>

@@ -1,11 +1,19 @@
 \doxysection{Класс Ticket}
 \hypertarget{class_ticket}{}\label{class_ticket}\index{Ticket@{Ticket}}
+
+
+Entity тикета.  
+
+
 \doxysubsubsection*{Открытые члены}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{class_ticket_a70e1c5fbacc79e32c7fe42c49d08cd04}{constructor}} (readonly id\+:number, readonly author\+Id\+:number, readonly assignee\+Id\+:number, readonly title\+:string, readonly messages\+:\+Ticket\+Message\mbox{[}$\,$\mbox{]}, readonly status\+:\+Ticket\+Status,)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Создаёт новый тикет. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\doxysubsection{Подробное описание}
+Entity тикета. 
 
 \label{doc-func-members}
 \Hypertarget{class_ticket_doc-func-members}
@@ -18,6 +26,25 @@ Ticket\+::constructor (\begin{DoxyParamCaption}\item[{}]{readonly id\+:number}{,
 
 
 
+Создаёт новый тикет. 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em id} & -\/ Уникальный идентификатор тикета. \\
+\hline
+{\em author\+Id} & -\/ Идентификатор пользователя, создавшего тикет. \\
+\hline
+{\em assignee\+Id} & -\/ Идентификатор пользователя, которому назначен тикет. \\
+\hline
+{\em title} & -\/ Заголовок тикета. \\
+\hline
+{\em messages} & -\/ Список сообщений, относящихся к тикету. \\
+\hline
+{\em status} & -\/ Статус тикета. \\
+\hline
+\end{DoxyParams}
+
+
 Объявления и описания членов класса находятся в файле\+:\begin{DoxyCompactItemize}
 \item 
-core/domains/\+Ticket/\mbox{\hyperlink{ticket_8ts}{ticket.\+ts}}\end{DoxyCompactItemize}
+domain/entities/\+Ticket/\mbox{\hyperlink{ticket_8entity_8ts}{ticket.\+entity.\+ts}}\end{DoxyCompactItemize}

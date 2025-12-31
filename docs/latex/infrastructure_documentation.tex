@@ -1,0 +1,168 @@
+\chapter{Infrastructure Layer Documentation }
+\hypertarget{infrastructure_documentation}{}\label{infrastructure_documentation}\index{Infrastructure Layer Documentation@{Infrastructure Layer Documentation}}
+Подробная документация слоя инфраструктуры
+
+См. \doxylink{infrastructure_8dox}{infrastructure/infrastructure.\+dox}\hypertarget{infrastructure_documentation_infra_overview}{}\doxysection{\texorpdfstring{Обзор}{Обзор}}\label{infrastructure_documentation_infra_overview}
+Infrastructure Layer — это {\bfseries{технический слой}}, который реализует детали работы с внешними системами, БД, файлами и сервисами.\hypertarget{infrastructure_documentation_infra_responsibility}{}\doxysection{\texorpdfstring{Ответственность Infrastructure Layer}{Ответственность Infrastructure Layer}}\label{infrastructure_documentation_infra_responsibility}
+
+\begin{DoxyItemize}
+\item Реализация Repository интерфейсов из Domain Layer
+\item Работа с базами данных (SQL, No\+SQL)
+\item Интеграция с внешними API (Telegram, Email, SMS)
+\item Работа с файловой системой
+\item Кэширование, очереди, логирование
+\end{DoxyItemize}
+
+{\bfseries{Важно\+:}} Реализует интерфейсы из Domain Layer, но Domain не зависит от Infrastructure!\hypertarget{infrastructure_documentation_infra_structure}{}\doxysection{\texorpdfstring{Структура Infrastructure Layer}{Структура Infrastructure Layer}}\label{infrastructure_documentation_infra_structure}
+\hypertarget{infrastructure_documentation_infra_persistence}{}\doxysubsection{\texorpdfstring{persistence/}{persistence/}}\label{infrastructure_documentation_infra_persistence}
+{\bfseries{Описание\+:}} Работа с базами данных и персистентностью
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Реализации Repository интерфейсов
+\item ORM конфигурация (Prisma, Type\+ORM и т.\+д.)
+\item Миграции базы данных
+\item Mapper классы для преобразования данных
+\end{DoxyItemize}
+
+{\bfseries{Подпапки\+:}}
+\begin{DoxyItemize}
+\item {\ttfamily repositories/} -\/ реализации Ticket\+Repository\+Impl, User\+Repository\+Impl
+\item {\ttfamily prisma/} или {\ttfamily typeorm/} -\/ конфигурация ORM
+\item {\ttfamily mappers/} -\/ преобразование Domain Entity ↔ DB Model
+\item {\ttfamily migrations/} -\/ миграции схемы БД
+\end{DoxyItemize}\hypertarget{infrastructure_documentation_infra_services}{}\doxysubsection{\texorpdfstring{services/}{services/}}\label{infrastructure_documentation_infra_services}
+{\bfseries{Описание\+:}} Интеграция с внешними сервисами
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Реализации Port интерфейсов из Application
+\item Клиенты для внешних API
+\item Обёртки над библиотеками
+\end{DoxyItemize}
+
+{\bfseries{Примеры сервисов\+:}}
+\begin{DoxyItemize}
+\item Telegram\+Notification\+Service
+\item Email\+Service
+\item Sms\+Service
+\item File\+Storage\+Service
+\item Cache\+Service
+\end{DoxyItemize}\hypertarget{infrastructure_documentation_infra_messaging}{}\doxysubsection{\texorpdfstring{messaging/}{messaging/}}\label{infrastructure_documentation_infra_messaging}
+{\bfseries{Описание\+:}} Работа с очередями сообщений и событиями
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Публикация событий в очередь
+\item Подписка на события
+\item Интеграция с Rabbit\+MQ, Kafka и т.\+д.
+\end{DoxyItemize}\hypertarget{infrastructure_documentation_infra_config}{}\doxysubsection{\texorpdfstring{config/}{config/}}\label{infrastructure_documentation_infra_config}
+{\bfseries{Описание\+:}} Конфигурация приложения
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Настройки подключения к БД
+\item API ключи и секреты
+\item Переменные окружения
+\item Конфигурация сервисов
+\end{DoxyItemize}
+
+{\bfseries{Файлы конфигурации\+:}}
+\begin{DoxyItemize}
+\item database.\+config.\+ts
+\item telegram.\+config.\+ts
+\item email.\+config.\+ts
+\item app.\+config.\+ts
+\end{DoxyItemize}\hypertarget{infrastructure_documentation_infra_di}{}\doxysubsection{\texorpdfstring{di/}{di/}}\label{infrastructure_documentation_infra_di}
+{\bfseries{Описание\+:}} Dependency Injection контейнер
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Настройка DI контейнера
+\item Регистрация зависимостей
+\item Binding интерфейсов к реализациям
+\end{DoxyItemize}\hypertarget{infrastructure_documentation_infra_mapping}{}\doxysection{\texorpdfstring{Маппинг данных}{Маппинг данных}}\label{infrastructure_documentation_infra_mapping}
+{\bfseries{Направления преобразования\+:}}
+\begin{DoxyItemize}
+\item Domain Entity ↔ Database Model
+\item Domain Entity ↔ API Response
+\item Domain Entity ↔ DTO
+\end{DoxyItemize}
+
+{\bfseries{Ответственность Mapper\+:}}
+\begin{DoxyItemize}
+\item Преобразование между разными представлениями
+\item Изоляция Domain от деталей БД
+\item Сохранение типобезопасности
+\end{DoxyItemize}\hypertarget{infrastructure_documentation_infra_repositories}{}\doxysection{\texorpdfstring{Repository Implementation}{Repository Implementation}}\label{infrastructure_documentation_infra_repositories}
+{\bfseries{Задачи Repository Implementation\+:}}
+\begin{DoxyItemize}
+\item Сохранение и загрузка Aggregates
+\item Маппинг Domain Entity → DB Model
+\item Выполнение SQL/\+No\+SQL запросов
+\item Обработка транзакций на уровне БД
+\end{DoxyItemize}
+
+{\bfseries{Паттерны\+:}}
+\begin{DoxyItemize}
+\item Repository Pattern
+\item Data Mapper Pattern
+\item Unit of Work (для управления транзакциями)
+\end{DoxyItemize}\hypertarget{infrastructure_documentation_infra_rules}{}\doxysection{\texorpdfstring{Правила Infrastructure Layer}{Правила Infrastructure Layer}}\label{infrastructure_documentation_infra_rules}
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Реализует интерфейсы\+:}} Из Domain и Application слоёв
+\item {\bfseries{Детали технологий\+:}} Вся специфика БД, API здесь
+\item {\bfseries{Заменяемость\+:}} Легко заменить Prisma на Type\+ORM, Postgre\+SQL на Mongo\+DB
+\item {\bfseries{Изоляция\+:}} Domain не знает о существовании Infrastructure
+\item {\bfseries{Тестирование\+:}} Можно подменять на in-\/memory реализации
+\end{DoxyEnumerate}\hypertarget{infrastructure_documentation_infra_concepts}{}\doxysection{\texorpdfstring{Ключевые концепции}{Ключевые концепции}}\label{infrastructure_documentation_infra_concepts}
+{\bfseries{Repository Implementation\+:}}
+\begin{DoxyItemize}
+\item Конкретная реализация Repository интерфейса
+\item Работает с конкретной БД (Postgre\+SQL, Mongo\+DB)
+\item Использует ORM или сырые запросы
+\item Преобразует данные между Domain и БД
+\end{DoxyItemize}
+
+{\bfseries{Data Mapper\+:}}
+\begin{DoxyItemize}
+\item Разделяет Domain Model и Database Schema
+\item Позволяет менять БД без изменения Domain
+\item Инкапсулирует логику преобразования
+\end{DoxyItemize}
+
+{\bfseries{External Service Adapter\+:}}
+\begin{DoxyItemize}
+\item Реализация Port интерфейса
+\item Интеграция с внешним API
+\item Обработка специфики внешней системы
+\end{DoxyItemize}\hypertarget{infrastructure_documentation_infra_technologies}{}\doxysection{\texorpdfstring{Возможные технологии}{Возможные технологии}}\label{infrastructure_documentation_infra_technologies}
+{\bfseries{Базы данных\+:}}
+\begin{DoxyItemize}
+\item Postgre\+SQL, My\+SQL, SQLite
+\item Mongo\+DB, Redis
+\item Prisma ORM, Type\+ORM, Mongoose
+\end{DoxyItemize}
+
+{\bfseries{Внешние сервисы\+:}}
+\begin{DoxyItemize}
+\item Telegram Bot API
+\item Send\+Grid, Mailgun (Email)
+\item Twilio (SMS)
+\item AWS S3 (файлы)
+\end{DoxyItemize}
+
+{\bfseries{Инфраструктура\+:}}
+\begin{DoxyItemize}
+\item Rabbit\+MQ, Kafka (очереди)
+\item Redis (кэш)
+\item Winston, Pino (логирование)
+\end{DoxyItemize}\hypertarget{infrastructure_documentation_infra_benefits}{}\doxysection{\texorpdfstring{Преимущества}{Преимущества}}\label{infrastructure_documentation_infra_benefits}
+
+\begin{DoxyItemize}
+\item {\bfseries{Изоляция технологий\+:}} Можно менять БД без изменения бизнес-\/логики
+\item {\bfseries{Тестируемость\+:}} Легко подменять на моки или in-\/memory
+\item {\bfseries{Гибкость\+:}} Разные реализации для прода, тестов, разработки
+\item {\bfseries{Чистота Domain\+:}} Domain остаётся чистым от технических деталей 
+\end{DoxyItemize}

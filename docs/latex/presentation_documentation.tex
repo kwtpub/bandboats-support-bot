@@ -1,0 +1,184 @@
+\chapter{Presentation Layer Documentation }
+\hypertarget{presentation_documentation}{}\label{presentation_documentation}\index{Presentation Layer Documentation@{Presentation Layer Documentation}}
+Подробная документация слоя представления
+
+См. \doxylink{presentation_8dox}{presentation/presentation.\+dox}\hypertarget{presentation_documentation_pres_overview}{}\doxysection{\texorpdfstring{Обзор}{Обзор}}\label{presentation_documentation_pres_overview}
+Presentation Layer — это {\bfseries{слой взаимодействия}} с пользователем. Здесь находятся все интерфейсы\+: боты, веб-\/приложения, REST API.
+
+{\bfseries{Ключевая особенность\+:}} Разные интерфейсы используют ОДНИ И ТЕ ЖЕ Use Cases!\hypertarget{presentation_documentation_pres_responsibility}{}\doxysection{\texorpdfstring{Ответственность Presentation Layer}{Ответственность Presentation Layer}}\label{presentation_documentation_pres_responsibility}
+
+\begin{DoxyItemize}
+\item Получение запросов от пользователей
+\item Преобразование входных данных в DTO
+\item Вызов Use Cases из Application Layer
+\item Форматирование ответов для пользователя
+\item Обработка ошибок и их отображение
+\item Валидация входных данных (формат, не бизнес-\/правила!)
+\end{DoxyItemize}
+
+{\bfseries{НЕ содержит\+:}}
+\begin{DoxyItemize}
+\item Бизнес-\/логику (она в Domain)
+\item Оркестрацию (она в Use Cases)
+\item Работу с БД (она в Infrastructure)
+\end{DoxyItemize}\hypertarget{presentation_documentation_pres_structure}{}\doxysection{\texorpdfstring{Структура Presentation Layer}{Структура Presentation Layer}}\label{presentation_documentation_pres_structure}
+\hypertarget{presentation_documentation_pres_telegram}{}\doxysubsection{\texorpdfstring{telegram-\/bot/}{telegram-\/bot/}}\label{presentation_documentation_pres_telegram}
+{\bfseries{Описание\+:}} Интерфейс через Telegram бота
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Обработчики команд (handlers)
+\item Middleware (аутентификация, логирование)
+\item Клавиатуры и меню бота
+\item Главный файл запуска бота
+\end{DoxyItemize}
+
+{\bfseries{Подпапки\+:}}
+\begin{DoxyItemize}
+\item {\ttfamily handlers/} -\/ Ticket\+Handlers, User\+Handlers, Admin\+Handlers
+\item {\ttfamily middleware/} -\/ Auth\+Middleware, Error\+Middleware
+\item {\ttfamily keyboards/} -\/ Main\+Keyboard, Admin\+Keyboard
+\item {\ttfamily scenes/} -\/ сценарии диалогов (если используются)
+\end{DoxyItemize}
+
+{\bfseries{Команды бота\+:}}
+\begin{DoxyItemize}
+\item Клиентские\+: /start, /help, /create\+\_\+ticket, /my\+\_\+tickets
+\item Админские\+: /admin, /assign, /close, /stats
+\end{DoxyItemize}\hypertarget{presentation_documentation_pres_web}{}\doxysubsection{\texorpdfstring{web/}{web/}}\label{presentation_documentation_pres_web}
+{\bfseries{Описание\+:}} Веб-\/интерфейс (будущее)
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item HTTP контроллеры
+\item Маршруты (routes)
+\item Middleware
+\item View компоненты (React/\+Vue)
+\end{DoxyItemize}
+
+{\bfseries{Подпапки\+:}}
+\begin{DoxyItemize}
+\item {\ttfamily controllers/} -\/ Ticket\+Controller, User\+Controller
+\item {\ttfamily routes/} -\/ определение маршрутов
+\item {\ttfamily middleware/} -\/ auth\+Middleware, validation\+Middleware
+\item {\ttfamily views/} -\/ React/\+Vue компоненты
+\end{DoxyItemize}\hypertarget{presentation_documentation_pres_api}{}\doxysubsection{\texorpdfstring{api/}{api/}}\label{presentation_documentation_pres_api}
+{\bfseries{Описание\+:}} REST API (будущее)
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item API эндпоинты
+\item Версионирование API (v1, v2)
+\item Middleware (auth, rate limiting)
+\item Open\+API/\+Swagger документация
+\end{DoxyItemize}
+
+{\bfseries{Подпапки\+:}}
+\begin{DoxyItemize}
+\item {\ttfamily v1/} -\/ версия 1 API
+\item {\ttfamily middleware/} -\/ api\+Key\+Auth, rate\+Limiter
+\item {\ttfamily docs/} -\/ swagger.\+yaml
+\end{DoxyItemize}\hypertarget{presentation_documentation_pres_graphql}{}\doxysubsection{\texorpdfstring{graphql/}{graphql/}}\label{presentation_documentation_pres_graphql}
+{\bfseries{Описание\+:}} Graph\+QL API (опционально)
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Resolvers
+\item Schema definitions
+\item Subscriptions (для real-\/time)
+\end{DoxyItemize}\hypertarget{presentation_documentation_pres_flow}{}\doxysection{\texorpdfstring{Поток обработки запроса}{Поток обработки запроса}}\label{presentation_documentation_pres_flow}
+{\bfseries{Общая последовательность\+:}}
+\begin{DoxyEnumerate}
+\item Пользователь отправляет запрос (команда/\+HTTP)
+\item Handler получает запрос
+\item Handler создаёт DTO из входных данных
+\item Handler вызывает Use Case
+\item Use Case выполняет операцию
+\item Use Case возвращает результат (DTO)
+\item Handler форматирует ответ
+\item Ответ отправляется пользователю
+\end{DoxyEnumerate}\hypertarget{presentation_documentation_pres_validation}{}\doxysection{\texorpdfstring{Валидация данных}{Валидация данных}}\label{presentation_documentation_pres_validation}
+{\bfseries{Валидация в Presentation Layer\+:}}
+\begin{DoxyItemize}
+\item Формат данных (email, телефон)
+\item Обязательные поля
+\item Длина строк
+\item Типы данных
+\end{DoxyItemize}
+
+{\bfseries{НЕ валидируется в Presentation\+:}}
+\begin{DoxyItemize}
+\item Бизнес-\/правила (это Domain Layer)
+\item Существование связанных объектов
+\item Бизнес-\/ограничения
+\end{DoxyItemize}\hypertarget{presentation_documentation_pres_error}{}\doxysection{\texorpdfstring{Обработка ошибок}{Обработка ошибок}}\label{presentation_documentation_pres_error}
+{\bfseries{Типы ошибок\+:}}
+\begin{DoxyItemize}
+\item Domain Error -\/ ошибка бизнес-\/логики
+\item Validation Error -\/ неверный формат данных
+\item Not Found Error -\/ объект не найден
+\item Technical Error -\/ техническая ошибка
+\end{DoxyItemize}
+
+{\bfseries{Задача Presentation\+:}}
+\begin{DoxyItemize}
+\item Преобразовать техническую ошибку в понятное сообщение
+\item Не раскрывать внутренние детали
+\item Логировать ошибки
+\item Отправить пользователю дружелюбное сообщение
+\end{DoxyItemize}\hypertarget{presentation_documentation_pres_rules}{}\doxysection{\texorpdfstring{Правила Presentation Layer}{Правила Presentation Layer}}\label{presentation_documentation_pres_rules}
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Только UI логика\+:}} Форматирование, валидация формата, навигация
+\item {\bfseries{Не знает о БД\+:}} Работает только через Use Cases
+\item {\bfseries{Не содержит бизнес-\/логику\+:}} Делегирует в Domain через Use Cases
+\item {\bfseries{Независимые интерфейсы\+:}} Telegram, Web, API независимы друг от друга
+\item {\bfseries{Общие Use Cases\+:}} Все интерфейсы используют одни Use Cases
+\end{DoxyEnumerate}\hypertarget{presentation_documentation_pres_concepts}{}\doxysection{\texorpdfstring{Ключевые концепции}{Ключевые концепции}}\label{presentation_documentation_pres_concepts}
+{\bfseries{Handler/\+Controller\+:}}
+\begin{DoxyItemize}
+\item Обрабатывает входящий запрос
+\item Преобразует данные в DTO
+\item Вызывает Use Case
+\item Форматирует ответ
+\end{DoxyItemize}
+
+{\bfseries{Middleware\+:}}
+\begin{DoxyItemize}
+\item Промежуточная обработка запросов
+\item Аутентификация, авторизация
+\item Логирование запросов
+\item Обработка ошибок
+\end{DoxyItemize}
+
+{\bfseries{View/\+Template\+:}}
+\begin{DoxyItemize}
+\item Отображение данных пользователю
+\item Форматирование сообщений
+\item Клавиатуры и меню
+\end{DoxyItemize}\hypertarget{presentation_documentation_pres_multiple}{}\doxysection{\texorpdfstring{Множественные интерфейсы}{Множественные интерфейсы}}\label{presentation_documentation_pres_multiple}
+{\bfseries{Преимущество DDD\+:}} Один Use Case используется везде\+:
+\begin{DoxyItemize}
+\item Telegram Bot Handler
+\item Web Controller
+\item REST API Endpoint
+\item Graph\+QL Resolver
+\item Discord Bot Handler
+\end{DoxyItemize}
+
+{\bfseries{Легко добавить\+:}}
+\begin{DoxyItemize}
+\item Новый Telegram Web\+App
+\item Mobile приложение
+\item Desktop приложение
+\item CLI интерфейс
+\item Slack/\+Discord ботов
+\end{DoxyItemize}\hypertarget{presentation_documentation_pres_benefits}{}\doxysection{\texorpdfstring{Преимущества архитектуры}{Преимущества архитектуры}}\label{presentation_documentation_pres_benefits}
+
+\begin{DoxyItemize}
+\item {\bfseries{Переиспользование логики\+:}} Один Use Case для всех интерфейсов
+\item {\bfseries{Независимость\+:}} Можно менять UI без изменения логики
+\item {\bfseries{Масштабируемость\+:}} Легко добавлять новые способы взаимодействия
+\item {\bfseries{Тестируемость\+:}} Можно тестировать handlers независимо
+\item {\bfseries{Гибкость\+:}} Разные UI для разных платформ 
+\end{DoxyItemize}

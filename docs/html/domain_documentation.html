@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Bandboats Support Bot: Domain Layer Documentation</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">Bandboats Support Bot
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Поиск',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('domain_documentation.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Загрузка...</div>
+<div class="SRStatus" id="Searching">Поиск...</div>
+<div class="SRStatus" id="NoMatches">Не найдено</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Domain Layer Documentation </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p>Подробная документация доменного слоя</p>
+<p>См. <a class="el" href="domain_8dox.html">domain/domain.dox</a></p>
+<h1 class="doxsection"><a class="anchor" id="domain_overview"></a>
+Обзор</h1>
+<p>Domain Layer — это <b>сердце приложения</b>, содержащее всю бизнес-логику. Этот слой полностью независим от технологий, фреймворков и способов доставки данных.</p>
+<h1 class="doxsection"><a class="anchor" id="domain_responsibility"></a>
+Ответственность Domain Layer</h1>
+<ul>
+<li>Описание бизнес-сущностей и их поведения</li>
+<li>Реализация бизнес-правил и инвариантов</li>
+<li>Определение интерфейсов для работы с данными</li>
+<li>Доменные события и их обработка</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="domain_structure"></a>
+Структура Domain Layer</h1>
+<h2 class="doxsection"><a class="anchor" id="domain_entities"></a>
+entities/</h2>
+<p><b>Описание:</b> Бизнес-сущности с уникальными идентификаторами</p>
+<p><b>Содержит:</b></p><ul>
+<li>Entity классы (User, <a class="el" href="class_ticket.html" title="Entity тикета.">Ticket</a>, <a class="el" href="class_ticket_message.html">TicketMessage</a> и т.д.)</li>
+<li>Enum для статусов и ролей</li>
+<li>Методы изменения состояния сущностей</li>
+<li>Валидация бизнес-правил внутри сущностей</li>
+</ul>
+<p><b>Характеристики Entity:</b></p><ul>
+<li>Имеет уникальный идентификатор (id)</li>
+<li>Может изменять своё состояние</li>
+<li>Инкапсулирует бизнес-логику работы с собой</li>
+<li>Две entity равны, если у них одинаковые ID</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="domain_aggregates"></a>
+aggregates/</h2>
+<p><b>Описание:</b> Группы связанных entities, обрабатываемые как единое целое</p>
+<p><b>Содержит:</b></p><ul>
+<li>Aggregate Root классы</li>
+<li>Вложенные entities (если агрегат содержит коллекции)</li>
+<li>Методы управления вложенными объектами</li>
+<li>Защита границ консистентности</li>
+</ul>
+<p><b>Характеристики Aggregate:</b></p><ul>
+<li>Aggregate Root — главная entity для доступа</li>
+<li>Изменения только через Aggregate Root</li>
+<li>Гарантирует консистентность данных внутри границ</li>
+<li>Определяет границы транзакций</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="domain_value_objects"></a>
+value-objects/</h2>
+<p><b>Описание:</b> Неизменяемые объекты без идентификатора</p>
+<p><b>Содержит:</b></p><ul>
+<li>Value Object классы (Email, Phone, Money и т.д.)</li>
+<li>Типобезопасные обёртки над примитивами</li>
+<li>Валидация значений</li>
+</ul>
+<p><b>Характеристики Value Object:</b></p><ul>
+<li>Не имеет идентификатора</li>
+<li>Неизменяемый (immutable)</li>
+<li>Равенство по значению, а не по ссылке</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="domain_repositories"></a>
+repositories/</h2>
+<p><b>Описание:</b> Интерфейсы для работы с хранилищем данных</p>
+<p><b>Содержит:</b></p><ul>
+<li>Интерфейсы Repository (только объявления)</li>
+<li>Методы для сохранения и загрузки aggregates</li>
+<li>Методы поиска по критериям</li>
+</ul>
+<p><b>Важно:</b> Только интерфейсы! Реализация в Infrastructure Layer</p>
+<h2 class="doxsection"><a class="anchor" id="domain_services"></a>
+services/</h2>
+<p><b>Описание:</b> Доменная логика между несколькими объектами</p>
+<p><b>Содержит:</b></p><ul>
+<li>Domain Service классы</li>
+<li>Логика, не принадлежащая одной entity</li>
+<li>Операции над несколькими aggregates</li>
+<li>Сложные вычисления и алгоритмы</li>
+</ul>
+<p><b>Когда использовать:</b></p><ul>
+<li>Операция затрагивает несколько aggregates</li>
+<li>Логика не является "поведением" одного объекта</li>
+<li>Сложные бизнес-правила</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="domain_events"></a>
+events/</h2>
+<p><b>Описание:</b> События, происходящие в домене</p>
+<p><b>Содержит:</b></p><ul>
+<li>Domain Event классы</li>
+<li>Описания событий (TicketCreated, TicketClosed и т.д.)</li>
+<li>Интерфейсы обработчиков событий</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="domain_rules"></a>
+Правила Domain Layer</h1>
+<ol type="1">
+<li><b>Независимость:</b> Не зависит от других слоёв</li>
+<li><b>Чистота:</b> Нет зависимостей от фреймворков, БД, UI</li>
+<li><b>Бизнес-логика:</b> Вся логика здесь, не в сервисах приложения</li>
+<li><b>Инварианты:</b> Всегда защищает свои бизнес-правила</li>
+<li><b>Тестируемость:</b> Легко тестировать без внешних зависимостей</li>
+</ol>
+<h1 class="doxsection"><a class="anchor" id="domain_concepts"></a>
+Ключевые концепции</h1>
+<p><b>Entity vs Value Object:</b></p><ul>
+<li>Entity имеет идентификатор, Value Object — нет</li>
+<li>Entity изменяема, Value Object — неизменяем</li>
+<li>Entity сравнивается по ID, Value Object — по значению</li>
+</ul>
+<p><b>Aggregate:</b></p><ul>
+<li>Граница консистентности для группы объектов</li>
+<li>Доступ только через Aggregate Root</li>
+<li>Определяет границы транзакций</li>
+</ul>
+<p><b>Domain Service:</b></p><ul>
+<li>Stateless (без состояния)</li>
+<li>Работает с несколькими объектами</li>
+<li>Содержит логику, не влезающую в entity</li>
+</ul>
+<p><b>Repository:</b></p><ul>
+<li>Абстракция над хранилищем</li>
+<li>Работает с целыми aggregates</li>
+<li>Скрывает детали персистентности </li>
+</ul>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

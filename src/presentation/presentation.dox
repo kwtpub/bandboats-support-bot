@@ -1,0 +1,173 @@
+/**
+ * @page presentation_documentation Presentation Layer (Слой представления)
+ * 
+ * @section pres_overview Обзор
+ * 
+ * Presentation Layer — это **слой взаимодействия** с пользователем.
+ * Здесь находятся все интерфейсы: боты, веб-приложения, REST API.
+ * 
+ * **Ключевая особенность:** Разные интерфейсы используют ОДНИ И ТЕ ЖЕ Use Cases!
+ * 
+ * @section pres_responsibility Ответственность Presentation Layer
+ * 
+ * - Получение запросов от пользователей
+ * - Преобразование входных данных в DTO
+ * - Вызов Use Cases из Application Layer
+ * - Форматирование ответов для пользователя
+ * - Обработка ошибок и их отображение
+ * - Валидация входных данных (формат, не бизнес-правила!)
+ * 
+ * **НЕ содержит:**
+ * - Бизнес-логику (она в Domain)
+ * - Оркестрацию (она в Use Cases)
+ * - Работу с БД (она в Infrastructure)
+ * 
+ * @section pres_structure Структура Presentation Layer
+ * 
+ * @subsection pres_telegram telegram-bot/
+ * **Описание:** Интерфейс через Telegram бота
+ * 
+ * **Содержит:**
+ * - Обработчики команд (handlers)
+ * - Middleware (аутентификация, логирование)
+ * - Клавиатуры и меню бота
+ * - Главный файл запуска бота
+ * 
+ * **Подпапки:**
+ * - `handlers/` - TicketHandlers, UserHandlers, AdminHandlers
+ * - `middleware/` - AuthMiddleware, ErrorMiddleware
+ * - `keyboards/` - MainKeyboard, AdminKeyboard
+ * - `scenes/` - сценарии диалогов (если используются)
+ * 
+ * **Команды бота:**
+ * - Клиентские: /start, /help, /create_ticket, /my_tickets
+ * - Админские: /admin, /assign, /close, /stats
+ * 
+ * @subsection pres_web web/
+ * **Описание:** Веб-интерфейс (будущее)
+ * 
+ * **Содержит:**
+ * - HTTP контроллеры
+ * - Маршруты (routes)
+ * - Middleware
+ * - View компоненты (React/Vue)
+ * 
+ * **Подпапки:**
+ * - `controllers/` - TicketController, UserController
+ * - `routes/` - определение маршрутов
+ * - `middleware/` - authMiddleware, validationMiddleware
+ * - `views/` - React/Vue компоненты
+ * 
+ * @subsection pres_api api/
+ * **Описание:** REST API (будущее)
+ * 
+ * **Содержит:**
+ * - API эндпоинты
+ * - Версионирование API (v1, v2)
+ * - Middleware (auth, rate limiting)
+ * - OpenAPI/Swagger документация
+ * 
+ * **Подпапки:**
+ * - `v1/` - версия 1 API
+ * - `middleware/` - apiKeyAuth, rateLimiter
+ * - `docs/` - swagger.yaml
+ * 
+ * @subsection pres_graphql graphql/
+ * **Описание:** GraphQL API (опционально)
+ * 
+ * **Содержит:**
+ * - Resolvers
+ * - Schema definitions
+ * - Subscriptions (для real-time)
+ * 
+ * @section pres_flow Поток обработки запроса
+ * 
+ * **Общая последовательность:**
+ * 1. Пользователь отправляет запрос (команда/HTTP)
+ * 2. Handler получает запрос
+ * 3. Handler создаёт DTO из входных данных
+ * 4. Handler вызывает Use Case
+ * 5. Use Case выполняет операцию
+ * 6. Use Case возвращает результат (DTO)
+ * 7. Handler форматирует ответ
+ * 8. Ответ отправляется пользователю
+ * 
+ * @section pres_validation Валидация данных
+ * 
+ * **Валидация в Presentation Layer:**
+ * - Формат данных (email, телефон)
+ * - Обязательные поля
+ * - Длина строк
+ * - Типы данных
+ * 
+ * **НЕ валидируется в Presentation:**
+ * - Бизнес-правила (это Domain Layer)
+ * - Существование связанных объектов
+ * - Бизнес-ограничения
+ * 
+ * @section pres_error Обработка ошибок
+ * 
+ * **Типы ошибок:**
+ * - Domain Error - ошибка бизнес-логики
+ * - Validation Error - неверный формат данных
+ * - Not Found Error - объект не найден
+ * - Technical Error - техническая ошибка
+ * 
+ * **Задача Presentation:**
+ * - Преобразовать техническую ошибку в понятное сообщение
+ * - Не раскрывать внутренние детали
+ * - Логировать ошибки
+ * - Отправить пользователю дружелюбное сообщение
+ * 
+ * @section pres_rules Правила Presentation Layer
+ * 
+ * 1. **Только UI логика:** Форматирование, валидация формата, навигация
+ * 2. **Не знает о БД:** Работает только через Use Cases
+ * 3. **Не содержит бизнес-логику:** Делегирует в Domain через Use Cases
+ * 4. **Независимые интерфейсы:** Telegram, Web, API независимы друг от друга
+ * 5. **Общие Use Cases:** Все интерфейсы используют одни Use Cases
+ * 
+ * @section pres_concepts Ключевые концепции
+ * 
+ * **Handler/Controller:**
+ * - Обрабатывает входящий запрос
+ * - Преобразует данные в DTO
+ * - Вызывает Use Case
+ * - Форматирует ответ
+ * 
+ * **Middleware:**
+ * - Промежуточная обработка запросов
+ * - Аутентификация, авторизация
+ * - Логирование запросов
+ * - Обработка ошибок
+ * 
+ * **View/Template:**
+ * - Отображение данных пользователю
+ * - Форматирование сообщений
+ * - Клавиатуры и меню
+ * 
+ * @section pres_multiple Множественные интерфейсы
+ * 
+ * **Преимущество DDD:**
+ * Один Use Case используется везде:
+ * - Telegram Bot Handler
+ * - Web Controller
+ * - REST API Endpoint
+ * - GraphQL Resolver
+ * - Discord Bot Handler
+ * 
+ * **Легко добавить:**
+ * - Новый Telegram WebApp
+ * - Mobile приложение
+ * - Desktop приложение
+ * - CLI интерфейс
+ * - Slack/Discord ботов
+ * 
+ * @section pres_benefits Преимущества архитектуры
+ * 
+ * - **Переиспользование логики:** Один Use Case для всех интерфейсов
+ * - **Независимость:** Можно менять UI без изменения логики
+ * - **Масштабируемость:** Легко добавлять новые способы взаимодействия
+ * - **Тестируемость:** Можно тестировать handlers независимо
+ * - **Гибкость:** Разные UI для разных платформ
+ */

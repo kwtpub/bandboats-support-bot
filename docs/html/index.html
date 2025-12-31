@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.15.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Bandboats Support Bot: Титульная страница</title>
+<title>Bandboats Support Bot: Bandboats Support Bot - DDD Architecture</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -87,10 +87,106 @@ $(function(){initNavTree('index.html','',''); });
 </div>
 </div>
 
-<div class="header">
-  <div class="headertitle"><div class="title">Bandboats Support Bot Документация</div></div>
+<div><div class="header">
+  <div class="headertitle"><div class="title">Bandboats Support Bot - DDD Architecture </div></div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><h1 class="doxsection"><a class="anchor" id="intro"></a>
+Введение</h1>
+<p>Это бот техподдержки, построенный на принципах Domain-Driven Design (DDD). Архитектура позволяет легко заменять способ взаимодействия с пользователем (Telegram Bot → Web → API) без изменения бизнес-логики.</p>
+<h1 class="doxsection"><a class="anchor" id="architecture"></a>
+Архитектура приложения</h1>
+<p>Приложение разделено на 4 слоя согласно DDD:</p>
+<h2 class="doxsection"><a class="anchor" id="domain_layer"></a>
+1. Domain Layer (Доменный слой)</h2>
+<p><b>Местоположение:</b> <span class="tt">src/domain/</span></p>
+<p><b>Ответственность:</b></p><ul>
+<li>Бизнес-логика приложения</li>
+<li>Сущности (Entities) и агрегаты (Aggregates)</li>
+<li>Доменные сервисы (Domain Services)</li>
+<li>Интерфейсы репозиториев (Repository Interfaces)</li>
+<li>Доменные события (Domain Events)</li>
+</ul>
+<p><b>Важно:</b> Этот слой НЕ зависит от других слоёв и технологий!</p>
+<dl class="section see"><dt>См. также</dt><dd><a class="el" href="domain_documentation.html">Domain Layer Documentation</a></dd></dl>
+<h2 class="doxsection"><a class="anchor" id="application_layer"></a>
+2. Application Layer (Слой приложения)</h2>
+<p><b>Местоположение:</b> <span class="tt">src/application/</span></p>
+<p><b>Ответственность:</b></p><ul>
+<li>Сценарии использования (Use Cases)</li>
+<li>Оркестрация операций</li>
+<li>Управление транзакциями</li>
+<li>DTO для входных/выходных данных</li>
+</ul>
+<p><b>Не содержит:</b> Бизнес-логику (она в Domain Layer)</p>
+<dl class="section see"><dt>См. также</dt><dd><a class="el" href="application_documentation.html">Application Layer (Слой приложения)</a></dd></dl>
+<h2 class="doxsection"><a class="anchor" id="infrastructure_layer"></a>
+3. Infrastructure Layer (Слой инфраструктуры)</h2>
+<p><b>Местоположение:</b> <span class="tt">src/infrastructure/</span></p>
+<p><b>Ответственность:</b></p><ul>
+<li>Реализация репозиториев (работа с БД)</li>
+<li>Интеграция с внешними сервисами</li>
+<li>Работа с файловой системой</li>
+<li>Email, SMS, Telegram API</li>
+</ul>
+<dl class="section see"><dt>См. также</dt><dd><a class="el" href="infrastructure_documentation.html">Infrastructure Layer Documentation</a></dd></dl>
+<h2 class="doxsection"><a class="anchor" id="presentation_layer"></a>
+4. Presentation Layer (Слой представления)</h2>
+<p><b>Местоположение:</b> <span class="tt">src/presentation/</span></p>
+<p><b>Ответственность:</b></p><ul>
+<li>Интерфейсы взаимодействия с пользователем</li>
+<li>Telegram Bot handlers</li>
+<li>Web controllers (в будущем)</li>
+<li>REST API endpoints (в будущем)</li>
+</ul>
+<p><b>Важно:</b> Разные презентационные слои используют одни и те же Use Cases!</p>
+<dl class="section see"><dt>См. также</dt><dd><a class="el" href="presentation_documentation.html">Presentation Layer Documentation</a></dd></dl>
+<h1 class="doxsection"><a class="anchor" id="dependencies"></a>
+Зависимости между слоями</h1>
+<div class="fragment"><div class="line">Presentation Layer</div>
+<div class="line">        ↓</div>
+<div class="line">Application Layer</div>
+<div class="line">        ↓</div>
+<div class="line">  Domain Layer</div>
+<div class="line">        ↑</div>
+<div class="line">Infrastructure Layer (реализует интерфейсы из Domain)</div>
+</div><!-- fragment --><p><b>Правило:</b> Зависимости направлены только ВНУТРЬ к Domain Layer. Domain Layer не зависит ни от чего!</p>
+<h1 class="doxsection"><a class="anchor" id="principles"></a>
+Принципы разработки</h1>
+<h2 class="doxsection"><a class="anchor" id="solid"></a>
+SOLID принципы</h2>
+<ul>
+<li>**S**ingle Responsibility - один класс = одна ответственность</li>
+<li>**O**pen/Closed - открыт для расширения, закрыт для модификации</li>
+<li>**L**iskov Substitution - подтипы должны заменять базовые типы</li>
+<li>**I**nterface Segregation - много специализированных интерфейсов</li>
+<li>**D**ependency Inversion - зависимость от абстракций, а не реализаций</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="ddd_patterns"></a>
+DDD паттерны</h2>
+<ul>
+<li><b>Entity</b> - объект с уникальным идентификатором</li>
+<li><b>Value Object</b> - неизменяемый объект без идентификатора</li>
+<li><b>Aggregate</b> - группа связанных entities с корнем (Aggregate Root)</li>
+<li><b>Repository</b> - абстракция для доступа к хранилищу</li>
+<li><b>Domain Service</b> - бизнес-логика между несколькими aggregates</li>
+<li><b>Use Case</b> - сценарий использования системы</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="getting_started"></a>
+Начало работы</h1>
+<ol type="1">
+<li>Изучите структуру Domain Layer</li>
+<li>Посмотрите на Use Cases в Application Layer</li>
+<li>Изучите реализацию репозиториев в Infrastructure Layer</li>
+<li>Изучите Telegram Bot handlers в Presentation Layer</li>
+</ol>
+<h1 class="doxsection"><a class="anchor" id="commands"></a>
+Полезные команды</h1>
+<p>Проверка соблюдения принципов:</p><ul>
+<li><span class="tt">/check-solid</span> - проверка SOLID принципов</li>
+<li><span class="tt">/check-ddd</span> - проверка DDD архитектуры </li>
+</ul>
+</div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->
 </div><!-- doc-content -->

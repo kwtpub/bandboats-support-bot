@@ -1,0 +1,9 @@
+var searchData=
+[
+  ['layer_0',['Layer',['../application_documentation.html#app_responsibility',1,'Ответственность Application Layer'],['../domain_documentation.html#domain_responsibility',1,'Ответственность Domain Layer'],['../infrastructure_documentation.html#infra_responsibility',1,'Ответственность Infrastructure Layer'],['../presentation_documentation.html#pres_responsibility',1,'Ответственность Presentation Layer'],['../application_documentation.html#app_rules',1,'Правила Application Layer'],['../domain_documentation.html#domain_rules',1,'Правила Domain Layer'],['../infrastructure_documentation.html#infra_rules',1,'Правила Infrastructure Layer'],['../presentation_documentation.html#pres_rules',1,'Правила Presentation Layer'],['../application_documentation.html#app_structure',1,'Структура Application Layer'],['../domain_documentation.html#domain_structure',1,'Структура Domain Layer'],['../infrastructure_documentation.html#infra_structure',1,'Структура Infrastructure Layer'],['../presentation_documentation.html#pres_structure',1,'Структура Presentation Layer']]],
+  ['layer_20доменный_20слой_1',['1. Domain Layer (Доменный слой)',['../index.html#domain_layer',1,'']]],
+  ['layer_20слой_20инфраструктуры_2',['3. Infrastructure Layer (Слой инфраструктуры)',['../index.html#infrastructure_layer',1,'']]],
+  ['layer_20слой_20представления_3',['4. Presentation Layer (Слой представления)',['../index.html#presentation_layer',1,'']]],
+  ['layer_20слой_20приложения_4',['Layer Слой приложения',['../index.html#application_layer',1,'2. Application Layer (Слой приложения)'],['../application_documentation.html',1,'Application Layer (Слой приложения)']]],
+  ['layer_20documentation_5',['Layer Documentation',['../domain_documentation.html',1,'Domain Layer Documentation'],['../infrastructure_documentation.html',1,'Infrastructure Layer Documentation'],['../presentation_documentation.html',1,'Presentation Layer Documentation']]]
+];

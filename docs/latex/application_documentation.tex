@@ -1,0 +1,133 @@
+\chapter{Application Layer (Слой приложения) }
+\hypertarget{application_documentation}{}\label{application_documentation}\index{Application Layer (Слой приложения)@{Application Layer (Слой приложения)}}
+Подробная документация слоя приложения\hypertarget{application_documentation_app_overview}{}\doxysection{\texorpdfstring{Обзор}{Обзор}}\label{application_documentation_app_overview}
+Application Layer — это {\bfseries{оркестратор}} приложения. Координирует выполнение бизнес-\/операций, но НЕ содержит бизнес-\/логику.\hypertarget{application_documentation_app_responsibility}{}\doxysection{\texorpdfstring{Ответственность Application Layer}{Ответственность Application Layer}}\label{application_documentation_app_responsibility}
+
+\begin{DoxyItemize}
+\item Реализация сценариев использования (Use Cases)
+\item Координация работы Domain Layer
+\item Управление транзакциями
+\item Преобразование данных (DTO)
+\item Вызов Infrastructure сервисов
+\end{DoxyItemize}
+
+{\bfseries{НЕ содержит\+:}}
+\begin{DoxyItemize}
+\item Бизнес-\/логику (она в Domain Layer)
+\item Детали UI (они в Presentation Layer)
+\item Детали БД (они в Infrastructure Layer)
+\end{DoxyItemize}\hypertarget{application_documentation_app_structure}{}\doxysection{\texorpdfstring{Структура Application Layer}{Структура Application Layer}}\label{application_documentation_app_structure}
+\hypertarget{application_documentation_app_usecases}{}\doxysubsection{\texorpdfstring{use-\/cases/}{use-\/cases/}}\label{application_documentation_app_usecases}
+{\bfseries{Описание\+:}} Сценарии использования системы
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Use Case классы
+\item Один Use Case = одна операция пользователя
+\item Оркестрация вызовов Domain и Infrastructure
+\item Управление транзакциями
+\end{DoxyItemize}
+
+{\bfseries{Характеристики Use Case\+:}}
+\begin{DoxyItemize}
+\item Не содержит бизнес-\/логику (делегирует в Domain)
+\item Координирует выполнение операции
+\item Независим от способа вызова (бот, веб, API)
+\item Один метод execute() на Use Case
+\end{DoxyItemize}
+
+{\bfseries{Примеры Use Cases\+:}}
+\begin{DoxyItemize}
+\item Create\+Ticket\+Use\+Case
+\item Assign\+Ticket\+Use\+Case
+\item Close\+Ticket\+Use\+Case
+\item Send\+Message\+To\+Ticket\+Use\+Case
+\end{DoxyItemize}\hypertarget{application_documentation_app_dto}{}\doxysubsection{\texorpdfstring{dto/}{dto/}}\label{application_documentation_app_dto}
+{\bfseries{Описание\+:}} Объекты передачи данных между слоями
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Интерфейсы DTO для входных данных
+\item Интерфейсы DTO для выходных данных
+\item Типы для Request/\+Response
+\end{DoxyItemize}
+
+{\bfseries{Типы DTO\+:}}
+\begin{DoxyItemize}
+\item Input DTO (Create\+Ticket\+Dto, Assign\+Ticket\+Dto)
+\item Output DTO (Ticket\+Response\+Dto, User\+Response\+Dto)
+\item Query DTO (для фильтрации и поиска)
+\end{DoxyItemize}\hypertarget{application_documentation_app_ports}{}\doxysubsection{\texorpdfstring{ports/}{ports/}}\label{application_documentation_app_ports}
+{\bfseries{Описание\+:}} Интерфейсы для внешних сервисов
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Интерфейсы сервисов (только объявления)
+\item Ports для уведомлений, email, SMS
+\item Адаптеры для внешних API
+\end{DoxyItemize}
+
+{\bfseries{Примеры Ports\+:}}
+\begin{DoxyItemize}
+\item Notification\+Service
+\item Email\+Service
+\item File\+Storage\+Service
+\end{DoxyItemize}
+
+{\bfseries{Важно\+:}} Application определяет интерфейсы, Infrastructure реализует\hypertarget{application_documentation_app_mappers}{}\doxysubsection{\texorpdfstring{mappers/}{mappers/}}\label{application_documentation_app_mappers}
+{\bfseries{Описание\+:}} Преобразование между Domain entities и DTO
+
+{\bfseries{Содержит\+:}}
+\begin{DoxyItemize}
+\item Mapper классы
+\item Методы to\+Dto() и to\+Domain()
+\item Логика преобразования данных
+\end{DoxyItemize}\hypertarget{application_documentation_app_flow}{}\doxysection{\texorpdfstring{Поток выполнения Use Case}{Поток выполнения Use Case}}\label{application_documentation_app_flow}
+{\bfseries{Типичная последовательность\+:}}
+\begin{DoxyEnumerate}
+\item Получение данных из Repository
+\item Вызов методов Domain Aggregate (бизнес-\/логика)
+\item Сохранение изменений через Repository
+\item Вызов Infrastructure сервисов (уведомления)
+\item Возврат DTO в Presentation Layer
+\end{DoxyEnumerate}\hypertarget{application_documentation_app_rules}{}\doxysection{\texorpdfstring{Правила Application Layer}{Правила Application Layer}}\label{application_documentation_app_rules}
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Оркестрация, не логика\+:}} Координирует, но не решает бизнес-\/правила
+\item {\bfseries{Один Use Case = одна операция\+:}} Не смешивайте несколько сценариев
+\item {\bfseries{Независимость от UI\+:}} Не знает, откуда пришёл запрос
+\item {\bfseries{Управление транзакциями\+:}} Определяет границы транзакций
+\item {\bfseries{Тонкий слой\+:}} Должен быть простым, вся сложность в Domain
+\end{DoxyEnumerate}\hypertarget{application_documentation_app_concepts}{}\doxysection{\texorpdfstring{Ключевые концепции}{Ключевые концепции}}\label{application_documentation_app_concepts}
+{\bfseries{Use Case\+:}}
+\begin{DoxyItemize}
+\item Один сценарий использования системы
+\item Не содержит бизнес-\/логику
+\item Использует Domain для выполнения операций
+\item Возвращает DTO, а не Domain entities
+\end{DoxyItemize}
+
+{\bfseries{DTO (Data Transfer Object)\+:}}
+\begin{DoxyItemize}
+\item Простые объекты для передачи данных
+\item Не содержат логику
+\item Используются на границах слоёв
+\item Изолируют Domain от Presentation
+\end{DoxyItemize}
+
+{\bfseries{Port (Hexagonal Architecture)\+:}}
+\begin{DoxyItemize}
+\item Интерфейс для внешнего сервиса
+\item Определяется в Application
+\item Реализуется в Infrastructure
+\item Позволяет заменять реализации
+\end{DoxyItemize}\hypertarget{application_documentation_app_benefits}{}\doxysection{\texorpdfstring{Преимущества}{Преимущества}}\label{application_documentation_app_benefits}
+
+\begin{DoxyItemize}
+\item {\bfseries{Переиспользование\+:}} Один Use Case для бота, веба и API
+\item {\bfseries{Тестируемость\+:}} Легко тестировать с моками
+\item {\bfseries{Ясность\+:}} Каждый файл = один сценарий
+\item {\bfseries{Изоляция\+:}} Изменение UI не затрагивает Use Cases
+\end{DoxyItemize}
+
+См. \doxylink{application_8dox}{application/application.\+dox} 

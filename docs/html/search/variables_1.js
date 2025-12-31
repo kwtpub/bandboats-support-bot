@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ticketrepository_0',['TicketRepository',['../ticket_8repository_8ts.html#a599f381e3dfe297bf75e73967c750fa9',1,'ticket.repository.ts']]]
+  ['assignticketdto_0',['AssignTicketDto',['../ticket_8dto_8ts.html#ab089b0b419ca944658b6687476c642ad',1,'ticket.dto.ts']]]
 ];

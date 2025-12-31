@@ -1,9 +1,9 @@
-\doxysection{Файл core/domain\+Services/\+Ticket/ticket.repository.\+ts}
-\hypertarget{ticket_8repository_8ts}{}\label{ticket_8repository_8ts}\index{core/domainServices/Ticket/ticket.repository.ts@{core/domainServices/Ticket/ticket.repository.ts}}
+\doxysection{Файл core/repositories/\+Ticket/ticket.repository.\+ts}
+\hypertarget{ticket_8repository_8ts}{}\label{ticket_8repository_8ts}\index{core/repositories/Ticket/ticket.repository.ts@{core/repositories/Ticket/ticket.repository.ts}}
 \doxysubsubsection*{Переменные}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{ticket_8repository_8ts_a59be084da8908b7d77ff34b25cd84488}{import}} \{ \mbox{\hyperlink{class_ticket}{Ticket}} \} from "{}../../domains/\mbox{\hyperlink{class_ticket}{Ticket}}/ticket"{}
+\mbox{\hyperlink{ticket_8repository_8ts_a59be084da8908b7d77ff34b25cd84488}{import}} \{ \mbox{\hyperlink{class_ticket}{Ticket}} \} from \textquotesingle{}../../entities/\mbox{\hyperlink{class_ticket}{Ticket}}/ticket.\+entity\textquotesingle{}
 \item 
 export interface \mbox{\hyperlink{ticket_8repository_8ts_a599f381e3dfe297bf75e73967c750fa9}{Ticket\+Repository}}
 \end{DoxyCompactItemize}
@@ -16,7 +16,7 @@ export interface \mbox{\hyperlink{ticket_8repository_8ts_a599f381e3dfe297bf75e73
 \index{import@{import}!ticket.repository.ts@{ticket.repository.ts}}
 \doxysubsubsection{\texorpdfstring{import}{import}}
 {\footnotesize\ttfamily \label{ticket_8repository_8ts_a59be084da8908b7d77ff34b25cd84488} 
-import \{ \mbox{\hyperlink{class_ticket}{Ticket}} \} from "{}../../domains/\mbox{\hyperlink{class_ticket}{Ticket}}/ticket"{}}
+import \{ \mbox{\hyperlink{class_ticket}{Ticket}} \} from \textquotesingle{}../../entities/\mbox{\hyperlink{class_ticket}{Ticket}}/ticket.\+entity\textquotesingle{}}
 
 \Hypertarget{ticket_8repository_8ts_a599f381e3dfe297bf75e73967c750fa9}\index{ticket.repository.ts@{ticket.repository.ts}!TicketRepository@{TicketRepository}}
 \index{TicketRepository@{TicketRepository}!ticket.repository.ts@{ticket.repository.ts}}
@@ -27,7 +27,8 @@ export interface Ticket\+Repository}
 {\bfseries Инициализатор}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\{}
+\DoxyCodeLine{}
 \DoxyCodeLine{\ \ }
-\DoxyCodeLine{\ \ add(dto:\ \mbox{\hyperlink{class_add_ticket_dto}{AddTicketDto}}):\ \mbox{\hyperlink{class_ticket}{Ticket}}}
+\DoxyCodeLine{\ \ save(ticket:\ \mbox{\hyperlink{class_ticket}{Ticket}}):\ Promise<void>}
 
 \end{DoxyCode}

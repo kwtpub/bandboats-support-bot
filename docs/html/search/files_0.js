@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['addticket_2edto_2ets_0',['addTicket.dto.ts',['../add_ticket_8dto_8ts.html',1,'']]],
-  ['assignticket_2edto_2ets_1',['assignTicket.dto.ts',['../assign_ticket_8dto_8ts.html',1,'']]]
+  ['application_2edox_0',['application.dox',['../application_8dox.html',1,'']]],
+  ['architecture_2edox_1',['architecture.dox',['../architecture_8dox.html',1,'']]]
 ];

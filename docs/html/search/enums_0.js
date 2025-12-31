@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['role_0',['ROLE',['../user_8ts.html#a8c34f586a0257f67771350576288dff9',1,'user.ts']]]
+  ['ticketstatus_0',['TicketStatus',['../ticket_8entity_8ts.html#ae4ad5c9a1b71b87331ca7c0cd486446d',1,'ticket.entity.ts']]]
 ];

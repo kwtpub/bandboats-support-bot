@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Bandboats Support Bot: Presentation Layer Documentation</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">Bandboats Support Bot
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Поиск',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('presentation_documentation.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Загрузка...</div>
+<div class="SRStatus" id="Searching">Поиск...</div>
+<div class="SRStatus" id="NoMatches">Не найдено</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Presentation Layer Documentation </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p>Подробная документация слоя представления</p>
+<p>См. <a class="el" href="presentation_8dox.html">presentation/presentation.dox</a></p>
+<h1 class="doxsection"><a class="anchor" id="pres_overview"></a>
+Обзор</h1>
+<p>Presentation Layer — это <b>слой взаимодействия</b> с пользователем. Здесь находятся все интерфейсы: боты, веб-приложения, REST API.</p>
+<p><b>Ключевая особенность:</b> Разные интерфейсы используют ОДНИ И ТЕ ЖЕ Use Cases!</p>
+<h1 class="doxsection"><a class="anchor" id="pres_responsibility"></a>
+Ответственность Presentation Layer</h1>
+<ul>
+<li>Получение запросов от пользователей</li>
+<li>Преобразование входных данных в DTO</li>
+<li>Вызов Use Cases из Application Layer</li>
+<li>Форматирование ответов для пользователя</li>
+<li>Обработка ошибок и их отображение</li>
+<li>Валидация входных данных (формат, не бизнес-правила!)</li>
+</ul>
+<p><b>НЕ содержит:</b></p><ul>
+<li>Бизнес-логику (она в Domain)</li>
+<li>Оркестрацию (она в Use Cases)</li>
+<li>Работу с БД (она в Infrastructure)</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="pres_structure"></a>
+Структура Presentation Layer</h1>
+<h2 class="doxsection"><a class="anchor" id="pres_telegram"></a>
+telegram-bot/</h2>
+<p><b>Описание:</b> Интерфейс через Telegram бота</p>
+<p><b>Содержит:</b></p><ul>
+<li>Обработчики команд (handlers)</li>
+<li>Middleware (аутентификация, логирование)</li>
+<li>Клавиатуры и меню бота</li>
+<li>Главный файл запуска бота</li>
+</ul>
+<p><b>Подпапки:</b></p><ul>
+<li><span class="tt">handlers/</span> - TicketHandlers, UserHandlers, AdminHandlers</li>
+<li><span class="tt">middleware/</span> - AuthMiddleware, ErrorMiddleware</li>
+<li><span class="tt">keyboards/</span> - MainKeyboard, AdminKeyboard</li>
+<li><span class="tt">scenes/</span> - сценарии диалогов (если используются)</li>
+</ul>
+<p><b>Команды бота:</b></p><ul>
+<li>Клиентские: /start, /help, /create_ticket, /my_tickets</li>
+<li>Админские: /admin, /assign, /close, /stats</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="pres_web"></a>
+web/</h2>
+<p><b>Описание:</b> Веб-интерфейс (будущее)</p>
+<p><b>Содержит:</b></p><ul>
+<li>HTTP контроллеры</li>
+<li>Маршруты (routes)</li>
+<li>Middleware</li>
+<li>View компоненты (React/Vue)</li>
+</ul>
+<p><b>Подпапки:</b></p><ul>
+<li><span class="tt">controllers/</span> - TicketController, UserController</li>
+<li><span class="tt">routes/</span> - определение маршрутов</li>
+<li><span class="tt">middleware/</span> - authMiddleware, validationMiddleware</li>
+<li><span class="tt">views/</span> - React/Vue компоненты</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="pres_api"></a>
+api/</h2>
+<p><b>Описание:</b> REST API (будущее)</p>
+<p><b>Содержит:</b></p><ul>
+<li>API эндпоинты</li>
+<li>Версионирование API (v1, v2)</li>
+<li>Middleware (auth, rate limiting)</li>
+<li>OpenAPI/Swagger документация</li>
+</ul>
+<p><b>Подпапки:</b></p><ul>
+<li><span class="tt">v1/</span> - версия 1 API</li>
+<li><span class="tt">middleware/</span> - apiKeyAuth, rateLimiter</li>
+<li><span class="tt">docs/</span> - swagger.yaml</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="pres_graphql"></a>
+graphql/</h2>
+<p><b>Описание:</b> GraphQL API (опционально)</p>
+<p><b>Содержит:</b></p><ul>
+<li>Resolvers</li>
+<li>Schema definitions</li>
+<li>Subscriptions (для real-time)</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="pres_flow"></a>
+Поток обработки запроса</h1>
+<p><b>Общая последовательность:</b></p><ol type="1">
+<li>Пользователь отправляет запрос (команда/HTTP)</li>
+<li>Handler получает запрос</li>
+<li>Handler создаёт DTO из входных данных</li>
+<li>Handler вызывает Use Case</li>
+<li>Use Case выполняет операцию</li>
+<li>Use Case возвращает результат (DTO)</li>
+<li>Handler форматирует ответ</li>
+<li>Ответ отправляется пользователю</li>
+</ol>
+<h1 class="doxsection"><a class="anchor" id="pres_validation"></a>
+Валидация данных</h1>
+<p><b>Валидация в Presentation Layer:</b></p><ul>
+<li>Формат данных (email, телефон)</li>
+<li>Обязательные поля</li>
+<li>Длина строк</li>
+<li>Типы данных</li>
+</ul>
+<p><b>НЕ валидируется в Presentation:</b></p><ul>
+<li>Бизнес-правила (это Domain Layer)</li>
+<li>Существование связанных объектов</li>
+<li>Бизнес-ограничения</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="pres_error"></a>
+Обработка ошибок</h1>
+<p><b>Типы ошибок:</b></p><ul>
+<li>Domain Error - ошибка бизнес-логики</li>
+<li>Validation Error - неверный формат данных</li>
+<li>Not Found Error - объект не найден</li>
+<li>Technical Error - техническая ошибка</li>
+</ul>
+<p><b>Задача Presentation:</b></p><ul>
+<li>Преобразовать техническую ошибку в понятное сообщение</li>
+<li>Не раскрывать внутренние детали</li>
+<li>Логировать ошибки</li>
+<li>Отправить пользователю дружелюбное сообщение</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="pres_rules"></a>
+Правила Presentation Layer</h1>
+<ol type="1">
+<li><b>Только UI логика:</b> Форматирование, валидация формата, навигация</li>
+<li><b>Не знает о БД:</b> Работает только через Use Cases</li>
+<li><b>Не содержит бизнес-логику:</b> Делегирует в Domain через Use Cases</li>
+<li><b>Независимые интерфейсы:</b> Telegram, Web, API независимы друг от друга</li>
+<li><b>Общие Use Cases:</b> Все интерфейсы используют одни Use Cases</li>
+</ol>
+<h1 class="doxsection"><a class="anchor" id="pres_concepts"></a>
+Ключевые концепции</h1>
+<p><b>Handler/Controller:</b></p><ul>
+<li>Обрабатывает входящий запрос</li>
+<li>Преобразует данные в DTO</li>
+<li>Вызывает Use Case</li>
+<li>Форматирует ответ</li>
+</ul>
+<p><b>Middleware:</b></p><ul>
+<li>Промежуточная обработка запросов</li>
+<li>Аутентификация, авторизация</li>
+<li>Логирование запросов</li>
+<li>Обработка ошибок</li>
+</ul>
+<p><b>View/Template:</b></p><ul>
+<li>Отображение данных пользователю</li>
+<li>Форматирование сообщений</li>
+<li>Клавиатуры и меню</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="pres_multiple"></a>
+Множественные интерфейсы</h1>
+<p><b>Преимущество DDD:</b> Один Use Case используется везде:</p><ul>
+<li>Telegram Bot Handler</li>
+<li>Web Controller</li>
+<li>REST API Endpoint</li>
+<li>GraphQL Resolver</li>
+<li>Discord Bot Handler</li>
+</ul>
+<p><b>Легко добавить:</b></p><ul>
+<li>Новый Telegram WebApp</li>
+<li>Mobile приложение</li>
+<li>Desktop приложение</li>
+<li>CLI интерфейс</li>
+<li>Slack/Discord ботов</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="pres_benefits"></a>
+Преимущества архитектуры</h1>
+<ul>
+<li><b>Переиспользование логики:</b> Один Use Case для всех интерфейсов</li>
+<li><b>Независимость:</b> Можно менять UI без изменения логики</li>
+<li><b>Масштабируемость:</b> Легко добавлять новые способы взаимодействия</li>
+<li><b>Тестируемость:</b> Можно тестировать handlers независимо</li>
+<li><b>Гибкость:</b> Разные UI для разных платформ </li>
+</ul>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

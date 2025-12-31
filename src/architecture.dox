@@ -1,0 +1,137 @@
+/**
+ * @mainpage Bandboats Support Bot - DDD Architecture
+ *
+ * @section intro Введение
+ *
+ * Это бот техподдержки, построенный на принципах Domain-Driven Design (DDD).
+ * Архитектура позволяет легко заменять способ взаимодействия с пользователем
+ * (Telegram Bot → Web → API) без изменения бизнес-логики.
+ *
+ * @section architecture Архитектура приложения
+ *
+ * Приложение разделено на 4 слоя согласно DDD:
+ *
+ * @subsection domain_layer 1. Domain Layer (Доменный слой)
+ * **Местоположение:** `src/domain/`
+ *
+ * **Ответственность:**
+ * - Бизнес-логика приложения
+ * - Сущности (Entities) и агрегаты (Aggregates)
+ * - Доменные сервисы (Domain Services)
+ * - Интерфейсы репозиториев (Repository Interfaces)
+ * - Доменные события (Domain Events)
+ *
+ * **Важно:** Этот слой НЕ зависит от других слоёв и технологий!
+ *
+ * @see @ref domain_documentation
+ *
+ * @subsection application_layer 2. Application Layer (Слой приложения)
+ * **Местоположение:** `src/application/`
+ *
+ * **Ответственность:**
+ * - Сценарии использования (Use Cases)
+ * - Оркестрация операций
+ * - Управление транзакциями
+ * - DTO для входных/выходных данных
+ *
+ * **Не содержит:** Бизнес-логику (она в Domain Layer)
+ *
+ * @see @ref application_documentation
+ *
+ * @subsection infrastructure_layer 3. Infrastructure Layer (Слой инфраструктуры)
+ * **Местоположение:** `src/infrastructure/`
+ *
+ * **Ответственность:**
+ * - Реализация репозиториев (работа с БД)
+ * - Интеграция с внешними сервисами
+ * - Работа с файловой системой
+ * - Email, SMS, Telegram API
+ *
+ * @see @ref infrastructure_documentation
+ *
+ * @subsection presentation_layer 4. Presentation Layer (Слой представления)
+ * **Местоположение:** `src/presentation/`
+ *
+ * **Ответственность:**
+ * - Интерфейсы взаимодействия с пользователем
+ * - Telegram Bot handlers
+ * - Web controllers (в будущем)
+ * - REST API endpoints (в будущем)
+ *
+ * **Важно:** Разные презентационные слои используют одни и те же Use Cases!
+ *
+ * @see @ref presentation_documentation
+ *
+ * @section dependencies Зависимости между слоями
+ *
+ * ```
+ * Presentation Layer
+ *         ↓
+ * Application Layer
+ *         ↓
+ *   Domain Layer
+ *         ↑
+ * Infrastructure Layer (реализует интерфейсы из Domain)
+ * ```
+ *
+ * **Правило:** Зависимости направлены только ВНУТРЬ к Domain Layer.
+ * Domain Layer не зависит ни от чего!
+ *
+ * @section principles Принципы разработки
+ *
+ * @subsection solid SOLID принципы
+ * - **S**ingle Responsibility - один класс = одна ответственность
+ * - **O**pen/Closed - открыт для расширения, закрыт для модификации
+ * - **L**iskov Substitution - подтипы должны заменять базовые типы
+ * - **I**nterface Segregation - много специализированных интерфейсов
+ * - **D**ependency Inversion - зависимость от абстракций, а не реализаций
+ *
+ * @subsection ddd_patterns DDD паттерны
+ * - **Entity** - объект с уникальным идентификатором
+ * - **Value Object** - неизменяемый объект без идентификатора
+ * - **Aggregate** - группа связанных entities с корнем (Aggregate Root)
+ * - **Repository** - абстракция для доступа к хранилищу
+ * - **Domain Service** - бизнес-логика между несколькими aggregates
+ * - **Use Case** - сценарий использования системы
+ *
+ * @section getting_started Начало работы
+ *
+ * 1. Изучите структуру Domain Layer
+ * 2. Посмотрите на Use Cases в Application Layer
+ * 3. Изучите реализацию репозиториев в Infrastructure Layer
+ * 4. Изучите Telegram Bot handlers в Presentation Layer
+ *
+ * @section commands Полезные команды
+ *
+ * Проверка соблюдения принципов:
+ * - `/check-solid` - проверка SOLID принципов
+ * - `/check-ddd` - проверка DDD архитектуры
+ */
+
+/**
+ * @page domain_documentation Domain Layer Documentation
+ * @brief Подробная документация доменного слоя
+ *
+ * См. domain/domain.dox
+ */
+
+/**
+ * @page application_documentation Application Layer Documentation
+ * @brief Подробная документация слоя приложения
+ *
+ * См. application/application.dox
+ */
+
+/**
+ * @page infrastructure_documentation Infrastructure Layer Documentation
+ * @brief Подробная документация слоя инфраструктуры
+ *
+ * См. infrastructure/infrastructure.dox
+ */
+
+/**
+ * @page presentation_documentation Presentation Layer Documentation
+ * @brief Подробная документация слоя представления
+ *
+ * См. presentation/presentation.dox
+ */

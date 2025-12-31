@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Bandboats Support Bot: Infrastructure Layer Documentation</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">Bandboats Support Bot
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Поиск',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('infrastructure_documentation.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Загрузка...</div>
+<div class="SRStatus" id="Searching">Поиск...</div>
+<div class="SRStatus" id="NoMatches">Не найдено</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Infrastructure Layer Documentation </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p>Подробная документация слоя инфраструктуры</p>
+<p>См. <a class="el" href="infrastructure_8dox.html">infrastructure/infrastructure.dox</a></p>
+<h1 class="doxsection"><a class="anchor" id="infra_overview"></a>
+Обзор</h1>
+<p>Infrastructure Layer — это <b>технический слой</b>, который реализует детали работы с внешними системами, БД, файлами и сервисами.</p>
+<h1 class="doxsection"><a class="anchor" id="infra_responsibility"></a>
+Ответственность Infrastructure Layer</h1>
+<ul>
+<li>Реализация Repository интерфейсов из Domain Layer</li>
+<li>Работа с базами данных (SQL, NoSQL)</li>
+<li>Интеграция с внешними API (Telegram, Email, SMS)</li>
+<li>Работа с файловой системой</li>
+<li>Кэширование, очереди, логирование</li>
+</ul>
+<p><b>Важно:</b> Реализует интерфейсы из Domain Layer, но Domain не зависит от Infrastructure!</p>
+<h1 class="doxsection"><a class="anchor" id="infra_structure"></a>
+Структура Infrastructure Layer</h1>
+<h2 class="doxsection"><a class="anchor" id="infra_persistence"></a>
+persistence/</h2>
+<p><b>Описание:</b> Работа с базами данных и персистентностью</p>
+<p><b>Содержит:</b></p><ul>
+<li>Реализации Repository интерфейсов</li>
+<li>ORM конфигурация (Prisma, TypeORM и т.д.)</li>
+<li>Миграции базы данных</li>
+<li>Mapper классы для преобразования данных</li>
+</ul>
+<p><b>Подпапки:</b></p><ul>
+<li><span class="tt">repositories/</span> - реализации TicketRepositoryImpl, UserRepositoryImpl</li>
+<li><span class="tt">prisma/</span> или <span class="tt">typeorm/</span> - конфигурация ORM</li>
+<li><span class="tt">mappers/</span> - преобразование Domain Entity ↔ DB Model</li>
+<li><span class="tt">migrations/</span> - миграции схемы БД</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="infra_services"></a>
+services/</h2>
+<p><b>Описание:</b> Интеграция с внешними сервисами</p>
+<p><b>Содержит:</b></p><ul>
+<li>Реализации Port интерфейсов из Application</li>
+<li>Клиенты для внешних API</li>
+<li>Обёртки над библиотеками</li>
+</ul>
+<p><b>Примеры сервисов:</b></p><ul>
+<li>TelegramNotificationService</li>
+<li>EmailService</li>
+<li>SmsService</li>
+<li>FileStorageService</li>
+<li>CacheService</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="infra_messaging"></a>
+messaging/</h2>
+<p><b>Описание:</b> Работа с очередями сообщений и событиями</p>
+<p><b>Содержит:</b></p><ul>
+<li>Публикация событий в очередь</li>
+<li>Подписка на события</li>
+<li>Интеграция с RabbitMQ, Kafka и т.д.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="infra_config"></a>
+config/</h2>
+<p><b>Описание:</b> Конфигурация приложения</p>
+<p><b>Содержит:</b></p><ul>
+<li>Настройки подключения к БД</li>
+<li>API ключи и секреты</li>
+<li>Переменные окружения</li>
+<li>Конфигурация сервисов</li>
+</ul>
+<p><b>Файлы конфигурации:</b></p><ul>
+<li>database.config.ts</li>
+<li>telegram.config.ts</li>
+<li>email.config.ts</li>
+<li>app.config.ts</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="infra_di"></a>
+di/</h2>
+<p><b>Описание:</b> Dependency Injection контейнер</p>
+<p><b>Содержит:</b></p><ul>
+<li>Настройка DI контейнера</li>
+<li>Регистрация зависимостей</li>
+<li>Binding интерфейсов к реализациям</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="infra_mapping"></a>
+Маппинг данных</h1>
+<p><b>Направления преобразования:</b></p><ul>
+<li>Domain Entity ↔ Database Model</li>
+<li>Domain Entity ↔ API Response</li>
+<li>Domain Entity ↔ DTO</li>
+</ul>
+<p><b>Ответственность Mapper:</b></p><ul>
+<li>Преобразование между разными представлениями</li>
+<li>Изоляция Domain от деталей БД</li>
+<li>Сохранение типобезопасности</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="infra_repositories"></a>
+Repository Implementation</h1>
+<p><b>Задачи Repository Implementation:</b></p><ul>
+<li>Сохранение и загрузка Aggregates</li>
+<li>Маппинг Domain Entity → DB Model</li>
+<li>Выполнение SQL/NoSQL запросов</li>
+<li>Обработка транзакций на уровне БД</li>
+</ul>
+<p><b>Паттерны:</b></p><ul>
+<li>Repository Pattern</li>
+<li>Data Mapper Pattern</li>
+<li>Unit of Work (для управления транзакциями)</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="infra_rules"></a>
+Правила Infrastructure Layer</h1>
+<ol type="1">
+<li><b>Реализует интерфейсы:</b> Из Domain и Application слоёв</li>
+<li><b>Детали технологий:</b> Вся специфика БД, API здесь</li>
+<li><b>Заменяемость:</b> Легко заменить Prisma на TypeORM, PostgreSQL на MongoDB</li>
+<li><b>Изоляция:</b> Domain не знает о существовании Infrastructure</li>
+<li><b>Тестирование:</b> Можно подменять на in-memory реализации</li>
+</ol>
+<h1 class="doxsection"><a class="anchor" id="infra_concepts"></a>
+Ключевые концепции</h1>
+<p><b>Repository Implementation:</b></p><ul>
+<li>Конкретная реализация Repository интерфейса</li>
+<li>Работает с конкретной БД (PostgreSQL, MongoDB)</li>
+<li>Использует ORM или сырые запросы</li>
+<li>Преобразует данные между Domain и БД</li>
+</ul>
+<p><b>Data Mapper:</b></p><ul>
+<li>Разделяет Domain Model и Database Schema</li>
+<li>Позволяет менять БД без изменения Domain</li>
+<li>Инкапсулирует логику преобразования</li>
+</ul>
+<p><b>External Service Adapter:</b></p><ul>
+<li>Реализация Port интерфейса</li>
+<li>Интеграция с внешним API</li>
+<li>Обработка специфики внешней системы</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="infra_technologies"></a>
+Возможные технологии</h1>
+<p><b>Базы данных:</b></p><ul>
+<li>PostgreSQL, MySQL, SQLite</li>
+<li>MongoDB, Redis</li>
+<li>Prisma ORM, TypeORM, Mongoose</li>
+</ul>
+<p><b>Внешние сервисы:</b></p><ul>
+<li>Telegram Bot API</li>
+<li>SendGrid, Mailgun (Email)</li>
+<li>Twilio (SMS)</li>
+<li>AWS S3 (файлы)</li>
+</ul>
+<p><b>Инфраструктура:</b></p><ul>
+<li>RabbitMQ, Kafka (очереди)</li>
+<li>Redis (кэш)</li>
+<li>Winston, Pino (логирование)</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="infra_benefits"></a>
+Преимущества</h1>
+<ul>
+<li><b>Изоляция технологий:</b> Можно менять БД без изменения бизнес-логики</li>
+<li><b>Тестируемость:</b> Легко подменять на моки или in-memory</li>
+<li><b>Гибкость:</b> Разные реализации для прода, тестов, разработки</li>
+<li><b>Чистота Domain:</b> Domain остаётся чистым от технических деталей </li>
+</ul>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>
