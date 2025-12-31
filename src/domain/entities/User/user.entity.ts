@@ -10,6 +10,7 @@
  */
 
 import { Ticket } from '../Ticket/ticket.entity';
+import { ValidationError, BusinessRuleViolationError } from '../../errors';
 
 export enum ROLE {
   ADMIN,
@@ -46,16 +47,16 @@ export class User {
    */
   private validateInvariants(): void {
     if (!this.name || this.name.trim().length === 0) {
-      throw new Error('User name cannot be empty');
+      throw new ValidationError('User name cannot be empty', 'name');
     }
     if (this.name.length > 100) {
-      throw new Error('User name cannot exceed 100 characters');
+      throw new ValidationError('User name cannot exceed 100 characters', 'name', this.name.length);
     }
     if (!this.telegramId || this.telegramId.trim().length === 0) {
-      throw new Error('Telegram ID cannot be empty');
+      throw new ValidationError('Telegram ID cannot be empty', 'telegramId');
     }
     if (this.id <= 0) {
-      throw new Error('Invalid user ID');
+      throw new ValidationError('Invalid user ID', 'id', this.id);
     }
   }
 
@@ -198,10 +199,10 @@ export class User {
    */
   changeName(newName: string): User {
     if (!newName || newName.trim().length === 0) {
-      throw new Error('User name cannot be empty');
+      throw new ValidationError('User name cannot be empty', 'name');
     }
     if (newName.length > 100) {
-      throw new Error('User name cannot exceed 100 characters');
+      throw new ValidationError('User name cannot exceed 100 characters', 'name', newName.length);
     }
     return new User(this.id, this.telegramId, newName, this.role, this.createAt);
   }
@@ -214,7 +215,7 @@ export class User {
    */
   promoteToAdmin(): User {
     if (this.isAdmin()) {
-      throw new Error('User is already an admin');
+      throw new BusinessRuleViolationError('User is already an admin', 'promotion');
     }
     return this.changeRole(ROLE.ADMIN);
   }
@@ -227,7 +228,7 @@ export class User {
    */
   demoteToClient(): User {
     if (this.isClient()) {
-      throw new Error('User is already a client');
+      throw new BusinessRuleViolationError('User is already a client', 'demotion');
     }
     return this.changeRole(ROLE.CLIENT);
   }

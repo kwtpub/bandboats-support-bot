@@ -13,6 +13,7 @@
 import { User, ROLE } from '../../entities/User/user.entity';
 import { UserRepository } from '../../repositories/User/user.repository';
 import { Ticket } from '../../entities/Ticket/ticket.entity';
+import { NotFoundError, ConflictError } from '../../errors';
 
 /**
  * @class UserService
@@ -30,17 +31,11 @@ export class UserService {
    * @returns Созданный пользователь
    * @throws Error если пользователь с таким Telegram ID уже существует
    */
-  async createUser(
-    telegramId: string,
-    name: string,
-    role: ROLE = ROLE.CLIENT,
-  ): Promise<User> {
+  async createUser(telegramId: string, name: string, role: ROLE = ROLE.CLIENT): Promise<User> {
     // Проверяем, не существует ли уже пользователь с таким Telegram ID
     const existingUser = await this.userRepository.findByTelegramId(telegramId);
     if (existingUser) {
-      throw new Error(
-        `User with Telegram ID ${telegramId} already exists`,
-      );
+      throw new ConflictError(`User with Telegram ID ${telegramId} already exists`, 'telegramId');
     }
 
     // Создаём новую доменную сущность
@@ -58,7 +53,7 @@ export class UserService {
     // Получаем сохранённого пользователя с правильным ID
     const savedUser = await this.userRepository.findByTelegramId(telegramId);
     if (!savedUser) {
-      throw new Error('Failed to create user');
+      throw new Error('Failed to create user'); // Internal error
     }
 
     return savedUser;
@@ -112,7 +107,7 @@ export class UserService {
   async updateUserName(userId: number, newName: string): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundError('User', userId);
     }
 
     // Используем доменную логику для изменения имени (с валидацией)
@@ -132,7 +127,7 @@ export class UserService {
   async promoteToAdmin(userId: number): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundError('User', userId);
     }
 
     // Используем доменную логику для повышения роли
@@ -152,7 +147,7 @@ export class UserService {
   async demoteToClient(userId: number): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundError('User', userId);
     }
 
     // Используем доменную логику для понижения роли
@@ -173,7 +168,7 @@ export class UserService {
   async changeUserRole(userId: number, newRole: ROLE): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundError('User', userId);
     }
 
     // Используем доменную логику для изменения роли
@@ -212,7 +207,7 @@ export class UserService {
   async canUserManageTicket(userId: number, ticket: Ticket): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundError('User', userId);
     }
 
     // Делегируем проверку доменной логике
@@ -230,7 +225,7 @@ export class UserService {
   async canUserCloseTicket(userId: number, ticket: Ticket): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundError('User', userId);
     }
 
     // Делегируем проверку доменной логике
@@ -248,7 +243,7 @@ export class UserService {
   async canUserViewTicket(userId: number, ticket: Ticket): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundError('User', userId);
     }
 
     // Делегируем проверку доменной логике
@@ -263,13 +258,10 @@ export class UserService {
    * @returns true если пользователь может добавлять сообщения
    * @throws Error если пользователь не найден
    */
-  async canUserAddMessageToTicket(
-    userId: number,
-    ticket: Ticket,
-  ): Promise<boolean> {
+  async canUserAddMessageToTicket(userId: number, ticket: Ticket): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundError('User', userId);
     }
 
     // Делегируем проверку доменной логике
@@ -286,7 +278,7 @@ export class UserService {
   async isUserAdmin(userId: number): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new NotFoundError('User', userId);
     }
 
     return user.isAdmin();

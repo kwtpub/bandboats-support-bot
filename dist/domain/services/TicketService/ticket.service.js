@@ -14,6 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TicketService = void 0;
 const ticket_entity_1 = require("../../entities/Ticket/ticket.entity");
 const ticketMessage_entity_1 = require("../../entities/Ticket/ticketMessage.entity");
+const errors_1 = require("../../errors");
 /**
  * @class TicketService
  * @brief Application Service для управления тикетами.
@@ -37,7 +38,7 @@ class TicketService {
         // Проверяем существование автора
         const author = await this.userRepository.findById(authorId);
         if (!author) {
-            throw new Error(`User with ID ${authorId} not found`);
+            throw new errors_1.NotFoundError('User', authorId);
         }
         // Создаём новую доменную сущность
         const ticket = new ticket_entity_1.Ticket(0, // Временный ID, будет заменён после сохранения
@@ -93,19 +94,19 @@ class TicketService {
     async assignTicket(ticketId, assigneeId, requesterId) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         const requester = await this.userRepository.findById(requesterId);
         if (!requester) {
-            throw new Error(`User with ID ${requesterId} not found`);
+            throw new errors_1.NotFoundError('User', requesterId);
         }
         // Проверяем права на назначение тикетов
         if (!requester.canAssignTickets()) {
-            throw new Error('Only administrators can assign tickets');
+            throw new errors_1.ForbiddenError('Only administrators can assign tickets', 'assign', 'ticket');
         }
         const assignee = await this.userRepository.findById(assigneeId);
         if (!assignee) {
-            throw new Error(`Assignee with ID ${assigneeId} not found`);
+            throw new errors_1.NotFoundError('User', assigneeId);
         }
         // Используем доменную логику для назначения
         const assignedTicket = ticket.assign(assigneeId);
@@ -124,15 +125,15 @@ class TicketService {
     async changeTicketStatus(ticketId, newStatus, requesterId) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         const requester = await this.userRepository.findById(requesterId);
         if (!requester) {
-            throw new Error(`User with ID ${requesterId} not found`);
+            throw new errors_1.NotFoundError('User', requesterId);
         }
         // Проверяем права на управление тикетом
         if (!requester.canManageTicket(ticket)) {
-            throw new Error('You do not have permission to change this ticket status');
+            throw new errors_1.ForbiddenError('You do not have permission to change this ticket status', 'changeStatus', 'ticket');
         }
         // Используем доменную логику для изменения статуса
         const updatedTicket = ticket.changeStatus(newStatus);
@@ -151,15 +152,15 @@ class TicketService {
     async closeTicket(ticketId, requesterId) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         const requester = await this.userRepository.findById(requesterId);
         if (!requester) {
-            throw new Error(`User with ID ${requesterId} not found`);
+            throw new errors_1.NotFoundError('User', requesterId);
         }
         // Проверяем права на закрытие тикета
         if (!requester.canCloseTicket(ticket)) {
-            throw new Error('You do not have permission to close this ticket');
+            throw new errors_1.ForbiddenError('You do not have permission to close this ticket', 'close', 'ticket');
         }
         // Используем доменную логику для закрытия
         const closedTicket = ticket.close();
@@ -178,15 +179,15 @@ class TicketService {
     async reopenTicket(ticketId, requesterId) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         const requester = await this.userRepository.findById(requesterId);
         if (!requester) {
-            throw new Error(`User with ID ${requesterId} not found`);
+            throw new errors_1.NotFoundError('User', requesterId);
         }
         // Проверяем права на переоткрытие тикетов
         if (!requester.canReopenTickets()) {
-            throw new Error('Only administrators can reopen tickets');
+            throw new errors_1.ForbiddenError('Only administrators can reopen tickets', 'reopen', 'ticket');
         }
         // Используем доменную логику для переоткрытия
         const reopenedTicket = ticket.reopen();
@@ -205,22 +206,22 @@ class TicketService {
     async addMessageToTicket(ticketId, authorId, content) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         const author = await this.userRepository.findById(authorId);
         if (!author) {
-            throw new Error(`User with ID ${authorId} not found`);
+            throw new errors_1.NotFoundError('User', authorId);
         }
         // Проверяем права на добавление сообщения
         if (!author.canAddMessageToTicket(ticket)) {
-            throw new Error('You do not have permission to add messages to this ticket');
+            throw new errors_1.ForbiddenError('You do not have permission to add messages to this ticket', 'addMessage', 'ticket');
         }
         // Валидация содержания сообщения
         if (!content || content.trim().length === 0) {
-            throw new Error('Message content cannot be empty');
+            throw new errors_1.ValidationError('Message content cannot be empty', 'content');
         }
         if (content.length > 2000) {
-            throw new Error('Message content cannot exceed 2000 characters');
+            throw new errors_1.ValidationError('Message content cannot exceed 2000 characters', 'content', content.length);
         }
         // Создаём новое сообщение
         const message = new ticketMessage_entity_1.TicketMessage(0, // Временный ID
@@ -245,15 +246,15 @@ class TicketService {
     async getTicketMessages(ticketId, requesterId) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         const requester = await this.userRepository.findById(requesterId);
         if (!requester) {
-            throw new Error(`User with ID ${requesterId} not found`);
+            throw new errors_1.NotFoundError('User', requesterId);
         }
         // Проверяем права на просмотр тикета
         if (!requester.canViewTicket(ticket)) {
-            throw new Error('You do not have permission to view this ticket');
+            throw new errors_1.ForbiddenError('You do not have permission to view this ticket', 'view', 'ticket');
         }
         return this.ticketMessageRepository.findByTicketId(ticketId);
     }
@@ -268,7 +269,7 @@ class TicketService {
     async canUserViewTicket(ticketId, userId) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         const user = await this.userRepository.findById(userId);
         if (!user) {
@@ -286,7 +287,7 @@ class TicketService {
     async getTicketMessageCount(ticketId) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         return ticket.getMessageCount();
     }
@@ -300,7 +301,7 @@ class TicketService {
     async isTicketOpen(ticketId) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         return ticket.isOpen();
     }
@@ -314,7 +315,7 @@ class TicketService {
     async isTicketInProgress(ticketId) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         return ticket.isInProgress();
     }
@@ -328,7 +329,7 @@ class TicketService {
     async isTicketClosed(ticketId) {
         const ticket = await this.ticketRepository.findById(ticketId);
         if (!ticket) {
-            throw new Error(`Ticket with ID ${ticketId} not found`);
+            throw new errors_1.NotFoundError('Ticket', ticketId);
         }
         return ticket.isClosed();
     }

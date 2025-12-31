@@ -11,6 +11,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = exports.ROLE = void 0;
+const errors_1 = require("../../errors");
 var ROLE;
 (function (ROLE) {
     ROLE[ROLE["ADMIN"] = 0] = "ADMIN";
@@ -44,16 +45,16 @@ class User {
      */
     validateInvariants() {
         if (!this.name || this.name.trim().length === 0) {
-            throw new Error('User name cannot be empty');
+            throw new errors_1.ValidationError('User name cannot be empty', 'name');
         }
         if (this.name.length > 100) {
-            throw new Error('User name cannot exceed 100 characters');
+            throw new errors_1.ValidationError('User name cannot exceed 100 characters', 'name', this.name.length);
         }
         if (!this.telegramId || this.telegramId.trim().length === 0) {
-            throw new Error('Telegram ID cannot be empty');
+            throw new errors_1.ValidationError('Telegram ID cannot be empty', 'telegramId');
         }
         if (this.id <= 0) {
-            throw new Error('Invalid user ID');
+            throw new errors_1.ValidationError('Invalid user ID', 'id', this.id);
         }
     }
     /**
@@ -184,10 +185,10 @@ class User {
      */
     changeName(newName) {
         if (!newName || newName.trim().length === 0) {
-            throw new Error('User name cannot be empty');
+            throw new errors_1.ValidationError('User name cannot be empty', 'name');
         }
         if (newName.length > 100) {
-            throw new Error('User name cannot exceed 100 characters');
+            throw new errors_1.ValidationError('User name cannot exceed 100 characters', 'name', newName.length);
         }
         return new User(this.id, this.telegramId, newName, this.role, this.createAt);
     }
@@ -199,7 +200,7 @@ class User {
      */
     promoteToAdmin() {
         if (this.isAdmin()) {
-            throw new Error('User is already an admin');
+            throw new errors_1.BusinessRuleViolationError('User is already an admin', 'promotion');
         }
         return this.changeRole(ROLE.ADMIN);
     }
@@ -211,7 +212,7 @@ class User {
      */
     demoteToClient() {
         if (this.isClient()) {
-            throw new Error('User is already a client');
+            throw new errors_1.BusinessRuleViolationError('User is already a client', 'demotion');
         }
         return this.changeRole(ROLE.CLIENT);
     }

@@ -10,6 +10,11 @@
  * Все изменения происходят через методы, гарантирующие консистентность.
  */
 import { TicketMessage } from './ticketMessage.entity';
+import {
+  ValidationError,
+  BusinessRuleViolationError,
+  InvalidStateTransitionError,
+} from '../../errors';
 
 export enum TicketStatus {
   OPEN,
@@ -49,13 +54,17 @@ export class Ticket {
    */
   private validateInvariants(): void {
     if (!this.title || this.title.trim().length === 0) {
-      throw new Error('Ticket title cannot be empty');
+      throw new ValidationError('Ticket title cannot be empty', 'title');
     }
     if (this.title.length > 200) {
-      throw new Error('Ticket title cannot exceed 200 characters');
+      throw new ValidationError(
+        'Ticket title cannot exceed 200 characters',
+        'title',
+        this.title.length,
+      );
     }
     if (this.authorId <= 0) {
-      throw new Error('Invalid author ID');
+      throw new ValidationError('Invalid author ID', 'authorId', this.authorId);
     }
   }
 
@@ -69,10 +78,10 @@ export class Ticket {
    */
   assign(assigneeId: number): Ticket {
     if (assigneeId <= 0) {
-      throw new Error('Invalid assignee ID');
+      throw new ValidationError('Invalid assignee ID', 'assigneeId', assigneeId);
     }
     if (this.status === TicketStatus.CLOSE) {
-      throw new Error('Cannot assign closed ticket');
+      throw new BusinessRuleViolationError('Cannot assign closed ticket', 'ticket_assignment');
     }
 
     const newStatus = this.status === TicketStatus.OPEN ? TicketStatus.IN_PROGRESS : this.status;
@@ -90,11 +99,18 @@ export class Ticket {
   changeStatus(newStatus: TicketStatus): Ticket {
     // Бизнес-правила переходов статусов
     if (this.status === TicketStatus.CLOSE && newStatus !== TicketStatus.OPEN) {
-      throw new Error('Closed ticket can only be reopened');
+      throw new InvalidStateTransitionError(
+        TicketStatus[this.status],
+        TicketStatus[newStatus],
+        'Ticket',
+      );
     }
 
     if (newStatus === TicketStatus.IN_PROGRESS && this.assigneeId === 0) {
-      throw new Error('Cannot set IN_PROGRESS status without assignee');
+      throw new BusinessRuleViolationError(
+        'Cannot set IN_PROGRESS status without assignee',
+        'status_change',
+      );
     }
 
     return new Ticket(
@@ -115,7 +131,7 @@ export class Ticket {
    */
   close(): Ticket {
     if (this.status === TicketStatus.CLOSE) {
-      throw new Error('Ticket is already closed');
+      throw new BusinessRuleViolationError('Ticket is already closed', 'ticket_close');
     }
 
     return new Ticket(
@@ -136,7 +152,7 @@ export class Ticket {
    */
   reopen(): Ticket {
     if (this.status !== TicketStatus.CLOSE) {
-      throw new Error('Can only reopen closed tickets');
+      throw new BusinessRuleViolationError('Can only reopen closed tickets', 'ticket_reopen');
     }
 
     return new Ticket(
@@ -158,11 +174,15 @@ export class Ticket {
    */
   addMessage(message: TicketMessage): Ticket {
     if (this.status === TicketStatus.CLOSE) {
-      throw new Error('Cannot add message to closed ticket');
+      throw new BusinessRuleViolationError('Cannot add message to closed ticket', 'message_add');
     }
 
     if (message.ticketId !== this.id) {
-      throw new Error('Message does not belong to this ticket');
+      throw new ValidationError(
+        'Message does not belong to this ticket',
+        'ticketId',
+        message.ticketId,
+      );
     }
 
     return new Ticket(

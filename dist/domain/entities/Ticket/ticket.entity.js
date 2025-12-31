@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ticket = exports.TicketStatus = void 0;
+const errors_1 = require("../../errors");
 var TicketStatus;
 (function (TicketStatus) {
     TicketStatus[TicketStatus["OPEN"] = 0] = "OPEN";
@@ -37,13 +38,13 @@ class Ticket {
      */
     validateInvariants() {
         if (!this.title || this.title.trim().length === 0) {
-            throw new Error('Ticket title cannot be empty');
+            throw new errors_1.ValidationError('Ticket title cannot be empty', 'title');
         }
         if (this.title.length > 200) {
-            throw new Error('Ticket title cannot exceed 200 characters');
+            throw new errors_1.ValidationError('Ticket title cannot exceed 200 characters', 'title', this.title.length);
         }
         if (this.authorId <= 0) {
-            throw new Error('Invalid author ID');
+            throw new errors_1.ValidationError('Invalid author ID', 'authorId', this.authorId);
         }
     }
     /**
@@ -56,10 +57,10 @@ class Ticket {
      */
     assign(assigneeId) {
         if (assigneeId <= 0) {
-            throw new Error('Invalid assignee ID');
+            throw new errors_1.ValidationError('Invalid assignee ID', 'assigneeId', assigneeId);
         }
         if (this.status === TicketStatus.CLOSE) {
-            throw new Error('Cannot assign closed ticket');
+            throw new errors_1.BusinessRuleViolationError('Cannot assign closed ticket', 'ticket_assignment');
         }
         const newStatus = this.status === TicketStatus.OPEN ? TicketStatus.IN_PROGRESS : this.status;
         return new Ticket(this.id, this.authorId, assigneeId, this.title, this.messages, newStatus);
@@ -74,10 +75,10 @@ class Ticket {
     changeStatus(newStatus) {
         // Бизнес-правила переходов статусов
         if (this.status === TicketStatus.CLOSE && newStatus !== TicketStatus.OPEN) {
-            throw new Error('Closed ticket can only be reopened');
+            throw new errors_1.InvalidStateTransitionError(TicketStatus[this.status], TicketStatus[newStatus], 'Ticket');
         }
         if (newStatus === TicketStatus.IN_PROGRESS && this.assigneeId === 0) {
-            throw new Error('Cannot set IN_PROGRESS status without assignee');
+            throw new errors_1.BusinessRuleViolationError('Cannot set IN_PROGRESS status without assignee', 'status_change');
         }
         return new Ticket(this.id, this.authorId, this.assigneeId, this.title, this.messages, newStatus);
     }
@@ -89,7 +90,7 @@ class Ticket {
      */
     close() {
         if (this.status === TicketStatus.CLOSE) {
-            throw new Error('Ticket is already closed');
+            throw new errors_1.BusinessRuleViolationError('Ticket is already closed', 'ticket_close');
         }
         return new Ticket(this.id, this.authorId, this.assigneeId, this.title, this.messages, TicketStatus.CLOSE);
     }
@@ -101,7 +102,7 @@ class Ticket {
      */
     reopen() {
         if (this.status !== TicketStatus.CLOSE) {
-            throw new Error('Can only reopen closed tickets');
+            throw new errors_1.BusinessRuleViolationError('Can only reopen closed tickets', 'ticket_reopen');
         }
         return new Ticket(this.id, this.authorId, this.assigneeId, this.title, this.messages, TicketStatus.OPEN);
     }
@@ -114,10 +115,10 @@ class Ticket {
      */
     addMessage(message) {
         if (this.status === TicketStatus.CLOSE) {
-            throw new Error('Cannot add message to closed ticket');
+            throw new errors_1.BusinessRuleViolationError('Cannot add message to closed ticket', 'message_add');
         }
         if (message.ticketId !== this.id) {
-            throw new Error('Message does not belong to this ticket');
+            throw new errors_1.ValidationError('Message does not belong to this ticket', 'ticketId', message.ticketId);
         }
         return new Ticket(this.id, this.authorId, this.assigneeId, this.title, [...this.messages, message], this.status);
     }

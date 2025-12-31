@@ -15,6 +15,7 @@ import { TicketMessage } from '../../entities/Ticket/ticketMessage.entity';
 import { TicketRepository } from '../../repositories/Ticket/ticket.repository';
 import { TicketMessageRepository } from '../../repositories/Ticket/ticketMessage.repository';
 import { UserRepository } from '../../repositories/User/user.repository';
+import { NotFoundError, ForbiddenError, ValidationError } from '../../errors';
 
 /**
  * @class TicketService
@@ -40,7 +41,7 @@ export class TicketService {
     // Проверяем существование автора
     const author = await this.userRepository.findById(authorId);
     if (!author) {
-      throw new Error(`User with ID ${authorId} not found`);
+      throw new NotFoundError('User', authorId);
     }
 
     // Создаём новую доменную сущность
@@ -110,22 +111,22 @@ export class TicketService {
   async assignTicket(ticketId: number, assigneeId: number, requesterId: number): Promise<Ticket> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     const requester = await this.userRepository.findById(requesterId);
     if (!requester) {
-      throw new Error(`User with ID ${requesterId} not found`);
+      throw new NotFoundError('User', requesterId);
     }
 
     // Проверяем права на назначение тикетов
     if (!requester.canAssignTickets()) {
-      throw new Error('Only administrators can assign tickets');
+      throw new ForbiddenError('Only administrators can assign tickets', 'assign', 'ticket');
     }
 
     const assignee = await this.userRepository.findById(assigneeId);
     if (!assignee) {
-      throw new Error(`Assignee with ID ${assigneeId} not found`);
+      throw new NotFoundError('User', assigneeId);
     }
 
     // Используем доменную логику для назначения
@@ -151,17 +152,21 @@ export class TicketService {
   ): Promise<Ticket> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     const requester = await this.userRepository.findById(requesterId);
     if (!requester) {
-      throw new Error(`User with ID ${requesterId} not found`);
+      throw new NotFoundError('User', requesterId);
     }
 
     // Проверяем права на управление тикетом
     if (!requester.canManageTicket(ticket)) {
-      throw new Error('You do not have permission to change this ticket status');
+      throw new ForbiddenError(
+        'You do not have permission to change this ticket status',
+        'changeStatus',
+        'ticket',
+      );
     }
 
     // Используем доменную логику для изменения статуса
@@ -183,17 +188,21 @@ export class TicketService {
   async closeTicket(ticketId: number, requesterId: number): Promise<Ticket> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     const requester = await this.userRepository.findById(requesterId);
     if (!requester) {
-      throw new Error(`User with ID ${requesterId} not found`);
+      throw new NotFoundError('User', requesterId);
     }
 
     // Проверяем права на закрытие тикета
     if (!requester.canCloseTicket(ticket)) {
-      throw new Error('You do not have permission to close this ticket');
+      throw new ForbiddenError(
+        'You do not have permission to close this ticket',
+        'close',
+        'ticket',
+      );
     }
 
     // Используем доменную логику для закрытия
@@ -215,17 +224,17 @@ export class TicketService {
   async reopenTicket(ticketId: number, requesterId: number): Promise<Ticket> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     const requester = await this.userRepository.findById(requesterId);
     if (!requester) {
-      throw new Error(`User with ID ${requesterId} not found`);
+      throw new NotFoundError('User', requesterId);
     }
 
     // Проверяем права на переоткрытие тикетов
     if (!requester.canReopenTickets()) {
-      throw new Error('Only administrators can reopen tickets');
+      throw new ForbiddenError('Only administrators can reopen tickets', 'reopen', 'ticket');
     }
 
     // Используем доменную логику для переоткрытия
@@ -247,25 +256,33 @@ export class TicketService {
   async addMessageToTicket(ticketId: number, authorId: number, content: string): Promise<Ticket> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     const author = await this.userRepository.findById(authorId);
     if (!author) {
-      throw new Error(`User with ID ${authorId} not found`);
+      throw new NotFoundError('User', authorId);
     }
 
     // Проверяем права на добавление сообщения
     if (!author.canAddMessageToTicket(ticket)) {
-      throw new Error('You do not have permission to add messages to this ticket');
+      throw new ForbiddenError(
+        'You do not have permission to add messages to this ticket',
+        'addMessage',
+        'ticket',
+      );
     }
 
     // Валидация содержания сообщения
     if (!content || content.trim().length === 0) {
-      throw new Error('Message content cannot be empty');
+      throw new ValidationError('Message content cannot be empty', 'content');
     }
     if (content.length > 2000) {
-      throw new Error('Message content cannot exceed 2000 characters');
+      throw new ValidationError(
+        'Message content cannot exceed 2000 characters',
+        'content',
+        content.length,
+      );
     }
 
     // Создаём новое сообщение
@@ -300,17 +317,17 @@ export class TicketService {
   async getTicketMessages(ticketId: number, requesterId: number): Promise<TicketMessage[]> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     const requester = await this.userRepository.findById(requesterId);
     if (!requester) {
-      throw new Error(`User with ID ${requesterId} not found`);
+      throw new NotFoundError('User', requesterId);
     }
 
     // Проверяем права на просмотр тикета
     if (!requester.canViewTicket(ticket)) {
-      throw new Error('You do not have permission to view this ticket');
+      throw new ForbiddenError('You do not have permission to view this ticket', 'view', 'ticket');
     }
 
     return this.ticketMessageRepository.findByTicketId(ticketId);
@@ -327,7 +344,7 @@ export class TicketService {
   async canUserViewTicket(ticketId: number, userId: number): Promise<boolean> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     const user = await this.userRepository.findById(userId);
@@ -348,7 +365,7 @@ export class TicketService {
   async getTicketMessageCount(ticketId: number): Promise<number> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     return ticket.getMessageCount();
@@ -364,7 +381,7 @@ export class TicketService {
   async isTicketOpen(ticketId: number): Promise<boolean> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     return ticket.isOpen();
@@ -380,7 +397,7 @@ export class TicketService {
   async isTicketInProgress(ticketId: number): Promise<boolean> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     return ticket.isInProgress();
@@ -396,7 +413,7 @@ export class TicketService {
   async isTicketClosed(ticketId: number): Promise<boolean> {
     const ticket = await this.ticketRepository.findById(ticketId);
     if (!ticket) {
-      throw new Error(`Ticket with ID ${ticketId} not found`);
+      throw new NotFoundError('Ticket', ticketId);
     }
 
     return ticket.isClosed();
