@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Роли пользователей в системе
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+/// Статусы тикетов
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSE
+}
+
+/// Модель пользователя
+model User {
+  id         Int      @id @default(autoincrement())
+  telegramId String   @unique @map("telegram_id")
+  name       String
+  role       Role     @default(CLIENT)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Отношения
+  authoredTickets  Ticket[]        @relation("AuthoredTickets")
+  assignedTickets  Ticket[]        @relation("AssignedTickets")
+  messages         TicketMessage[]
+
+  @@map("users")
+}
+
+/// Модель тикета (агрегат)
+model Ticket {
+  id         Int          @id @default(autoincrement())
+  authorId   Int          @map("author_id")
+  assigneeId Int?         @map("assignee_id")
+  title      String
+  status     TicketStatus @default(OPEN)
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+
+  // Отношения
+  author   User            @relation("AuthoredTickets", fields: [authorId], references: [id])
+  assignee User?           @relation("AssignedTickets", fields: [assigneeId], references: [id])
+  messages TicketMessage[]
+
+  @@index([authorId])
+  @@index([assigneeId])
+  @@index([status])
+  @@map("tickets")
+}
+
+/// Модель сообщения в тикете
+model TicketMessage {
+  id        Int      @id @default(autoincrement())
+  ticketId  Int      @map("ticket_id")
+  authorId  Int      @map("author_id")
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Отношения
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author User   @relation(fields: [authorId], references: [id])
+
+  @@index([ticketId])
+  @@index([authorId])
+  @@map("ticket_messages")
+}

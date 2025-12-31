@@ -1,3 +1,8 @@
 node_modules
 t.ts 
 .DS_Store
+
+# bv (beads viewer) local config and caches
+.bv/
+
+/src/generated/prisma
