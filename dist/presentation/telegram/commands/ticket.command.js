@@ -1,0 +1,121 @@
+"use strict";
+/**
+ * @file ticket.command.ts
+ * @brief Обработчик команды /ticket для просмотра деталей тикета.
+ *
+ * Показывает подробную информацию о тикете и его сообщения.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createTicketCommand = createTicketCommand;
+const errors_1 = require("../../../infrastructure/errors");
+const ticket_entity_1 = require("../../../domain/entities/Ticket/ticket.entity");
+/**
+ * Получает эмодзи для статуса тикета
+ */
+function getStatusEmoji(status) {
+    switch (status) {
+        case ticket_entity_1.TicketStatus.OPEN:
+            return '🆕';
+        case ticket_entity_1.TicketStatus.IN_PROGRESS:
+            return '🔄';
+        case ticket_entity_1.TicketStatus.CLOSE:
+            return '✅';
+        default:
+            return '❓';
+    }
+}
+/**
+ * Получает текстовое представление статуса
+ */
+function getStatusText(status) {
+    switch (status) {
+        case ticket_entity_1.TicketStatus.OPEN:
+            return 'Открыт';
+        case ticket_entity_1.TicketStatus.IN_PROGRESS:
+            return 'В работе';
+        case ticket_entity_1.TicketStatus.CLOSE:
+            return 'Закрыт';
+        default:
+            return 'Неизвестно';
+    }
+}
+/**
+ * Обработчик команды /ticket
+ */
+function createTicketCommand(ticketService) {
+    return async (ctx) => {
+        const errorHandler = (0, errors_1.getErrorHandler)();
+        try {
+            if (!ctx.dbUser) {
+                await ctx.reply('❌ Пользователь не найден. Используйте /start');
+                return;
+            }
+            // Извлекаем ID тикета из команды
+            const args = ctx.message && 'text' in ctx.message
+                ? ctx.message.text.split(' ').slice(1)
+                : [];
+            if (args.length === 0) {
+                await ctx.reply('⚠️ Укажите ID тикета.\n\n' +
+                    'Использование: /ticket <ID>\n' +
+                    'Пример: /ticket 5');
+                return;
+            }
+            const ticketId = parseInt(args[0], 10);
+            if (isNaN(ticketId)) {
+                await ctx.reply('❌ Некорректный ID тикета. Используйте число.');
+                return;
+            }
+            // Получаем тикет
+            const ticket = await ticketService.getTicketById(ticketId);
+            if (!ticket) {
+                await ctx.reply(`❌ Тикет #${ticketId} не найден.`);
+                return;
+            }
+            // Проверяем права доступа
+            const canView = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.id);
+            if (!canView) {
+                await ctx.reply('⛔️ У вас нет доступа к этому тикету.');
+                return;
+            }
+            // Формируем информацию о тикете
+            const statusEmoji = getStatusEmoji(ticket.status);
+            const statusText = getStatusText(ticket.status);
+            let message = `${statusEmoji} *Тикет #${ticket.id}*\n\n`;
+            message += `📝 *Заголовок:* ${ticket.title}\n`;
+            message += `📊 *Статус:* ${statusText}\n`;
+            message += `👤 *Автор:* ID ${ticket.authorId}\n`;
+            if (ticket.isAssigned()) {
+                message += `🔧 *Исполнитель:* ID ${ticket.assigneeId}\n`;
+            }
+            else {
+                message += `🔧 *Исполнитель:* Не назначен\n`;
+            }
+            const messageCount = ticket.getMessageCount();
+            message += `💬 *Сообщений:* ${messageCount}\n\n`;
+            // Добавляем последнее сообщение
+            const lastMessage = ticket.getLastMessage();
+            if (lastMessage) {
+                message += `💭 *Последнее сообщение:*\n`;
+                message += `_${lastMessage.content.substring(0, 200)}${lastMessage.content.length > 200 ? '...' : ''}_\n\n`;
+            }
+            // Добавляем доступные действия
+            if (ticket.isOpen() || ticket.isInProgress()) {
+                message += `*Доступные действия:*\n`;
+                message += `💬 Добавить сообщение: /reply ${ticketId}\n`;
+                const canClose = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.id);
+                if (canClose) {
+                    message += `✅ Закрыть тикет: /close ${ticketId}\n`;
+                }
+            }
+            await ctx.reply(message, { parse_mode: 'Markdown' });
+        }
+        catch (error) {
+            const message = errorHandler.handle(error, {
+                command: 'ticket',
+                userId: ctx.from?.id,
+            });
+            await ctx.reply(message);
+        }
+    };
+}
+//# sourceMappingURL=ticket.command.js.map

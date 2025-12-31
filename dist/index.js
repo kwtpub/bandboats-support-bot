@@ -13,6 +13,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const config_1 = require("./infrastructure/config");
 const di_1 = require("./infrastructure/di");
+const errors_1 = require("./infrastructure/errors");
+const bot_1 = require("./presentation/telegram/bot");
 /**
  * Главная функция приложения.
  */
@@ -25,21 +27,29 @@ async function main() {
     console.log(`   - Database: ${config.database.url.split('@')[1] || 'configured'}`);
     console.log(`   - Log Level: ${config.logging.level}`);
     console.log(`   - Port: ${config.port}`);
-    // Шаг 2: Настройка DI контейнера
+    // Шаг 2: Инициализация обработчика ошибок
+    console.log('⚠️  Initializing error handler...');
+    (0, errors_1.initializeErrorHandler)();
+    console.log('✅ Error handler initialized');
+    // Шаг 3: Настройка DI контейнера
     console.log('📦 Setting up Dependency Injection...');
     (0, di_1.setupContainer)();
     console.log('✅ Dependency Injection container configured');
-    // Шаг 3: Проверка сервисов
+    // Шаг 4: Получение сервисов
     const userService = (0, di_1.getService)('UserService');
     const ticketService = (0, di_1.getService)('TicketService');
     console.log('✅ Services resolved from DI container');
     console.log(`   - ${userService.constructor.name}`);
     console.log(`   - ${ticketService.constructor.name}`);
-    // TODO: Шаг 4: Инициализация Telegram бота
-    console.log('⏳ Telegram Bot initialization pending...');
-    console.log(`   Bot Token: ${config.telegram.botToken.substring(0, 10)}...`);
+    // Шаг 5: Инициализация и запуск Telegram бота
+    console.log('🤖 Initializing Telegram Bot...');
+    const bot = (0, bot_1.createBot)(config.telegram.botToken, userService, ticketService);
+    console.log('✅ Telegram Bot configured');
+    console.log('🚀 Starting Telegram Bot...');
+    await (0, bot_1.startBot)(bot);
     console.log('\n✅ Application ready!');
     console.log(`🤖 Bandboats Support Bot is running in ${config.nodeEnv} mode`);
+    console.log(`📱 Bot is listening for messages...`);
 }
 // Запуск приложения
 main().catch((error) => {
