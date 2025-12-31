@@ -10,6 +10,7 @@
  */
 
 import 'reflect-metadata';
+import { initializeConfig, getConfig } from './infrastructure/config';
 import { setupContainer, getService } from './infrastructure/di';
 import { UserService } from './domain/services/UserService/user.service';
 import { TicketService } from './domain/services/TicketService/ticket.service';
@@ -20,22 +21,32 @@ import { TicketService } from './domain/services/TicketService/ticket.service';
 async function main(): Promise<void> {
   console.log('🚀 Initializing Bandboats Support Bot...');
 
-  // Настройка DI контейнера
+  // Шаг 1: Загрузка и валидация конфигурации
+  console.log('📋 Loading configuration...');
+  const config = initializeConfig();
+  console.log(`✅ Configuration loaded (${config.nodeEnv} mode)`);
+  console.log(`   - Database: ${config.database.url.split('@')[1] || 'configured'}`);
+  console.log(`   - Log Level: ${config.logging.level}`);
+  console.log(`   - Port: ${config.port}`);
+
+  // Шаг 2: Настройка DI контейнера
+  console.log('📦 Setting up Dependency Injection...');
   setupContainer();
   console.log('✅ Dependency Injection container configured');
 
-  // Пример использования сервисов через DI
+  // Шаг 3: Проверка сервисов
   const userService = getService<UserService>('UserService');
   const ticketService = getService<TicketService>('TicketService');
-
   console.log('✅ Services resolved from DI container');
-  console.log('📦 UserService:', userService.constructor.name);
-  console.log('📦 TicketService:', ticketService.constructor.name);
+  console.log(`   - ${userService.constructor.name}`);
+  console.log(`   - ${ticketService.constructor.name}`);
 
-  // TODO: Здесь будет инициализация Telegram бота
+  // TODO: Шаг 4: Инициализация Telegram бота
   console.log('⏳ Telegram Bot initialization pending...');
+  console.log(`   Bot Token: ${config.telegram.botToken.substring(0, 10)}...`);
 
-  console.log('✅ Application ready!');
+  console.log('\n✅ Application ready!');
+  console.log(`🤖 Bandboats Support Bot is running in ${config.nodeEnv} mode`);
 }
 
 // Запуск приложения
