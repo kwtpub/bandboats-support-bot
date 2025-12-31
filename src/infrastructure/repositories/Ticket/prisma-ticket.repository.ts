@@ -1,16 +1,16 @@
 /**
  * @file prisma-ticket.repository.ts
  * @brief Реализация TicketRepository с использованием Prisma ORM.
- * 
+ *
  * Реализует интерфейс TicketRepository для работы с тикетами
  * через Prisma Client и PostgreSQL.
- * 
+ *
  * @remarks
  * Это Infrastructure слой - конкретная реализация репозитория.
  */
 
 import { PrismaClient, TicketStatus as PrismaTicketStatus } from '@prisma/client';
-import { TicketRepository } from '../../../core/repositories/Ticket/ticket.repository';
+import { TicketRepository } from '../../../domain/repositories/Ticket/ticket.repository';
 import { Ticket, TicketStatus } from '../../../domain/entities/Ticket/ticket.entity';
 import { TicketMessage } from '../../../domain/entities/Ticket/ticketMessage.entity';
 import { prisma } from '../../database/prisma.client';
@@ -97,14 +97,7 @@ export class PrismaTicketRepository implements TicketRepository {
     }
 
     const messages = prismaTicket.messages.map(
-      (msg) =>
-        new TicketMessage(
-          msg.id,
-          msg.ticketId,
-          msg.authorId,
-          msg.content,
-          msg.createdAt,
-        ),
+      (msg) => new TicketMessage(msg.id, msg.ticketId, msg.authorId, msg.content, msg.createdAt),
     );
 
     return new Ticket(
@@ -137,14 +130,7 @@ export class PrismaTicketRepository implements TicketRepository {
 
     return prismaTickets.map((prismaTicket) => {
       const messages = prismaTicket.messages.map(
-        (msg) =>
-          new TicketMessage(
-            msg.id,
-            msg.ticketId,
-            msg.authorId,
-            msg.content,
-            msg.createdAt,
-          ),
+        (msg) => new TicketMessage(msg.id, msg.ticketId, msg.authorId, msg.content, msg.createdAt),
       );
 
       return new Ticket(

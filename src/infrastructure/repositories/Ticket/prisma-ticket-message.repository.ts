@@ -1,16 +1,16 @@
 /**
  * @file prisma-ticket-message.repository.ts
  * @brief Реализация TicketMessageRepository с использованием Prisma ORM.
- * 
+ *
  * Реализует интерфейс TicketMessageRepository для работы с сообщениями тикетов
  * через Prisma Client и PostgreSQL.
- * 
+ *
  * @remarks
  * Это Infrastructure слой - конкретная реализация репозитория.
  */
 
 import { PrismaClient } from '@prisma/client';
-import { TicketMessageRepository } from '../../../core/repositories/Ticket/ticketMessage.repository';
+import { TicketMessageRepository } from '../../../domain/repositories/Ticket/ticketMessage.repository';
 import { TicketMessage } from '../../../domain/entities/Ticket/ticketMessage.entity';
 import { prisma } from '../../database/prisma.client';
 

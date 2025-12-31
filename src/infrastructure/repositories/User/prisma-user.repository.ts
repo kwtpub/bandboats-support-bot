@@ -1,16 +1,16 @@
 /**
  * @file prisma-user.repository.ts
  * @brief Реализация UserRepository с использованием Prisma ORM.
- * 
+ *
  * Реализует интерфейс UserRepository для работы с пользователями
  * через Prisma Client и PostgreSQL.
- * 
+ *
  * @remarks
  * Это Infrastructure слой - конкретная реализация репозитория.
  */
 
 import { PrismaClient, Role as PrismaRole } from '@prisma/client';
-import { UserRepository } from '../../../core/repositories/User/user.repository';
+import { UserRepository } from '../../../domain/repositories/User/user.repository';
 import { User, ROLE } from '../../../domain/entities/User/user.entity';
 import { prisma } from '../../database/prisma.client';
 
