@@ -1,11 +1,10 @@
-import { Ticket } from '../../entities/Ticket/ticket.entity';
+import { Ticket } from '../../../domain/entities/Ticket/ticket.entity';
 
 /**
  * @interface TicketRepository
  * @brief Репозиторий агрегата Ticket
  */
 export interface TicketRepository {
-
   /**
    * Сохраняет агрегат Ticket.
    *

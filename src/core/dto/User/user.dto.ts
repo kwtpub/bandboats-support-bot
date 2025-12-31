@@ -1,5 +1,5 @@
 // src/core/dto/user.dto.ts
-import { ROLE } from "../../entities/User/user.entity";
+import { ROLE } from '../../../domain/entities/User/user.entity';
 
 export interface CreateUserDto {
   telegramId: string;

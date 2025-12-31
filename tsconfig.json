@@ -6,7 +6,7 @@
 
     // Цель компиляции
     "target": "ES2020",
-    "module": "nodenext",               
+    "module": "nodenext",
 
     // Node.js типы
     "lib": ["ESNext"],
@@ -14,8 +14,8 @@
 
     // Строгая типизация
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
 
@@ -29,8 +29,8 @@
 
     // ESM специфические
     "moduleResolution": "nodenext",
-    "isolatedModules": true
+    "isolatedModules": true,
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
 }

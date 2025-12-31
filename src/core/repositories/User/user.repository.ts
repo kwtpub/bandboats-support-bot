@@ -1,32 +1,31 @@
 /**
  * @file user.repository.ts
  * @brief Репозиторий для работы с пользователями.
- * 
+ *
  * Интерфейс определяет методы для сохранения, поиска и получения пользователей
  * в системе техподдержки.
- * 
+ *
  * @remarks
  * Интерфейс находится в Application/Domain слое. Реализация методов выполняется
  * в Infrastructure слое.
  */
-import { ROLE, User } from "../../entities/User/user.entity";
+import { ROLE, User } from '../../../domain/entities/User/user.entity';
 
 /**
  * @interface UserRepository
  * @brief Репозиторий пользователей.
  */
 export interface UserRepository {
-
   /**
    * Сохраняет пользователя.
-   * 
+   *
    * @param user - Entity пользователя
    */
   save(user: User): Promise<void>;
 
   /**
    * Возвращает пользователя по идентификатору.
-   * 
+   *
    * @param id - Уникальный идентификатор пользователя
    * @return User или null, если не найден
    */
@@ -34,7 +33,7 @@ export interface UserRepository {
 
   /**
    * Возвращает пользователя по Telegram ID.
-   * 
+   *
    * @param telegramId - Идентификатор пользователя в Telegram
    * @return User или null, если не найден
    */
@@ -42,7 +41,7 @@ export interface UserRepository {
 
   /**
    * Возвращает всех пользователей с указанной ролью.
-   * 
+   *
    * @param role - Роль пользователя (ADMIN или CLIENT)
    * @return Массив пользователей
    */
