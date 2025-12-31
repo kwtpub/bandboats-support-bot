@@ -9,21 +9,18 @@
  * Это Infrastructure слой - конкретная реализация репозитория.
  */
 
+import { injectable, inject } from 'tsyringe';
 import { PrismaClient, Role as PrismaRole } from '@prisma/client';
 import { UserRepository } from '../../../domain/repositories/User/user.repository';
 import { User, ROLE } from '../../../domain/entities/User/user.entity';
-import { prisma } from '../../database/prisma.client';
 
 /**
  * @class PrismaUserRepository
  * @brief Реализация UserRepository через Prisma ORM.
  */
+@injectable()
 export class PrismaUserRepository implements UserRepository {
-  private prismaClient: PrismaClient;
-
-  constructor(prismaClient: PrismaClient = prisma) {
-    this.prismaClient = prismaClient;
-  }
+  constructor(@inject('PrismaClient') private readonly prismaClient: PrismaClient) {}
 
   /**
    * Маппинг Prisma Role в доменный ROLE

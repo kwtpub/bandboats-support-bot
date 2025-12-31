@@ -8,6 +8,7 @@
  * @remarks
  * В режиме разработки использует глобальную переменную для сохранения
  * экземпляра между hot-reload.
+ * Использует @prisma/adapter-pg для Prisma 7.x
  */
 import { PrismaClient } from '@prisma/client';
 /**

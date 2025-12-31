@@ -16,8 +16,8 @@ import { Ticket } from '../../../domain/entities/Ticket/ticket.entity';
  * @brief Реализация TicketRepository через Prisma ORM.
  */
 export declare class PrismaTicketRepository implements TicketRepository {
-    private prismaClient;
-    constructor(prismaClient?: PrismaClient);
+    private readonly prismaClient;
+    constructor(prismaClient: PrismaClient);
     /**
      * Маппинг Prisma TicketStatus в доменный TicketStatus
      */

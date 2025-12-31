@@ -9,22 +9,19 @@
  * Это Infrastructure слой - конкретная реализация репозитория.
  */
 
+import { injectable, inject } from 'tsyringe';
 import { PrismaClient, TicketStatus as PrismaTicketStatus } from '@prisma/client';
 import { TicketRepository } from '../../../domain/repositories/Ticket/ticket.repository';
 import { Ticket, TicketStatus } from '../../../domain/entities/Ticket/ticket.entity';
 import { TicketMessage } from '../../../domain/entities/Ticket/ticketMessage.entity';
-import { prisma } from '../../database/prisma.client';
 
 /**
  * @class PrismaTicketRepository
  * @brief Реализация TicketRepository через Prisma ORM.
  */
+@injectable()
 export class PrismaTicketRepository implements TicketRepository {
-  private prismaClient: PrismaClient;
-
-  constructor(prismaClient: PrismaClient = prisma) {
-    this.prismaClient = prismaClient;
-  }
+  constructor(@inject('PrismaClient') private readonly prismaClient: PrismaClient) {}
 
   /**
    * Маппинг Prisma TicketStatus в доменный TicketStatus

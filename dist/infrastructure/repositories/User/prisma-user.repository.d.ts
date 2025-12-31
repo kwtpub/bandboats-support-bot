@@ -16,8 +16,8 @@ import { User, ROLE } from '../../../domain/entities/User/user.entity';
  * @brief Реализация UserRepository через Prisma ORM.
  */
 export declare class PrismaUserRepository implements UserRepository {
-    private prismaClient;
-    constructor(prismaClient?: PrismaClient);
+    private readonly prismaClient;
+    constructor(prismaClient: PrismaClient);
     /**
      * Маппинг Prisma Role в доменный ROLE
      */

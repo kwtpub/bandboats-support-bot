@@ -9,21 +9,18 @@
  * Это Infrastructure слой - конкретная реализация репозитория.
  */
 
+import { injectable, inject } from 'tsyringe';
 import { PrismaClient } from '@prisma/client';
 import { TicketMessageRepository } from '../../../domain/repositories/Ticket/ticketMessage.repository';
 import { TicketMessage } from '../../../domain/entities/Ticket/ticketMessage.entity';
-import { prisma } from '../../database/prisma.client';
 
 /**
  * @class PrismaTicketMessageRepository
  * @brief Реализация TicketMessageRepository через Prisma ORM.
  */
+@injectable()
 export class PrismaTicketMessageRepository implements TicketMessageRepository {
-  private prismaClient: PrismaClient;
-
-  constructor(prismaClient: PrismaClient = prisma) {
-    this.prismaClient = prismaClient;
-  }
+  constructor(@inject('PrismaClient') private readonly prismaClient: PrismaClient) {}
 
   /**
    * Сохраняет сообщение тикета в базе данных.

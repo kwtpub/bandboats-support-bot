@@ -16,8 +16,8 @@ import { TicketMessage } from '../../../domain/entities/Ticket/ticketMessage.ent
  * @brief Реализация TicketMessageRepository через Prisma ORM.
  */
 export declare class PrismaTicketMessageRepository implements TicketMessageRepository {
-    private prismaClient;
-    constructor(prismaClient?: PrismaClient);
+    private readonly prismaClient;
+    constructor(prismaClient: PrismaClient);
     /**
      * Сохраняет сообщение тикета в базе данных.
      * Если сообщение с таким ID существует - обновляет, иначе создаёт новое.
