@@ -12,32 +12,22 @@ const telegraf_1 = require("telegraf");
 const errors_1 = require("../../infrastructure/errors");
 // Импорт команд
 const commands_1 = require("./commands");
+// Импорт middleware
+const middleware_1 = require("./middleware");
 /**
  * Создаёт и настраивает Telegram бота
  */
 function createBot(token, userService, ticketService) {
     const bot = new telegraf_1.Telegraf(token);
-    const errorHandler = (0, errors_1.getErrorHandler)();
-    // Middleware для загрузки пользователя из БД
-    bot.use(async (ctx, next) => {
-        try {
-            if (ctx.from) {
-                const telegramId = ctx.from.id.toString();
-                const user = await userService.getUserByTelegramId(telegramId);
-                if (user) {
-                    ctx.dbUser = user;
-                }
-            }
-            await next();
-        }
-        catch (error) {
-            const message = errorHandler.handle(error, {
-                middleware: 'userLoader',
-                userId: ctx.from?.id,
-            });
-            await ctx.reply(message);
-        }
-    });
+    // Регистрация middleware (порядок важен!)
+    // 1. Логирование - первым для отслеживания всех запросов
+    bot.use((0, middleware_1.createLoggingMiddleware)());
+    // 2. Обработка ошибок - оборачивает все последующие middleware
+    bot.use((0, middleware_1.createErrorMiddleware)());
+    // 3. Сессии - для хранения временных данных
+    bot.use((0, middleware_1.createSessionMiddleware)());
+    // 4. Аутентификация - загрузка пользователя из БД
+    bot.use((0, middleware_1.createAuthMiddleware)(userService));
     // Регистрация команд
     bot.command('start', (0, commands_1.createStartCommand)(userService));
     bot.command('help', (0, commands_1.createHelpCommand)());
@@ -47,10 +37,14 @@ function createBot(token, userService, ticketService) {
     bot.command('ticket', (0, commands_1.createTicketCommand)(ticketService));
     // Обработчик текстовых сообщений (для создания тикетов)
     bot.on('text', (0, commands_1.createTicketMessageHandler)(ticketService));
-    // Глобальный обработчик ошибок
+    // Глобальный обработчик ошибок (для ошибок вне middleware chain)
     bot.catch((error, ctx) => {
-        console.error('Bot error:', error);
-        const message = errorHandler.handle(error instanceof Error ? error : new Error(String(error)), { userId: ctx.from?.id });
+        console.error('[Bot] Uncaught error:', error);
+        const errorHandler = (0, errors_1.getErrorHandler)();
+        const message = errorHandler.handle(error instanceof Error ? error : new Error(String(error)), {
+            userId: ctx.from?.id,
+            source: 'bot.catch',
+        });
         ctx.reply(message).catch(console.error);
     });
     return bot;

@@ -22,6 +22,14 @@ import {
   createTicketCommand,
 } from './commands';
 
+// Импорт middleware
+import {
+  createAuthMiddleware,
+  createLoggingMiddleware,
+  createErrorMiddleware,
+  createSessionMiddleware,
+} from './middleware';
+
 /**
  * Создаёт и настраивает Telegram бота
  */
@@ -31,29 +39,19 @@ export function createBot(
   ticketService: TicketService,
 ): Telegraf<BotContext> {
   const bot = new Telegraf<BotContext>(token);
-  const errorHandler = getErrorHandler();
 
-  // Middleware для загрузки пользователя из БД
-  bot.use(async (ctx, next) => {
-    try {
-      if (ctx.from) {
-        const telegramId = ctx.from.id.toString();
-        const user = await userService.getUserByTelegramId(telegramId);
+  // Регистрация middleware (порядок важен!)
+  // 1. Логирование - первым для отслеживания всех запросов
+  bot.use(createLoggingMiddleware());
 
-        if (user) {
-          ctx.dbUser = user;
-        }
-      }
+  // 2. Обработка ошибок - оборачивает все последующие middleware
+  bot.use(createErrorMiddleware());
 
-      await next();
-    } catch (error) {
-      const message = errorHandler.handle(error as Error, {
-        middleware: 'userLoader',
-        userId: ctx.from?.id,
-      });
-      await ctx.reply(message);
-    }
-  });
+  // 3. Сессии - для хранения временных данных
+  bot.use(createSessionMiddleware());
+
+  // 4. Аутентификация - загрузка пользователя из БД
+  bot.use(createAuthMiddleware(userService));
 
   // Регистрация команд
   bot.command('start', createStartCommand(userService));
@@ -66,13 +64,14 @@ export function createBot(
   // Обработчик текстовых сообщений (для создания тикетов)
   bot.on('text', createTicketMessageHandler(ticketService));
 
-  // Глобальный обработчик ошибок
+  // Глобальный обработчик ошибок (для ошибок вне middleware chain)
   bot.catch((error, ctx) => {
-    console.error('Bot error:', error);
-    const message = errorHandler.handle(
-      error instanceof Error ? error : new Error(String(error)),
-      { userId: ctx.from?.id },
-    );
+    console.error('[Bot] Uncaught error:', error);
+    const errorHandler = getErrorHandler();
+    const message = errorHandler.handle(error instanceof Error ? error : new Error(String(error)), {
+      userId: ctx.from?.id,
+      source: 'bot.catch',
+    });
     ctx.reply(message).catch(console.error);
   });
 
