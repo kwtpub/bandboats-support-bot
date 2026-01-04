@@ -14,7 +14,7 @@ RUN npm ci
 COPY prisma ./prisma/
 
 # Генерируем Prisma Client
-RUN npx prisma generate
+RUN npm run prisma:generate || npx prisma generate
 
 # Копируем исходный код
 COPY . .
