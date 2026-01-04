@@ -13,11 +13,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - '5432:5432'
     networks:
       - bandboats-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bandboats}"]
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-bandboats}']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -45,11 +45,6 @@ services:
       - ./logs:/app/logs
     networks:
       - bandboats-network
-    command: >
-      sh -c "
-        npx prisma migrate deploy &&
-        node dist/index.js
-      "
 
 volumes:
   postgres_data:

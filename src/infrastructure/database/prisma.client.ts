@@ -8,24 +8,9 @@
  * @remarks
  * В режиме разработки использует глобальную переменную для сохранения
  * экземпляра между hot-reload.
- * Использует @prisma/adapter-pg для Prisma 7.x
  */
 
 import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
-
-/**
- * Создаём пул подключений PostgreSQL
- */
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
-/**
- * Создаём адаптер для Prisma
- */
-const adapter = new PrismaPg(pool);
 
 /**
  * Глобальная переменная для хранения PrismaClient в режиме разработки
@@ -40,7 +25,6 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    adapter,
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   });
 

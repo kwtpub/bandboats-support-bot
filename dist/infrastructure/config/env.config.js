@@ -103,10 +103,10 @@ function validateDatabaseUrl(url) {
 function validateBotToken(token) {
     // Базовая валидация: токен должен содержать двоеточие и быть достаточно длинным
     if (token === 'your_telegram_bot_token_here') {
-        throw new errors_1.ConfigurationError('BOT_TOKEN must be set to a valid Telegram bot token. Get it from @BotFather', 'BOT_TOKEN');
+        throw new errors_1.ConfigurationError('TELEGRAM_BOT_TOKEN must be set to a valid Telegram bot token. Get it from @BotFather', 'TELEGRAM_BOT_TOKEN');
     }
     if (!token.includes(':') || token.length < 20) {
-        throw new errors_1.ConfigurationError('BOT_TOKEN appears to be invalid. Expected format: "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"', 'BOT_TOKEN');
+        throw new errors_1.ConfigurationError('TELEGRAM_BOT_TOKEN appears to be invalid. Expected format: "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"', 'TELEGRAM_BOT_TOKEN');
     }
 }
 /**
@@ -117,7 +117,7 @@ function loadConfig() {
     const nodeEnv = validateEnvironment(getOptionalEnv('NODE_ENV', Environment.DEVELOPMENT));
     const databaseUrl = getRequiredEnv('DATABASE_URL');
     validateDatabaseUrl(databaseUrl);
-    const botToken = getRequiredEnv('BOT_TOKEN');
+    const botToken = getRequiredEnv('TELEGRAM_BOT_TOKEN');
     validateBotToken(botToken);
     const logLevel = validateLogLevel(getOptionalEnv('LOG_LEVEL', LogLevel.INFO));
     const port = getEnvAsNumber('PORT', 3000);

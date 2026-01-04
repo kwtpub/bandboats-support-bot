@@ -25,6 +25,9 @@ RUN npm run build
 # Production stage
 FROM node:20-alpine
 
+# Устанавливаем OpenSSL для Prisma
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 # Копируем package.json
@@ -42,11 +45,15 @@ RUN npx prisma generate
 # Копируем собранный код из builder
 COPY --from=builder /app/dist ./dist
 
+# Копируем entrypoint скрипт
+COPY docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
+
 # Удаляем ненужное
 RUN rm -rf src tsconfig.json
 
 # Открываем порт (если нужен для webhooks)
 # EXPOSE 3000
 
-# Запускаем приложение
-CMD ["node", "dist/index.js"]
+# Запускаем через entrypoint
+ENTRYPOINT ["./docker-entrypoint.sh"]
