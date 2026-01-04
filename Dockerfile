@@ -1,5 +1,5 @@
 # Используем официальный образ Node.js
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
@@ -7,8 +7,8 @@ WORKDIR /app
 # Копируем package.json и package-lock.json
 COPY package*.json ./
 
-# Устанавливаем зависимости
-RUN npm ci --only=production
+# Устанавливаем ВСЕ зависимости (включая dev)
+RUN npm ci
 
 # Копируем prisma схему
 COPY prisma ./prisma/
@@ -22,9 +22,28 @@ COPY . .
 # Собираем TypeScript
 RUN npm run build
 
-# Удаляем dev зависимости и исходники для уменьшения размера
-RUN npm prune --production && \
-    rm -rf src tsconfig.json
+# Production stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Копируем package.json
+COPY package*.json ./
+
+# Устанавливаем только production зависимости
+RUN npm ci --only=production
+
+# Копируем prisma схему
+COPY prisma ./prisma/
+
+# Генерируем Prisma Client в production
+RUN npx prisma generate
+
+# Копируем собранный код из builder
+COPY --from=builder /app/dist ./dist
+
+# Удаляем ненужное
+RUN rm -rf src tsconfig.json
 
 # Открываем порт (если нужен для webhooks)
 # EXPOSE 3000
