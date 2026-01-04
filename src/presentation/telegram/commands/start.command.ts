@@ -8,6 +8,7 @@
 import { BotContext } from '../types';
 import { UserService } from '../../../domain/services/UserService/user.service';
 import { getErrorHandler } from '../../../infrastructure/errors';
+import { Markup } from 'telegraf';
 
 /**
  * Обработчик команды /start
@@ -36,25 +37,8 @@ export function createStartCommand(userService: UserService) {
       let welcomeMessage: string;
 
       if (dbUser.isAdmin()) {
-        // UI для администратора
-        welcomeMessage = `
-👋 Добро пожаловать в систему поддержки Bandboats!
-
-👑 *Панель администратора*
-
-📊 *Управление тикетами:*
-🎫 Все тикеты - /alltickets
-🔧 Назначить тикет - /assign <ticket_id> <user_id>
-📋 Мои тикеты - /mytickets
-🔍 Просмотр тикета - /ticket <ID>
-
-📝 *Работа с тикетами:*
-✏️ Создать тикет - /newticket
-💬 Ответить в тикет - /reply <ID>
-✅ Закрыть тикет - /close <ID>
-
-ℹ️ Помощь - /help
-        `.trim();
+        // UI для администратора - сразу админ-панель
+        welcomeMessage = `🔐 *Админ-панель*\n\nВыберите действие:`;
       } else {
         // UI для обычного пользователя
         welcomeMessage = `
@@ -62,19 +46,25 @@ export function createStartCommand(userService: UserService) {
 
 Я бот техподдержки. Здесь вы можете получить помощь по любым вопросам.
 
-*Доступные команды:*
-
-📝 Создать новый тикет - /newticket
-📋 Мои тикеты - /mytickets
-🔍 Просмотр тикета - /ticket <ID>
-💬 Ответить в тикет - /reply <ID>
-ℹ️ Помощь - /help
-
-Начните с создания тикета командой /newticket
+Используйте кнопку ниже для создания тикета:
         `.trim();
       }
 
-      await ctx.reply(welcomeMessage, { parse_mode: 'Markdown' });
+      // Создаем inline-кнопки
+      let keyboard;
+      if (dbUser.isAdmin()) {
+        keyboard = Markup.inlineKeyboard([
+          [Markup.button.callback('📂 Открытые тикеты', 'admin_open_tickets')],
+          [Markup.button.callback('📋 Мои назначенные', 'admin_assigned_to_me')],
+        ]);
+      } else {
+        keyboard = Markup.inlineKeyboard([
+          [Markup.button.callback('📝 Новый тикет', 'start_newticket')],
+          [Markup.button.callback('📋 Мои тикеты', 'start_mytickets')],
+        ]);
+      }
+
+      await ctx.reply(welcomeMessage, { parse_mode: 'Markdown', ...keyboard });
     } catch (error) {
       const message = errorHandler.handle(error as Error, {
         command: 'start',

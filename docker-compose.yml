@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # PostgreSQL база данных
+  postgres:
+    image: postgres:16-alpine
+    container_name: bandboats-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bandboats}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-bandboats_support}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - bandboats-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bandboats}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Telegram бот
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bandboats-bot
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Telegram
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+
+      # Database
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bandboats}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-bandboats_support}?schema=public
+
+      # Node environment
+      NODE_ENV: production
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - bandboats-network
+    command: >
+      sh -c "
+        npx prisma migrate deploy &&
+        node dist/index.js
+      "
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  bandboats-network:
+    driver: bridge

@@ -155,5 +155,25 @@ export declare class TicketService {
      * @throws Error если тикет не найден
      */
     isTicketClosed(ticketId: number): Promise<boolean>;
+    /**
+     * Обновляет заголовок тикета.
+     *
+     * @param ticketId - ID тикета
+     * @param newTitle - Новый заголовок
+     * @param requesterId - ID пользователя, выполняющего обновление
+     * @returns Обновлённый тикет
+     * @throws Error если тикет не найден, пользователь не найден или нет прав
+     */
+    updateTicketTitle(ticketId: number, newTitle: string, requesterId: number): Promise<Ticket>;
+    /**
+     * Обновляет описание тикета (первое сообщение).
+     *
+     * @param ticketId - ID тикета
+     * @param newDescription - Новое описание
+     * @param requesterId - ID пользователя, выполняющего обновление
+     * @returns Обновлённый тикет
+     * @throws Error если тикет не найден, пользователь не найден, нет прав или нет сообщений
+     */
+    updateTicketDescription(ticketId: number, newDescription: string, requesterId: number): Promise<Ticket>;
 }
 //# sourceMappingURL=ticket.service.d.ts.map

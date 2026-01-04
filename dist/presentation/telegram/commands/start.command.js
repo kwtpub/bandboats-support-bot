@@ -8,6 +8,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createStartCommand = createStartCommand;
 const errors_1 = require("../../../infrastructure/errors");
+const telegraf_1 = require("telegraf");
 /**
  * Обработчик команды /start
  */
@@ -27,25 +28,8 @@ function createStartCommand(userService) {
             // Формируем приветственное сообщение в зависимости от роли
             let welcomeMessage;
             if (dbUser.isAdmin()) {
-                // UI для администратора
-                welcomeMessage = `
-👋 Добро пожаловать в систему поддержки Bandboats!
-
-👑 *Панель администратора*
-
-📊 *Управление тикетами:*
-🎫 Все тикеты - /alltickets
-🔧 Назначить тикет - /assign <ticket_id> <user_id>
-📋 Мои тикеты - /mytickets
-🔍 Просмотр тикета - /ticket <ID>
-
-📝 *Работа с тикетами:*
-✏️ Создать тикет - /newticket
-💬 Ответить в тикет - /reply <ID>
-✅ Закрыть тикет - /close <ID>
-
-ℹ️ Помощь - /help
-        `.trim();
+                // UI для администратора - сразу админ-панель
+                welcomeMessage = `🔐 *Админ-панель*\n\nВыберите действие:`;
             }
             else {
                 // UI для обычного пользователя
@@ -54,18 +38,24 @@ function createStartCommand(userService) {
 
 Я бот техподдержки. Здесь вы можете получить помощь по любым вопросам.
 
-*Доступные команды:*
-
-📝 Создать новый тикет - /newticket
-📋 Мои тикеты - /mytickets
-🔍 Просмотр тикета - /ticket <ID>
-💬 Ответить в тикет - /reply <ID>
-ℹ️ Помощь - /help
-
-Начните с создания тикета командой /newticket
+Используйте кнопку ниже для создания тикета:
         `.trim();
             }
-            await ctx.reply(welcomeMessage, { parse_mode: 'Markdown' });
+            // Создаем inline-кнопки
+            let keyboard;
+            if (dbUser.isAdmin()) {
+                keyboard = telegraf_1.Markup.inlineKeyboard([
+                    [telegraf_1.Markup.button.callback('📂 Открытые тикеты', 'admin_open_tickets')],
+                    [telegraf_1.Markup.button.callback('📋 Мои назначенные', 'admin_assigned_to_me')],
+                ]);
+            }
+            else {
+                keyboard = telegraf_1.Markup.inlineKeyboard([
+                    [telegraf_1.Markup.button.callback('📝 Новый тикет', 'start_newticket')],
+                    [telegraf_1.Markup.button.callback('📋 Мои тикеты', 'start_mytickets')],
+                ]);
+            }
+            await ctx.reply(welcomeMessage, { parse_mode: 'Markdown', ...keyboard });
         }
         catch (error) {
             const message = errorHandler.handle(error, {

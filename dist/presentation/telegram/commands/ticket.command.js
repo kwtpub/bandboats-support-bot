@@ -53,7 +53,10 @@ function createTicketCommand(ticketService) {
             // Извлекаем ID тикета из команды
             const args = ctx.message && 'text' in ctx.message ? ctx.message.text.split(' ').slice(1) : [];
             if (args.length === 0) {
-                await ctx.reply('⚠️ Укажите ID тикета.\n\n' + 'Использование: /ticket <ID>\n' + 'Пример: /ticket 5');
+                await ctx.reply('⚠️ Укажите ID тикета.\n\n' +
+                    'Использование: /ticket <ID>\n' +
+                    'Пример: /ticket 5\n\n' +
+                    '💡 Или используйте /mytickets для просмотра ваших тикетов с кнопками');
                 return;
             }
             const ticketId = parseInt(args[0], 10);

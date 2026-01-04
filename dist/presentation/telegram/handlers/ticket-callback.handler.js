@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createViewTicketCallbackHandler = createViewTicketCallbackHandler;
 const errors_1 = require("../../../infrastructure/errors");
 const ticket_entity_1 = require("../../../domain/entities/Ticket/ticket.entity");
+const telegraf_1 = require("telegraf");
 /**
  * Получает эмодзи для статуса тикета
  */
@@ -85,24 +86,48 @@ function createViewTicketCallbackHandler(ticketService) {
             }
             const messageCount = ticket.getMessageCount();
             message += `💬 *Сообщений:* ${messageCount}\n\n`;
-            // Добавляем последнее сообщение
-            const lastMessage = ticket.getLastMessage();
-            if (lastMessage) {
-                message += `💭 *Последнее сообщение:*\n`;
-                message += `_${lastMessage.content.substring(0, 200)}${lastMessage.content.length > 200 ? '...' : ''}_\n\n`;
+            // Показываем все сообщения
+            if (ticket.messages.length > 0) {
+                message += `📝 *Сообщения:*\n\n`;
+                ticket.messages.forEach((msg) => {
+                    const content = msg.content.length > 100 ? msg.content.substring(0, 100) + '...' : msg.content;
+                    const isAuthor = msg.authorId === ticket.authorId;
+                    const authorLabel = isAuthor ? '👤 Пользователь' : '👨‍💼 Администратор';
+                    message += `${authorLabel}:\n${content}\n\n`;
+                });
             }
-            // Добавляем доступные действия
+            // Создаем inline-кнопки для управления тикетом
+            const buttons = [];
             if (ticket.isOpen() || ticket.isInProgress()) {
-                message += `*Доступные действия:*\n`;
-                message += `💬 Добавить сообщение: /reply ${ticketId}\n`;
+                // Кнопки редактирования (только если тикет не закрыт)
+                buttons.push([
+                    telegraf_1.Markup.button.callback('✏️ Изменить заголовок', `edit_title_${ticketId}`),
+                    telegraf_1.Markup.button.callback('📝 Изменить описание', `edit_description_${ticketId}`),
+                ]);
+                // Кнопка закрытия тикета
                 const canClose = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
                 if (canClose) {
-                    message += `✅ Закрыть тикет: /close ${ticketId}\n`;
+                    buttons.push([telegraf_1.Markup.button.callback('✅ Закрыть тикет', `close_ticket_${ticketId}`)]);
                 }
             }
-            // Отвечаем на callback
+            // Кнопка "Назад"
+            buttons.push([telegraf_1.Markup.button.callback('◀️ Назад', 'start_mytickets')]);
+            const keyboard = telegraf_1.Markup.inlineKeyboard(buttons);
+            // Отвечаем на callback и редактируем сообщение вместо отправки нового
             await ctx.answerCbQuery();
-            await ctx.reply(message, { parse_mode: 'Markdown' });
+            // Редактируем текущее сообщение вместо отправки нового
+            if (ctx.callbackQuery && 'message' in ctx.callbackQuery && ctx.callbackQuery.message) {
+                try {
+                    await ctx.editMessageText(message, { parse_mode: 'Markdown', ...keyboard });
+                }
+                catch (editError) {
+                    // Если не удалось отредактировать (например, сообщение слишком старое), отправляем новое
+                    await ctx.reply(message, { parse_mode: 'Markdown', ...keyboard });
+                }
+            }
+            else {
+                await ctx.reply(message, { parse_mode: 'Markdown', ...keyboard });
+            }
         }
         catch (error) {
             const message = errorHandler.handle(error, {

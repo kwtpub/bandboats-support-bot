@@ -64,24 +64,8 @@ export function createMyTicketsCommand(ticketService: TicketService) {
         return;
       }
 
-      // Формируем список тикетов
-      let message = `📋 *Ваши тикеты (${tickets.length}):*\n\n`;
-
-      tickets.forEach((ticket, index) => {
-        const statusEmoji = getStatusEmoji(ticket.status);
-        const statusText = getStatusText(ticket.status);
-        const messageCount = ticket.getMessageCount();
-
-        message += `${index + 1}. ${statusEmoji} *${ticket.title}*\n`;
-        message += `   ID: #${ticket.id} | ${statusText}\n`;
-        message += `   💬 Сообщений: ${messageCount}\n`;
-        if (ticket.isAssigned()) {
-          message += `   👤 Назначен исполнителю\n`;
-        }
-        message += `\n`;
-      });
-
-      message += `\n💡 Нажмите на кнопку ниже для просмотра тикета:`;
+      // Формируем сообщение
+      let message = `📋 *Ваши тикеты (${tickets.length}):*\n\n💡 Выберите тикет для просмотра:`;
 
       // Создаем inline-кнопки для каждого тикета
       const buttons = tickets.map((ticket) => {

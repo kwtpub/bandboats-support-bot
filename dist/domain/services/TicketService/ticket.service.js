@@ -342,6 +342,78 @@ class TicketService {
         }
         return ticket.isClosed();
     }
+    /**
+     * Обновляет заголовок тикета.
+     *
+     * @param ticketId - ID тикета
+     * @param newTitle - Новый заголовок
+     * @param requesterId - ID пользователя, выполняющего обновление
+     * @returns Обновлённый тикет
+     * @throws Error если тикет не найден, пользователь не найден или нет прав
+     */
+    async updateTicketTitle(ticketId, newTitle, requesterId) {
+        const ticket = await this.ticketRepository.findById(ticketId);
+        if (!ticket) {
+            throw new errors_1.NotFoundError('Ticket', ticketId);
+        }
+        const requester = await this.userRepository.findById(requesterId);
+        if (!requester) {
+            throw new errors_1.NotFoundError('User', requesterId);
+        }
+        // Проверяем права на редактирование тикета (автор или админ)
+        if (!requester.canManageTicket(ticket)) {
+            throw new errors_1.ForbiddenError('You do not have permission to update this ticket', 'update', 'ticket');
+        }
+        // Создаём новый экземпляр тикета с обновлённым заголовком
+        const updatedTicket = new ticket_entity_1.Ticket(ticket.id, ticket.authorId, ticket.assigneeId, newTitle, ticket.messages, ticket.status);
+        await this.ticketRepository.save(updatedTicket);
+        return updatedTicket;
+    }
+    /**
+     * Обновляет описание тикета (первое сообщение).
+     *
+     * @param ticketId - ID тикета
+     * @param newDescription - Новое описание
+     * @param requesterId - ID пользователя, выполняющего обновление
+     * @returns Обновлённый тикет
+     * @throws Error если тикет не найден, пользователь не найден, нет прав или нет сообщений
+     */
+    async updateTicketDescription(ticketId, newDescription, requesterId) {
+        const ticket = await this.ticketRepository.findById(ticketId);
+        if (!ticket) {
+            throw new errors_1.NotFoundError('Ticket', ticketId);
+        }
+        const requester = await this.userRepository.findById(requesterId);
+        if (!requester) {
+            throw new errors_1.NotFoundError('User', requesterId);
+        }
+        // Проверяем права на редактирование тикета (автор или админ)
+        if (!requester.canManageTicket(ticket)) {
+            throw new errors_1.ForbiddenError('You do not have permission to update this ticket', 'update', 'ticket');
+        }
+        if (ticket.messages.length === 0) {
+            throw new errors_1.ValidationError('Cannot update description: ticket has no messages', 'messages');
+        }
+        // Валидация содержания описания
+        if (!newDescription || newDescription.trim().length === 0) {
+            throw new errors_1.ValidationError('Description cannot be empty', 'description');
+        }
+        if (newDescription.length > 2000) {
+            throw new errors_1.ValidationError('Description cannot exceed 2000 characters', 'description', newDescription.length);
+        }
+        // Получаем первое сообщение
+        const firstMessage = ticket.messages[0];
+        // Создаём обновлённое сообщение
+        const updatedMessage = new ticketMessage_entity_1.TicketMessage(firstMessage.id, firstMessage.ticketId, firstMessage.authorId, newDescription, firstMessage.createAt);
+        // Сохраняем обновлённое сообщение
+        await this.ticketMessageRepository.save(updatedMessage);
+        // Получаем обновлённый тикет
+        const updatedTicket = await this.ticketRepository.findById(ticketId);
+        if (!updatedTicket) {
+            throw new Error('Failed to update ticket description');
+        }
+        return updatedTicket;
+    }
 }
 exports.TicketService = TicketService;
 //# sourceMappingURL=ticket.service.js.map

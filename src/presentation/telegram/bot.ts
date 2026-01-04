@@ -23,6 +23,7 @@ import {
   createAllTicketsCommand,
   createAssignCommand,
 } from './commands';
+import { createAdminCommand } from './commands/admin.command';
 
 // Импорт middleware
 import {
@@ -34,7 +35,34 @@ import {
 } from './middleware';
 
 // Импорт обработчиков callback
-import { createViewTicketCallbackHandler } from './handlers';
+import {
+  createViewTicketCallbackHandler,
+  createNewTicketCallbackHandler,
+  createBackToMenuCallbackHandler,
+  createBackToTitleCallbackHandler,
+  createMyTicketsCallbackHandler,
+  createEditTitleCallbackHandler,
+  createEditDescriptionCallbackHandler,
+  createCloseTicketCallbackHandler,
+} from './handlers';
+import {
+  createAdminOpenTicketsCallbackHandler,
+  createAdminOpenTicketsPaginationHandler,
+  createAdminPaginationInfoHandler,
+  createAdminPanelCallbackHandler,
+  createAdminViewTicketCallbackHandler,
+  createAdminAssignSelfCallbackHandler,
+  createAdminAssignedToMeCallbackHandler,
+  createAdminAssignedToMePaginationHandler,
+  createAdminReplyTicketCallbackHandler,
+  createAdminCancelReplyCallbackHandler,
+  createAdminCloseTicketCallbackHandler,
+} from './handlers/admin-callback.handler';
+import {
+  createUserReplyTicketCallbackHandler,
+  createUserCloseTicketCallbackHandler,
+  createUserCancelReplyCallbackHandler,
+} from './handlers/user-ticket-callback.handler';
 
 /**
  * Создаёт и настраивает Telegram бота
@@ -63,19 +91,51 @@ export function createBot(
   bot.command('start', createStartCommand(userService));
   bot.command('help', createHelpCommand());
   bot.command('mytickets', createMyTicketsCommand(ticketService));
-  bot.command('newticket', createNewTicketCommand(ticketService));
+  bot.command('newticket', createNewTicketCommand(ticketService, userService));
   bot.command('cancel', createCancelCommand());
   bot.command('ticket', createTicketCommand(ticketService));
 
   // Команды только для администраторов
+  bot.command('admin', createAdminCommand());
   bot.command('alltickets', createAdminMiddleware(), createAllTicketsCommand(ticketService));
   bot.command('assign', createAdminMiddleware(), createAssignCommand(ticketService));
 
   // Обработчики callback-запросов
   bot.action(/^view_ticket_\d+$/, createViewTicketCallbackHandler(ticketService));
+  bot.action('start_newticket', createNewTicketCallbackHandler());
+  bot.action('start_mytickets', createMyTicketsCallbackHandler(ticketService));
+  bot.action('ticket_back_to_menu', createBackToMenuCallbackHandler());
+  bot.action('ticket_back_to_title', createBackToTitleCallbackHandler());
+  bot.action(/^edit_title_\d+$/, createEditTitleCallbackHandler(ticketService));
+  bot.action(/^edit_description_\d+$/, createEditDescriptionCallbackHandler(ticketService));
+  bot.action(/^close_ticket_\d+$/, createCloseTicketCallbackHandler(ticketService));
+
+  // Обработчики callback для админ-панели
+  bot.action('admin_panel', createAdminPanelCallbackHandler());
+  bot.action('admin_open_tickets', createAdminOpenTicketsCallbackHandler(ticketService));
+  bot.action(
+    /^admin_open_tickets_page_\d+$/,
+    createAdminOpenTicketsPaginationHandler(ticketService),
+  );
+  bot.action('admin_pagination_info', createAdminPaginationInfoHandler());
+  bot.action(/^admin_view_ticket_\d+$/, createAdminViewTicketCallbackHandler(ticketService));
+  bot.action(/^admin_assign_self_\d+$/, createAdminAssignSelfCallbackHandler(ticketService));
+  bot.action('admin_assigned_to_me', createAdminAssignedToMeCallbackHandler(ticketService));
+  bot.action(
+    /^admin_assigned_to_me_page_\d+$/,
+    createAdminAssignedToMePaginationHandler(ticketService),
+  );
+  bot.action(/^admin_reply_ticket_\d+$/, createAdminReplyTicketCallbackHandler(ticketService));
+  bot.action('admin_cancel_reply', createAdminCancelReplyCallbackHandler());
+  bot.action(/^admin_close_ticket_\d+$/, createAdminCloseTicketCallbackHandler(ticketService));
+
+  // Обработчики callback для пользователей
+  bot.action(/^user_reply_ticket_\d+$/, createUserReplyTicketCallbackHandler(ticketService));
+  bot.action(/^user_close_ticket_\d+$/, createUserCloseTicketCallbackHandler(ticketService));
+  bot.action('user_cancel_reply', createUserCancelReplyCallbackHandler());
 
   // Обработчик текстовых сообщений (для создания тикетов)
-  bot.on('text', createTicketMessageHandler(ticketService));
+  bot.on('text', createTicketMessageHandler(ticketService, userService));
 
   // Глобальный обработчик ошибок (для ошибок вне middleware chain)
   bot.catch((error, ctx) => {

@@ -105,8 +105,8 @@ export function createAllTicketsCommand(ticketService: TicketService) {
         message += `\n`;
       }
 
-      message += `💡 Нажмите на кнопку ниже для просмотра тикета:\n`;
-      message += `🔧 Для назначения тикета: /assign <ticket_id> <user_id>`;
+      message += `\n💡 Нажмите на кнопку для просмотра деталей\n`;
+      message += `🔧 Назначить исполнителя: /assign <ticket_id> <user_id>`;
 
       // Создаем inline-кнопки для открытых и активных тикетов
       const activeTickets = [...openTickets, ...inProgressTickets];

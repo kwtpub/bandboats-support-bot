@@ -1,8 +1,50 @@
 node_modules
-t.ts 
+t.ts
 .DS_Store
 
 # bv (beads viewer) local config and caches
 .bv/
 
 /src/generated/prisma
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Database
+*.db
+*.sqlite
+
+# Docker
+docker-compose.override.yml
+
+# Backups
+backups/
+*.sql
+*.sql.gz
+
+# Build output
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/

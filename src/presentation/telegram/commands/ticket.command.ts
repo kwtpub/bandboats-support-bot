@@ -60,7 +60,10 @@ export function createTicketCommand(ticketService: TicketService) {
 
       if (args.length === 0) {
         await ctx.reply(
-          '⚠️ Укажите ID тикета.\n\n' + 'Использование: /ticket <ID>\n' + 'Пример: /ticket 5',
+          '⚠️ Укажите ID тикета.\n\n' +
+            'Использование: /ticket <ID>\n' +
+            'Пример: /ticket 5\n\n' +
+            '💡 Или используйте /mytickets для просмотра ваших тикетов с кнопками',
         );
         return;
       }
