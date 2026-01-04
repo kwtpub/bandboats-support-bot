@@ -25,8 +25,8 @@ RUN npm run build
 # Production stage
 FROM node:20-alpine
 
-# Устанавливаем OpenSSL для Prisma
-RUN apk add --no-cache openssl
+# Устанавливаем OpenSSL для Prisma и netcat для проверки подключения к БД
+RUN apk add --no-cache openssl postgresql-client
 
 WORKDIR /app
 

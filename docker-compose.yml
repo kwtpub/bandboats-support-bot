@@ -1,55 +1,53 @@
-version: '3.8'
+# Docker Compose для Bandboats Support Bot
+# Собирает приложение внутри Docker (медленнее, но проще)
 
 services:
-  # PostgreSQL база данных
   postgres:
     image: postgres:16-alpine
-    container_name: bandboats-postgres
-    restart: unless-stopped
+    container_name: bandboats-db
+    restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-bandboats}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
       POSTGRES_DB: ${POSTGRES_DB:-bandboats_support}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+      - db_data:/var/lib/postgresql/data
     networks:
-      - bandboats-network
+      - app-network
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-bandboats}']
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bandboats} -d ${POSTGRES_DB:-bandboats_support}"]
       timeout: 5s
+      interval: 10s
       retries: 5
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
 
-  # Telegram бот
-  bot:
+  server:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: bandboats-bot
-    restart: unless-stopped
+    container_name: bandboats-server
+    restart: always
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      # Telegram
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-
-      # Database
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-3000}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
       DATABASE_URL: postgresql://${POSTGRES_USER:-bandboats}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-bandboats_support}?schema=public
-
-      # Node environment
-      NODE_ENV: production
-    volumes:
-      - ./logs:/app/logs
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      # Переменные для docker-entrypoint.sh
+      POSTGRES_USER: ${POSTGRES_USER:-bandboats}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-bandboats_support}
     networks:
-      - bandboats-network
+      - app-network
 
 volumes:
-  postgres_data:
-    driver: local
+  db_data:
 
 networks:
-  bandboats-network:
+  app-network:
     driver: bridge
+
