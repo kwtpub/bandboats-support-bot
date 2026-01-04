@@ -51,13 +51,9 @@ function createTicketCommand(ticketService) {
                 return;
             }
             // Извлекаем ID тикета из команды
-            const args = ctx.message && 'text' in ctx.message
-                ? ctx.message.text.split(' ').slice(1)
-                : [];
+            const args = ctx.message && 'text' in ctx.message ? ctx.message.text.split(' ').slice(1) : [];
             if (args.length === 0) {
-                await ctx.reply('⚠️ Укажите ID тикета.\n\n' +
-                    'Использование: /ticket <ID>\n' +
-                    'Пример: /ticket 5');
+                await ctx.reply('⚠️ Укажите ID тикета.\n\n' + 'Использование: /ticket <ID>\n' + 'Пример: /ticket 5');
                 return;
             }
             const ticketId = parseInt(args[0], 10);
@@ -72,7 +68,7 @@ function createTicketCommand(ticketService) {
                 return;
             }
             // Проверяем права доступа
-            const canView = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.id);
+            const canView = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
             if (!canView) {
                 await ctx.reply('⛔️ У вас нет доступа к этому тикету.');
                 return;
@@ -102,7 +98,7 @@ function createTicketCommand(ticketService) {
             if (ticket.isOpen() || ticket.isInProgress()) {
                 message += `*Доступные действия:*\n`;
                 message += `💬 Добавить сообщение: /reply ${ticketId}\n`;
-                const canClose = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.id);
+                const canClose = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
                 if (canClose) {
                     message += `✅ Закрыть тикет: /close ${ticketId}\n`;
                 }

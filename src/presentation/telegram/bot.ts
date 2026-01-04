@@ -20,6 +20,8 @@ import {
   createCancelCommand,
   createTicketMessageHandler,
   createTicketCommand,
+  createAllTicketsCommand,
+  createAssignCommand,
 } from './commands';
 
 // Импорт middleware
@@ -28,7 +30,11 @@ import {
   createLoggingMiddleware,
   createErrorMiddleware,
   createSessionMiddleware,
+  createAdminMiddleware,
 } from './middleware';
+
+// Импорт обработчиков callback
+import { createViewTicketCallbackHandler } from './handlers';
 
 /**
  * Создаёт и настраивает Telegram бота
@@ -60,6 +66,13 @@ export function createBot(
   bot.command('newticket', createNewTicketCommand(ticketService));
   bot.command('cancel', createCancelCommand());
   bot.command('ticket', createTicketCommand(ticketService));
+
+  // Команды только для администраторов
+  bot.command('alltickets', createAdminMiddleware(), createAllTicketsCommand(ticketService));
+  bot.command('assign', createAdminMiddleware(), createAssignCommand(ticketService));
+
+  // Обработчики callback-запросов
+  bot.action(/^view_ticket_\d+$/, createViewTicketCallbackHandler(ticketService));
 
   // Обработчик текстовых сообщений (для создания тикетов)
   bot.on('text', createTicketMessageHandler(ticketService));

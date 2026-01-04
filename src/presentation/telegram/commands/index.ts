@@ -12,3 +12,5 @@ export {
   createTicketMessageHandler,
 } from './newticket.command';
 export { createTicketCommand } from './ticket.command';
+export { createAllTicketsCommand } from './alltickets.command';
+export { createAssignCommand } from './assign.command';

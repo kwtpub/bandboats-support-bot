@@ -20,23 +20,23 @@ export declare enum TicketStatus {
  * @brief Rich Domain Entity тикета с бизнес-логикой.
  */
 export declare class Ticket {
-    readonly id: number;
+    readonly id: number | null;
     readonly authorId: number;
-    readonly assigneeId: number;
+    readonly assigneeId: number | null;
     readonly title: string;
     readonly messages: TicketMessage[];
     readonly status: TicketStatus;
     /**
      * Создаёт новый тикет.
      *
-     * @param id - Уникальный идентификатор тикета.
+     * @param id - Уникальный идентификатор тикета (null для новых тикетов).
      * @param authorId - Идентификатор пользователя, создавшего тикет.
-     * @param assigneeId - Идентификатор пользователя, которому назначен тикет (0 если не назначен).
+     * @param assigneeId - Идентификатор пользователя, которому назначен тикет (null если не назначен).
      * @param title - Заголовок тикета.
      * @param messages - Список сообщений, относящихся к тикету.
      * @param status - Статус тикета.
      */
-    constructor(id: number, authorId: number, assigneeId: number, title: string, messages: TicketMessage[], status: TicketStatus);
+    constructor(id: number | null, authorId: number, assigneeId: number | null, title: string, messages: TicketMessage[], status: TicketStatus);
     /**
      * Валидация инвариантов тикета.
      * @throws Error если нарушены бизнес-правила
@@ -139,5 +139,18 @@ export declare class Ticket {
      * @returns Последнее сообщение или null если сообщений нет
      */
     getLastMessage(): TicketMessage | null;
+    /**
+     * Получает ID тикета. Бросает ошибку если тикет не сохранён в БД.
+     *
+     * @returns ID тикета
+     * @throws Error если ID равен null
+     */
+    getId(): number;
+    /**
+     * Проверяет, сохранён ли тикет в БД.
+     *
+     * @returns true если тикет имеет ID
+     */
+    isPersisted(): boolean;
 }
 //# sourceMappingURL=ticket.entity.d.ts.map

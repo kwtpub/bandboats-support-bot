@@ -11,4 +11,6 @@ export { createErrorMiddleware } from './error.middleware';
 
 export { createSessionMiddleware, getSession, clearSession } from './session.middleware';
 
+export { createAdminMiddleware } from './admin.middleware';
+
 export type { SessionData, SessionContext } from './session.middleware';

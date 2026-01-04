@@ -1,0 +1,117 @@
+"use strict";
+/**
+ * @file ticket-callback.handler.ts
+ * @brief Обработчик callback-запросов для тикетов.
+ *
+ * Обрабатывает нажатия на inline-кнопки связанные с тикетами.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createViewTicketCallbackHandler = createViewTicketCallbackHandler;
+const errors_1 = require("../../../infrastructure/errors");
+const ticket_entity_1 = require("../../../domain/entities/Ticket/ticket.entity");
+/**
+ * Получает эмодзи для статуса тикета
+ */
+function getStatusEmoji(status) {
+    switch (status) {
+        case ticket_entity_1.TicketStatus.OPEN:
+            return '🆕';
+        case ticket_entity_1.TicketStatus.IN_PROGRESS:
+            return '🔄';
+        case ticket_entity_1.TicketStatus.CLOSE:
+            return '✅';
+        default:
+            return '❓';
+    }
+}
+/**
+ * Получает текстовое представление статуса
+ */
+function getStatusText(status) {
+    switch (status) {
+        case ticket_entity_1.TicketStatus.OPEN:
+            return 'Открыт';
+        case ticket_entity_1.TicketStatus.IN_PROGRESS:
+            return 'В работе';
+        case ticket_entity_1.TicketStatus.CLOSE:
+            return 'Закрыт';
+        default:
+            return 'Неизвестно';
+    }
+}
+/**
+ * Обработчик callback для просмотра тикета
+ */
+function createViewTicketCallbackHandler(ticketService) {
+    return async (ctx) => {
+        const errorHandler = (0, errors_1.getErrorHandler)();
+        try {
+            if (!ctx.dbUser) {
+                await ctx.answerCbQuery('❌ Пользователь не найден');
+                return;
+            }
+            // Извлекаем ID тикета из callback_data
+            const callbackData = ctx.callbackQuery && 'data' in ctx.callbackQuery ? ctx.callbackQuery.data : '';
+            const match = callbackData.match(/^view_ticket_(\d+)$/);
+            if (!match) {
+                await ctx.answerCbQuery('❌ Некорректный запрос');
+                return;
+            }
+            const ticketId = parseInt(match[1], 10);
+            // Получаем тикет
+            const ticket = await ticketService.getTicketById(ticketId);
+            if (!ticket) {
+                await ctx.answerCbQuery(`❌ Тикет #${ticketId} не найден`);
+                return;
+            }
+            // Проверяем права доступа
+            const canView = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
+            if (!canView) {
+                await ctx.answerCbQuery('⛔️ У вас нет доступа к этому тикету');
+                return;
+            }
+            // Формируем информацию о тикете
+            const statusEmoji = getStatusEmoji(ticket.status);
+            const statusText = getStatusText(ticket.status);
+            let message = `${statusEmoji} *Тикет #${ticket.id}*\n\n`;
+            message += `📝 *Заголовок:* ${ticket.title}\n`;
+            message += `📊 *Статус:* ${statusText}\n`;
+            message += `👤 *Автор:* ID ${ticket.authorId}\n`;
+            if (ticket.isAssigned()) {
+                message += `🔧 *Исполнитель:* ID ${ticket.assigneeId}\n`;
+            }
+            else {
+                message += `🔧 *Исполнитель:* Не назначен\n`;
+            }
+            const messageCount = ticket.getMessageCount();
+            message += `💬 *Сообщений:* ${messageCount}\n\n`;
+            // Добавляем последнее сообщение
+            const lastMessage = ticket.getLastMessage();
+            if (lastMessage) {
+                message += `💭 *Последнее сообщение:*\n`;
+                message += `_${lastMessage.content.substring(0, 200)}${lastMessage.content.length > 200 ? '...' : ''}_\n\n`;
+            }
+            // Добавляем доступные действия
+            if (ticket.isOpen() || ticket.isInProgress()) {
+                message += `*Доступные действия:*\n`;
+                message += `💬 Добавить сообщение: /reply ${ticketId}\n`;
+                const canClose = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
+                if (canClose) {
+                    message += `✅ Закрыть тикет: /close ${ticketId}\n`;
+                }
+            }
+            // Отвечаем на callback
+            await ctx.answerCbQuery();
+            await ctx.reply(message, { parse_mode: 'Markdown' });
+        }
+        catch (error) {
+            const message = errorHandler.handle(error, {
+                handler: 'view_ticket_callback',
+                userId: ctx.from?.id,
+            });
+            await ctx.answerCbQuery('❌ Произошла ошибка');
+            await ctx.reply(message);
+        }
+    };
+}
+//# sourceMappingURL=ticket-callback.handler.js.map

@@ -41,8 +41,8 @@ class TicketService {
             throw new errors_1.NotFoundError('User', authorId);
         }
         // Создаём новую доменную сущность
-        const ticket = new ticket_entity_1.Ticket(0, // Временный ID, будет заменён после сохранения
-        authorId, 0, // Не назначен
+        const ticket = new ticket_entity_1.Ticket(null, // null означает, что ID будет сгенерирован БД
+        authorId, null, // Не назначен
         title, [], ticket_entity_1.TicketStatus.OPEN);
         await this.ticketRepository.save(ticket);
         // Получаем сохранённый тикет с правильным ID
@@ -53,10 +53,10 @@ class TicketService {
         }
         // Если есть начальное сообщение, добавляем его
         if (initialMessage) {
-            const message = new ticketMessage_entity_1.TicketMessage(0, savedTicket.id, authorId, initialMessage, new Date());
+            const message = new ticketMessage_entity_1.TicketMessage(null, savedTicket.getId(), authorId, initialMessage, new Date());
             await this.ticketMessageRepository.save(message);
             // Получаем обновлённый тикет с сообщением
-            const updatedTicket = await this.ticketRepository.findById(savedTicket.id);
+            const updatedTicket = await this.ticketRepository.findById(savedTicket.getId());
             if (updatedTicket) {
                 return updatedTicket;
             }
@@ -80,6 +80,15 @@ class TicketService {
      */
     async getTicketsByAuthor(authorId) {
         return this.ticketRepository.findByAuthorId(authorId);
+    }
+    /**
+     * Получает все тикеты по статусу.
+     *
+     * @param status - Статус тикета
+     * @returns Массив тикетов с указанным статусом
+     */
+    async getTicketsByStatus(status) {
+        return this.ticketRepository.findByStatus(status);
     }
     /**
      * Назначает тикет исполнителю.
@@ -224,7 +233,7 @@ class TicketService {
             throw new errors_1.ValidationError('Message content cannot exceed 2000 characters', 'content', content.length);
         }
         // Создаём новое сообщение
-        const message = new ticketMessage_entity_1.TicketMessage(0, // Временный ID
+        const message = new ticketMessage_entity_1.TicketMessage(null, // null означает, что ID будет сгенерирован БД
         ticketId, authorId, content, new Date());
         // Сохраняем сообщение
         await this.ticketMessageRepository.save(message);

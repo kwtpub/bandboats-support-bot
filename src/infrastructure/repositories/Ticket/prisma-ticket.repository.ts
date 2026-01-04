@@ -56,22 +56,35 @@ export class PrismaTicketRepository implements TicketRepository {
    * Если тикет с таким ID существует - обновляет, иначе создаёт новый.
    */
   async save(ticket: Ticket): Promise<void> {
-    await this.prismaClient.ticket.upsert({
-      where: { id: ticket.id },
-      update: {
-        authorId: ticket.authorId,
-        assigneeId: ticket.assigneeId,
-        title: ticket.title,
-        status: this.mapDomainStatusToPrisma(ticket.status),
-      },
-      create: {
-        id: ticket.id,
-        authorId: ticket.authorId,
-        assigneeId: ticket.assigneeId,
-        title: ticket.title,
-        status: this.mapDomainStatusToPrisma(ticket.status),
-      },
-    });
+    // If ticket has no ID (new ticket), create without specifying ID
+    if (ticket.id === null) {
+      await this.prismaClient.ticket.create({
+        data: {
+          authorId: ticket.authorId,
+          assigneeId: ticket.assigneeId,
+          title: ticket.title,
+          status: this.mapDomainStatusToPrisma(ticket.status),
+        },
+      });
+    } else {
+      // If ticket has ID, use upsert to update or create
+      await this.prismaClient.ticket.upsert({
+        where: { id: ticket.id },
+        update: {
+          authorId: ticket.authorId,
+          assigneeId: ticket.assigneeId,
+          title: ticket.title,
+          status: this.mapDomainStatusToPrisma(ticket.status),
+        },
+        create: {
+          id: ticket.id,
+          authorId: ticket.authorId,
+          assigneeId: ticket.assigneeId,
+          title: ticket.title,
+          status: this.mapDomainStatusToPrisma(ticket.status),
+        },
+      });
+    }
   }
 
   /**
@@ -100,7 +113,7 @@ export class PrismaTicketRepository implements TicketRepository {
     return new Ticket(
       prismaTicket.id,
       prismaTicket.authorId,
-      prismaTicket.assigneeId ?? 0,
+      prismaTicket.assigneeId,
       prismaTicket.title,
       messages,
       this.mapPrismaStatusToDomain(prismaTicket.status),
@@ -133,7 +146,41 @@ export class PrismaTicketRepository implements TicketRepository {
       return new Ticket(
         prismaTicket.id,
         prismaTicket.authorId,
-        prismaTicket.assigneeId ?? 0,
+        prismaTicket.assigneeId,
+        prismaTicket.title,
+        messages,
+        this.mapPrismaStatusToDomain(prismaTicket.status),
+      );
+    });
+  }
+
+  /**
+   * Находит все тикеты по статусу.
+   */
+  async findByStatus(status: TicketStatus): Promise<Ticket[]> {
+    const prismaTickets = await this.prismaClient.ticket.findMany({
+      where: { status: this.mapDomainStatusToPrisma(status) },
+      include: {
+        messages: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return prismaTickets.map((prismaTicket) => {
+      const messages = prismaTicket.messages.map(
+        (msg) => new TicketMessage(msg.id, msg.ticketId, msg.authorId, msg.content, msg.createdAt),
+      );
+
+      return new Ticket(
+        prismaTicket.id,
+        prismaTicket.authorId,
+        prismaTicket.assigneeId,
         prismaTicket.title,
         messages,
         this.mapPrismaStatusToDomain(prismaTicket.status),

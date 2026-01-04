@@ -46,9 +46,9 @@ export class TicketService {
 
     // Создаём новую доменную сущность
     const ticket = new Ticket(
-      0, // Временный ID, будет заменён после сохранения
+      null, // null означает, что ID будет сгенерирован БД
       authorId,
-      0, // Не назначен
+      null, // Не назначен
       title,
       [],
       TicketStatus.OPEN,
@@ -65,11 +65,17 @@ export class TicketService {
 
     // Если есть начальное сообщение, добавляем его
     if (initialMessage) {
-      const message = new TicketMessage(0, savedTicket.id, authorId, initialMessage, new Date());
+      const message = new TicketMessage(
+        null,
+        savedTicket.getId(),
+        authorId,
+        initialMessage,
+        new Date(),
+      );
       await this.ticketMessageRepository.save(message);
 
       // Получаем обновлённый тикет с сообщением
-      const updatedTicket = await this.ticketRepository.findById(savedTicket.id);
+      const updatedTicket = await this.ticketRepository.findById(savedTicket.getId());
       if (updatedTicket) {
         return updatedTicket;
       }
@@ -96,6 +102,16 @@ export class TicketService {
    */
   async getTicketsByAuthor(authorId: number): Promise<Ticket[]> {
     return this.ticketRepository.findByAuthorId(authorId);
+  }
+
+  /**
+   * Получает все тикеты по статусу.
+   *
+   * @param status - Статус тикета
+   * @returns Массив тикетов с указанным статусом
+   */
+  async getTicketsByStatus(status: TicketStatus): Promise<Ticket[]> {
+    return this.ticketRepository.findByStatus(status);
   }
 
   /**
@@ -287,7 +303,7 @@ export class TicketService {
 
     // Создаём новое сообщение
     const message = new TicketMessage(
-      0, // Временный ID
+      null, // null означает, что ID будет сгенерирован БД
       ticketId,
       authorId,
       content,

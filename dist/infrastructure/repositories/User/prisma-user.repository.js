@@ -51,21 +51,35 @@ let PrismaUserRepository = class PrismaUserRepository {
      * Если пользователь с таким ID существует - обновляет, иначе создаёт нового.
      */
     async save(user) {
-        await this.prismaClient.user.upsert({
-            where: { id: user.id },
-            update: {
-                telegramId: user.telegramId,
-                name: user.name,
-                role: this.mapDomainRoleToPrisma(user.role),
-            },
-            create: {
-                id: user.id,
-                telegramId: user.telegramId,
-                name: user.name,
-                role: this.mapDomainRoleToPrisma(user.role),
-                createdAt: user.createAt,
-            },
-        });
+        // If user has no ID (new user), create without specifying ID
+        if (user.id === null) {
+            await this.prismaClient.user.create({
+                data: {
+                    telegramId: user.telegramId,
+                    name: user.name,
+                    role: this.mapDomainRoleToPrisma(user.role),
+                    createdAt: user.createAt,
+                },
+            });
+        }
+        else {
+            // If user has ID, use upsert to update or create
+            await this.prismaClient.user.upsert({
+                where: { id: user.id },
+                update: {
+                    telegramId: user.telegramId,
+                    name: user.name,
+                    role: this.mapDomainRoleToPrisma(user.role),
+                },
+                create: {
+                    id: user.id,
+                    telegramId: user.telegramId,
+                    name: user.name,
+                    role: this.mapDomainRoleToPrisma(user.role),
+                    createdAt: user.createAt,
+                },
+            });
+        }
     }
     /**
      * Находит пользователя по ID.

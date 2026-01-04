@@ -10,7 +10,7 @@
  */
 import { PrismaClient } from '@prisma/client';
 import { TicketRepository } from '../../../domain/repositories/Ticket/ticket.repository';
-import { Ticket } from '../../../domain/entities/Ticket/ticket.entity';
+import { Ticket, TicketStatus } from '../../../domain/entities/Ticket/ticket.entity';
 /**
  * @class PrismaTicketRepository
  * @brief Реализация TicketRepository через Prisma ORM.
@@ -39,5 +39,9 @@ export declare class PrismaTicketRepository implements TicketRepository {
      * Находит все тикеты автора с сообщениями.
      */
     findByAuthorId(authorId: number): Promise<Ticket[]>;
+    /**
+     * Находит все тикеты по статусу.
+     */
+    findByStatus(status: TicketStatus): Promise<Ticket[]>;
 }
 //# sourceMappingURL=prisma-ticket.repository.d.ts.map

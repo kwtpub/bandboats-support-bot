@@ -99,8 +99,7 @@ export function createTicketMessageHandler(ticketService: TicketService) {
       if (state.waitingForTitle) {
         if (text.length > 200) {
           await ctx.reply(
-            '⚠️ Заголовок слишком длинный. Максимум 200 символов.\n' +
-              'Попробуйте снова:',
+            '⚠️ Заголовок слишком длинный. Максимум 200 символов.\n' + 'Попробуйте снова:',
           );
           return;
         }
@@ -125,18 +124,13 @@ export function createTicketMessageHandler(ticketService: TicketService) {
       if (state.waitingForDescription && state.title) {
         if (text.length > 2000) {
           await ctx.reply(
-            '⚠️ Описание слишком длинное. Максимум 2000 символов.\n' +
-              'Попробуйте снова:',
+            '⚠️ Описание слишком длинное. Максимум 2000 символов.\n' + 'Попробуйте снова:',
           );
           return;
         }
 
         // Создаём тикет
-        const ticket = await ticketService.createTicket(
-          ctx.dbUser.id,
-          state.title,
-          text,
-        );
+        const ticket = await ticketService.createTicket(ctx.dbUser.getId(), state.title, text);
 
         // Очищаем состояние
         userStates.delete(userId);

@@ -9,6 +9,7 @@ import { BotContext } from '../types';
 import { TicketService } from '../../../domain/services/TicketService/ticket.service';
 import { getErrorHandler } from '../../../infrastructure/errors';
 import { TicketStatus } from '../../../domain/entities/Ticket/ticket.entity';
+import { Markup } from 'telegraf';
 
 /**
  * Получает эмодзи для статуса тикета
@@ -56,12 +57,10 @@ export function createMyTicketsCommand(ticketService: TicketService) {
       }
 
       // Получаем тикеты пользователя
-      const tickets = await ticketService.getTicketsByAuthor(ctx.dbUser.id);
+      const tickets = await ticketService.getTicketsByAuthor(ctx.dbUser.getId());
 
       if (tickets.length === 0) {
-        await ctx.reply(
-          '📋 У вас пока нет тикетов.\n\nСоздайте новый тикет командой /newticket',
-        );
+        await ctx.reply('📋 У вас пока нет тикетов.\n\nСоздайте новый тикет командой /newticket');
         return;
       }
 
@@ -82,9 +81,23 @@ export function createMyTicketsCommand(ticketService: TicketService) {
         message += `\n`;
       });
 
-      message += `\n💡 Для просмотра деталей тикета используйте: /ticket <ID>`;
+      message += `\n💡 Нажмите на кнопку ниже для просмотра тикета:`;
 
-      await ctx.reply(message, { parse_mode: 'Markdown' });
+      // Создаем inline-кнопки для каждого тикета
+      const buttons = tickets.map((ticket) => {
+        const statusEmoji = getStatusEmoji(ticket.status);
+        return [
+          Markup.button.callback(
+            `${statusEmoji} #${ticket.id} ${ticket.title.substring(0, 25)}${ticket.title.length > 25 ? '...' : ''}`,
+            `view_ticket_${ticket.id}`,
+          ),
+        ];
+      });
+
+      await ctx.reply(message, {
+        parse_mode: 'Markdown',
+        ...Markup.inlineKeyboard(buttons),
+      });
     } catch (error) {
       const message = errorHandler.handle(error as Error, {
         command: 'mytickets',

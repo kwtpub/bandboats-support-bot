@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createMyTicketsCommand = createMyTicketsCommand;
 const errors_1 = require("../../../infrastructure/errors");
 const ticket_entity_1 = require("../../../domain/entities/Ticket/ticket.entity");
+const telegraf_1 = require("telegraf");
 /**
  * Получает эмодзи для статуса тикета
  */
@@ -51,7 +52,7 @@ function createMyTicketsCommand(ticketService) {
                 return;
             }
             // Получаем тикеты пользователя
-            const tickets = await ticketService.getTicketsByAuthor(ctx.dbUser.id);
+            const tickets = await ticketService.getTicketsByAuthor(ctx.dbUser.getId());
             if (tickets.length === 0) {
                 await ctx.reply('📋 У вас пока нет тикетов.\n\nСоздайте новый тикет командой /newticket');
                 return;
@@ -70,8 +71,18 @@ function createMyTicketsCommand(ticketService) {
                 }
                 message += `\n`;
             });
-            message += `\n💡 Для просмотра деталей тикета используйте: /ticket <ID>`;
-            await ctx.reply(message, { parse_mode: 'Markdown' });
+            message += `\n💡 Нажмите на кнопку ниже для просмотра тикета:`;
+            // Создаем inline-кнопки для каждого тикета
+            const buttons = tickets.map((ticket) => {
+                const statusEmoji = getStatusEmoji(ticket.status);
+                return [
+                    telegraf_1.Markup.button.callback(`${statusEmoji} #${ticket.id} ${ticket.title.substring(0, 25)}${ticket.title.length > 25 ? '...' : ''}`, `view_ticket_${ticket.id}`),
+                ];
+            });
+            await ctx.reply(message, {
+                parse_mode: 'Markdown',
+                ...telegraf_1.Markup.inlineKeyboard(buttons),
+            });
         }
         catch (error) {
             const message = errorHandler.handle(error, {

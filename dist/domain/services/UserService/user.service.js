@@ -38,8 +38,8 @@ class UserService {
             throw new errors_1.ConflictError(`User with Telegram ID ${telegramId} already exists`, 'telegramId');
         }
         // Создаём новую доменную сущность
-        // ID будет сгенерирован базой данных, поэтому используем временный ID
-        const user = new user_entity_1.User(0, // Временный ID, будет заменён после сохранения
+        // ID будет сгенерирован базой данных, поэтому используем null
+        const user = new user_entity_1.User(null, // null означает, что ID будет сгенерирован БД
         telegramId, name, role, new Date());
         await this.userRepository.save(user);
         // Получаем сохранённого пользователя с правильным ID

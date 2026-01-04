@@ -16,9 +16,9 @@ class Ticket {
     /**
      * Создаёт новый тикет.
      *
-     * @param id - Уникальный идентификатор тикета.
+     * @param id - Уникальный идентификатор тикета (null для новых тикетов).
      * @param authorId - Идентификатор пользователя, создавшего тикет.
-     * @param assigneeId - Идентификатор пользователя, которому назначен тикет (0 если не назначен).
+     * @param assigneeId - Идентификатор пользователя, которому назначен тикет (null если не назначен).
      * @param title - Заголовок тикета.
      * @param messages - Список сообщений, относящихся к тикету.
      * @param status - Статус тикета.
@@ -45,6 +45,14 @@ class Ticket {
         }
         if (this.authorId <= 0) {
             throw new errors_1.ValidationError('Invalid author ID', 'authorId', this.authorId);
+        }
+        // ID can be null for new tickets (before saving to DB)
+        if (this.id !== null && this.id <= 0) {
+            throw new errors_1.ValidationError('Invalid ticket ID', 'id', this.id);
+        }
+        // assigneeId can be null (unassigned) but if present must be valid
+        if (this.assigneeId !== null && this.assigneeId <= 0) {
+            throw new errors_1.ValidationError('Invalid assignee ID', 'assigneeId', this.assigneeId);
         }
     }
     /**
@@ -77,7 +85,7 @@ class Ticket {
         if (this.status === TicketStatus.CLOSE && newStatus !== TicketStatus.OPEN) {
             throw new errors_1.InvalidStateTransitionError(TicketStatus[this.status], TicketStatus[newStatus], 'Ticket');
         }
-        if (newStatus === TicketStatus.IN_PROGRESS && this.assigneeId === 0) {
+        if (newStatus === TicketStatus.IN_PROGRESS && this.assigneeId === null) {
             throw new errors_1.BusinessRuleViolationError('Cannot set IN_PROGRESS status without assignee', 'status_change');
         }
         return new Ticket(this.id, this.authorId, this.assigneeId, this.title, this.messages, newStatus);
@@ -130,7 +138,7 @@ class Ticket {
      * @returns true если пользователь может закрыть тикет
      */
     canBeClosedBy(userId) {
-        return userId === this.authorId || userId === this.assigneeId;
+        return userId === this.authorId || (this.assigneeId !== null && userId === this.assigneeId);
     }
     /**
      * Проверяет, назначен ли тикет конкретному пользователю.
@@ -139,7 +147,7 @@ class Ticket {
      * @returns true если тикет назначен этому пользователю
      */
     isAssignedTo(userId) {
-        return this.assigneeId === userId && this.assigneeId !== 0;
+        return this.assigneeId !== null && this.assigneeId === userId;
     }
     /**
      * Проверяет, является ли пользователь автором тикета.
@@ -156,7 +164,7 @@ class Ticket {
      * @returns true если тикет назначен
      */
     isAssigned() {
-        return this.assigneeId !== 0;
+        return this.assigneeId !== null;
     }
     /**
      * Проверяет, открыт ли тикет.
@@ -200,6 +208,26 @@ class Ticket {
             return null;
         }
         return this.messages[this.messages.length - 1];
+    }
+    /**
+     * Получает ID тикета. Бросает ошибку если тикет не сохранён в БД.
+     *
+     * @returns ID тикета
+     * @throws Error если ID равен null
+     */
+    getId() {
+        if (this.id === null) {
+            throw new errors_1.ValidationError('Ticket must be saved to database before accessing ID', 'id');
+        }
+        return this.id;
+    }
+    /**
+     * Проверяет, сохранён ли тикет в БД.
+     *
+     * @returns true если тикет имеет ID
+     */
+    isPersisted() {
+        return this.id !== null;
     }
 }
 exports.Ticket = Ticket;

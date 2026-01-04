@@ -7,4 +7,6 @@ export { createHelpCommand } from './help.command';
 export { createMyTicketsCommand } from './mytickets.command';
 export { createNewTicketCommand, createCancelCommand, createTicketMessageHandler, } from './newticket.command';
 export { createTicketCommand } from './ticket.command';
+export { createAllTicketsCommand } from './alltickets.command';
+export { createAssignCommand } from './assign.command';
 //# sourceMappingURL=index.d.ts.map

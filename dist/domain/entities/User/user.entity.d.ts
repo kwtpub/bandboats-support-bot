@@ -18,7 +18,7 @@ export declare enum ROLE {
  * @brief Rich Domain Entity пользователя с бизнес-логикой.
  */
 export declare class User {
-    readonly id: number;
+    readonly id: number | null;
     readonly telegramId: string;
     readonly name: string;
     readonly role: ROLE;
@@ -26,13 +26,13 @@ export declare class User {
     /**
      * Создаёт нового пользователя.
      *
-     * @param id - Уникальный идентификатор пользователя.
+     * @param id - Уникальный идентификатор пользователя (null для новых пользователей).
      * @param telegramId - Идентификатор пользователя в Telegram.
      * @param name - Имя пользователя.
      * @param role - Роль пользователя в системе.
      * @param createAt - Дата создания пользователя.
      */
-    constructor(id: number, telegramId: string, name: string, role: ROLE, createAt: Date);
+    constructor(id: number | null, telegramId: string, name: string, role: ROLE, createAt: Date);
     /**
      * Валидация инвариантов пользователя.
      * @throws Error если нарушены бизнес-правила
@@ -165,5 +165,18 @@ export declare class User {
      * @returns true если пользователи имеют одинаковый ID
      */
     equals(other: User): boolean;
+    /**
+     * Получает ID пользователя. Бросает ошибку если пользователь не сохранён в БД.
+     *
+     * @returns ID пользователя
+     * @throws Error если ID равен null
+     */
+    getId(): number;
+    /**
+     * Проверяет, сохранён ли пользователь в БД.
+     *
+     * @returns true если пользователь имеет ID
+     */
+    isPersisted(): boolean;
 }
 //# sourceMappingURL=user.entity.d.ts.map

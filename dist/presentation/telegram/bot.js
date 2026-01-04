@@ -14,6 +14,8 @@ const errors_1 = require("../../infrastructure/errors");
 const commands_1 = require("./commands");
 // Импорт middleware
 const middleware_1 = require("./middleware");
+// Импорт обработчиков callback
+const handlers_1 = require("./handlers");
 /**
  * Создаёт и настраивает Telegram бота
  */
@@ -35,6 +37,11 @@ function createBot(token, userService, ticketService) {
     bot.command('newticket', (0, commands_1.createNewTicketCommand)(ticketService));
     bot.command('cancel', (0, commands_1.createCancelCommand)());
     bot.command('ticket', (0, commands_1.createTicketCommand)(ticketService));
+    // Команды только для администраторов
+    bot.command('alltickets', (0, middleware_1.createAdminMiddleware)(), (0, commands_1.createAllTicketsCommand)(ticketService));
+    bot.command('assign', (0, middleware_1.createAdminMiddleware)(), (0, commands_1.createAssignCommand)(ticketService));
+    // Обработчики callback-запросов
+    bot.action(/^view_ticket_\d+$/, (0, handlers_1.createViewTicketCallbackHandler)(ticketService));
     // Обработчик текстовых сообщений (для создания тикетов)
     bot.on('text', (0, commands_1.createTicketMessageHandler)(ticketService));
     // Глобальный обработчик ошибок (для ошибок вне middleware chain)

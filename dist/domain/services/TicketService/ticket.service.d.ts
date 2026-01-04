@@ -48,6 +48,13 @@ export declare class TicketService {
      */
     getTicketsByAuthor(authorId: number): Promise<Ticket[]>;
     /**
+     * Получает все тикеты по статусу.
+     *
+     * @param status - Статус тикета
+     * @returns Массив тикетов с указанным статусом
+     */
+    getTicketsByStatus(status: TicketStatus): Promise<Ticket[]>;
+    /**
      * Назначает тикет исполнителю.
      * Только администраторы могут назначать тикеты.
      *

@@ -1,4 +1,4 @@
-import { Ticket } from '../../../domain/entities/Ticket/ticket.entity';
+import { Ticket, TicketStatus } from '../../../domain/entities/Ticket/ticket.entity';
 /**
  * @interface TicketRepository
  * @brief Репозиторий агрегата Ticket
@@ -24,5 +24,12 @@ export interface TicketRepository {
      * @return Массив тикетов автора
      */
     findByAuthorId(authorId: number): Promise<Ticket[]>;
+    /**
+     * Возвращает тикеты по статусу.
+     *
+     * @param status Статус тикета
+     * @return Массив тикетов с указанным статусом
+     */
+    findByStatus(status: TicketStatus): Promise<Ticket[]>;
 }
 //# sourceMappingURL=ticket.repository.d.ts.map

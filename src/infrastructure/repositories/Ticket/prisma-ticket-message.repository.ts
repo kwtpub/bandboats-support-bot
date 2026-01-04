@@ -27,21 +27,34 @@ export class PrismaTicketMessageRepository implements TicketMessageRepository {
    * Если сообщение с таким ID существует - обновляет, иначе создаёт новое.
    */
   async save(message: TicketMessage): Promise<void> {
-    await this.prismaClient.ticketMessage.upsert({
-      where: { id: message.id },
-      update: {
-        ticketId: message.ticketId,
-        authorId: message.authorId,
-        content: message.content,
-      },
-      create: {
-        id: message.id,
-        ticketId: message.ticketId,
-        authorId: message.authorId,
-        content: message.content,
-        createdAt: message.createAt,
-      },
-    });
+    // If message has no ID (new message), create without specifying ID
+    if (message.id === null) {
+      await this.prismaClient.ticketMessage.create({
+        data: {
+          ticketId: message.ticketId,
+          authorId: message.authorId,
+          content: message.content,
+          createdAt: message.createAt,
+        },
+      });
+    } else {
+      // If message has ID, use upsert to update or create
+      await this.prismaClient.ticketMessage.upsert({
+        where: { id: message.id },
+        update: {
+          ticketId: message.ticketId,
+          authorId: message.authorId,
+          content: message.content,
+        },
+        create: {
+          id: message.id,
+          ticketId: message.ticketId,
+          authorId: message.authorId,
+          content: message.content,
+          createdAt: message.createAt,
+        },
+      });
+    }
   }
 
   /**

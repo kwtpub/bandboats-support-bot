@@ -66,22 +66,36 @@ let PrismaTicketRepository = class PrismaTicketRepository {
      * Если тикет с таким ID существует - обновляет, иначе создаёт новый.
      */
     async save(ticket) {
-        await this.prismaClient.ticket.upsert({
-            where: { id: ticket.id },
-            update: {
-                authorId: ticket.authorId,
-                assigneeId: ticket.assigneeId,
-                title: ticket.title,
-                status: this.mapDomainStatusToPrisma(ticket.status),
-            },
-            create: {
-                id: ticket.id,
-                authorId: ticket.authorId,
-                assigneeId: ticket.assigneeId,
-                title: ticket.title,
-                status: this.mapDomainStatusToPrisma(ticket.status),
-            },
-        });
+        // If ticket has no ID (new ticket), create without specifying ID
+        if (ticket.id === null) {
+            await this.prismaClient.ticket.create({
+                data: {
+                    authorId: ticket.authorId,
+                    assigneeId: ticket.assigneeId,
+                    title: ticket.title,
+                    status: this.mapDomainStatusToPrisma(ticket.status),
+                },
+            });
+        }
+        else {
+            // If ticket has ID, use upsert to update or create
+            await this.prismaClient.ticket.upsert({
+                where: { id: ticket.id },
+                update: {
+                    authorId: ticket.authorId,
+                    assigneeId: ticket.assigneeId,
+                    title: ticket.title,
+                    status: this.mapDomainStatusToPrisma(ticket.status),
+                },
+                create: {
+                    id: ticket.id,
+                    authorId: ticket.authorId,
+                    assigneeId: ticket.assigneeId,
+                    title: ticket.title,
+                    status: this.mapDomainStatusToPrisma(ticket.status),
+                },
+            });
+        }
     }
     /**
      * Находит тикет по ID вместе со всеми сообщениями.
@@ -101,7 +115,7 @@ let PrismaTicketRepository = class PrismaTicketRepository {
             return null;
         }
         const messages = prismaTicket.messages.map((msg) => new ticketMessage_entity_1.TicketMessage(msg.id, msg.ticketId, msg.authorId, msg.content, msg.createdAt));
-        return new ticket_entity_1.Ticket(prismaTicket.id, prismaTicket.authorId, prismaTicket.assigneeId ?? 0, prismaTicket.title, messages, this.mapPrismaStatusToDomain(prismaTicket.status));
+        return new ticket_entity_1.Ticket(prismaTicket.id, prismaTicket.authorId, prismaTicket.assigneeId, prismaTicket.title, messages, this.mapPrismaStatusToDomain(prismaTicket.status));
     }
     /**
      * Находит все тикеты автора с сообщениями.
@@ -122,7 +136,29 @@ let PrismaTicketRepository = class PrismaTicketRepository {
         });
         return prismaTickets.map((prismaTicket) => {
             const messages = prismaTicket.messages.map((msg) => new ticketMessage_entity_1.TicketMessage(msg.id, msg.ticketId, msg.authorId, msg.content, msg.createdAt));
-            return new ticket_entity_1.Ticket(prismaTicket.id, prismaTicket.authorId, prismaTicket.assigneeId ?? 0, prismaTicket.title, messages, this.mapPrismaStatusToDomain(prismaTicket.status));
+            return new ticket_entity_1.Ticket(prismaTicket.id, prismaTicket.authorId, prismaTicket.assigneeId, prismaTicket.title, messages, this.mapPrismaStatusToDomain(prismaTicket.status));
+        });
+    }
+    /**
+     * Находит все тикеты по статусу.
+     */
+    async findByStatus(status) {
+        const prismaTickets = await this.prismaClient.ticket.findMany({
+            where: { status: this.mapDomainStatusToPrisma(status) },
+            include: {
+                messages: {
+                    orderBy: {
+                        createdAt: 'asc',
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+        return prismaTickets.map((prismaTicket) => {
+            const messages = prismaTicket.messages.map((msg) => new ticketMessage_entity_1.TicketMessage(msg.id, msg.ticketId, msg.authorId, msg.content, msg.createdAt));
+            return new ticket_entity_1.Ticket(prismaTicket.id, prismaTicket.authorId, prismaTicket.assigneeId, prismaTicket.title, messages, this.mapPrismaStatusToDomain(prismaTicket.status));
         });
     }
 };

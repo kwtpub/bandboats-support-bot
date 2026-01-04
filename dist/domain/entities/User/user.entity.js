@@ -25,7 +25,7 @@ class User {
     /**
      * Создаёт нового пользователя.
      *
-     * @param id - Уникальный идентификатор пользователя.
+     * @param id - Уникальный идентификатор пользователя (null для новых пользователей).
      * @param telegramId - Идентификатор пользователя в Telegram.
      * @param name - Имя пользователя.
      * @param role - Роль пользователя в системе.
@@ -53,7 +53,8 @@ class User {
         if (!this.telegramId || this.telegramId.trim().length === 0) {
             throw new errors_1.ValidationError('Telegram ID cannot be empty', 'telegramId');
         }
-        if (this.id <= 0) {
+        // ID can be null for new users (before saving to DB)
+        if (this.id !== null && this.id <= 0) {
             throw new errors_1.ValidationError('Invalid user ID', 'id', this.id);
         }
     }
@@ -91,6 +92,9 @@ class User {
      * @returns true если пользователь может управлять тикетом
      */
     canManageTicket(ticket) {
+        if (this.id === null) {
+            return false; // User without ID cannot manage tickets
+        }
         if (this.isAdmin()) {
             return true;
         }
@@ -114,6 +118,9 @@ class User {
      * @returns true если пользователь может закрыть тикет
      */
     canCloseTicket(ticket) {
+        if (this.id === null) {
+            return false; // User without ID cannot close tickets
+        }
         if (this.isAdmin()) {
             return true;
         }
@@ -128,6 +135,9 @@ class User {
      * @returns true если пользователь может просматривать тикет
      */
     canViewTicket(ticket) {
+        if (this.id === null) {
+            return false; // User without ID cannot view tickets
+        }
         if (this.isAdmin()) {
             return true;
         }
@@ -151,6 +161,9 @@ class User {
      * @returns true если пользователь может добавлять сообщения
      */
     canAddMessageToTicket(ticket) {
+        if (this.id === null) {
+            return false; // User without ID cannot add messages
+        }
         if (this.isAdmin()) {
             return true;
         }
@@ -231,7 +244,7 @@ class User {
      * @returns true если ID совпадает
      */
     hasId(userId) {
-        return this.id === userId;
+        return this.id !== null && this.id === userId;
     }
     /**
      * Проверяет равенство двух пользователей по ID.
@@ -240,7 +253,27 @@ class User {
      * @returns true если пользователи имеют одинаковый ID
      */
     equals(other) {
-        return this.id === other.id;
+        return this.id !== null && other.id !== null && this.id === other.id;
+    }
+    /**
+     * Получает ID пользователя. Бросает ошибку если пользователь не сохранён в БД.
+     *
+     * @returns ID пользователя
+     * @throws Error если ID равен null
+     */
+    getId() {
+        if (this.id === null) {
+            throw new errors_1.ValidationError('User must be saved to database before accessing ID', 'id');
+        }
+        return this.id;
+    }
+    /**
+     * Проверяет, сохранён ли пользователь в БД.
+     *
+     * @returns true если пользователь имеет ID
+     */
+    isPersisted() {
+        return this.id !== null;
     }
 }
 exports.User = User;
