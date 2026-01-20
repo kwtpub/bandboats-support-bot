@@ -37,7 +37,7 @@ export function createEditTitleCallbackHandler(ticketService: TicketService) {
       // Проверяем права доступа
       const canView = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
       if (!canView) {
-        await ctx.answerCbQuery('⛔️ У вас нет доступа к этому тикету');
+        await ctx.answerCbQuery('⛔️ У вас нет доступа к этой проблеме');
         return;
       }
 
@@ -45,7 +45,7 @@ export function createEditTitleCallbackHandler(ticketService: TicketService) {
       ctx.session.editingTicketId = ticketId;
       ctx.session.editingField = 'title';
 
-      const message = `✏️ *Редактирование заголовка тикета #${ticketId}*\n\nВведите новый заголовок тикета:`;
+      const message = `✏️ *Редактирование заголовка проблемы #${ticketId}*\n\nВведите новый заголовок проблемы:`;
 
       const backButton = Markup.inlineKeyboard([
         [Markup.button.callback('◀️ Отмена', `view_ticket_${ticketId}`)],
@@ -100,7 +100,7 @@ export function createEditDescriptionCallbackHandler(ticketService: TicketServic
       // Проверяем права доступа
       const canView = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
       if (!canView) {
-        await ctx.answerCbQuery('⛔️ У вас нет доступа к этому тикету');
+        await ctx.answerCbQuery('⛔️ У вас нет доступа к этой проблеме');
         return;
       }
 
@@ -108,7 +108,7 @@ export function createEditDescriptionCallbackHandler(ticketService: TicketServic
       ctx.session.editingTicketId = ticketId;
       ctx.session.editingField = 'description';
 
-      const message = `📝 *Редактирование описания тикета #${ticketId}*\n\nВведите новое описание тикета:`;
+      const message = `📝 *Редактирование описания проблемы #${ticketId}*\n\nВведите новое описание проблемы:`;
 
       const backButton = Markup.inlineKeyboard([
         [Markup.button.callback('◀️ Отмена', `view_ticket_${ticketId}`)],
@@ -163,19 +163,19 @@ export function createCloseTicketCallbackHandler(ticketService: TicketService) {
       // Проверяем права доступа
       const canView = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
       if (!canView) {
-        await ctx.answerCbQuery('⛔️ У вас нет доступа к этому тикету');
+        await ctx.answerCbQuery('⛔️ У вас нет доступа к этой проблеме');
         return;
       }
 
       // Закрываем тикет
       await ticketService.closeTicket(ticketId, ctx.dbUser.getId());
 
-      await ctx.answerCbQuery('✅ Тикет закрыт');
+      await ctx.answerCbQuery('✅ Проблема закрыта');
 
-      const message = `✅ *Тикет #${ticketId} закрыт*\n\nТикет успешно закрыт.`;
+      const message = `✅ *Проблема #${ticketId} закрыта*\n\nПроблема успешно закрыта.`;
 
       const backButton = Markup.inlineKeyboard([
-        [Markup.button.callback('◀️ К моим тикетам', 'start_mytickets')],
+        [Markup.button.callback('◀️ К моим проблемам', 'start_mytickets')],
       ]);
 
       if (ctx.callbackQuery && 'message' in ctx.callbackQuery && ctx.callbackQuery.message) {

@@ -46,7 +46,7 @@ export function createStartCommand(userService: UserService) {
 
 Я бот техподдержки. Здесь вы можете получить помощь по любым вопросам.
 
-Используйте кнопку ниже для создания тикета:
+Используйте кнопку ниже для сообщения о проблеме:
         `.trim();
       }
 
@@ -54,13 +54,13 @@ export function createStartCommand(userService: UserService) {
       let keyboard;
       if (dbUser.isAdmin()) {
         keyboard = Markup.inlineKeyboard([
-          [Markup.button.callback('📂 Открытые тикеты', 'admin_open_tickets')],
+          [Markup.button.callback('📂 Открытые проблемы', 'admin_open_tickets')],
           [Markup.button.callback('📋 Мои назначенные', 'admin_assigned_to_me')],
         ]);
       } else {
         keyboard = Markup.inlineKeyboard([
-          [Markup.button.callback('📝 Новый тикет', 'start_newticket')],
-          [Markup.button.callback('📋 Мои тикеты', 'start_mytickets')],
+          [Markup.button.callback('📝 Новая проблема', 'start_newticket')],
+          [Markup.button.callback('📋 Мои проблемы', 'start_mytickets')],
         ]);
       }
 

@@ -80,11 +80,29 @@ npm run dev
 
 1. Установите Docker и Docker Compose на VPS
 2. Клонируйте репозиторий
-3. Настройте `.env` файл
+3. Создайте `.env` файл с необходимыми переменными (см. раздел "Переменные окружения")
 4. Запустите:
 
 ```bash
+# Первый запуск (сборка образов)
 docker-compose up --build -d
+
+# Последующие запуски
+docker-compose up -d
+```
+
+**Переменные окружения для `.env`:**
+```bash
+# Обязательные
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+POSTGRES_USER=bandboats
+POSTGRES_PASSWORD=changeme
+POSTGRES_DB=bandboats_support
+
+# Опциональные (есть значения по умолчанию)
+NODE_ENV=production
+LOG_LEVEL=info
+PORT=3000
 ```
 
 ### Подробные инструкции
@@ -114,13 +132,120 @@ npx prisma generate       # Сгенерировать Prisma Client
 ```
 
 ### Docker
+
+#### Основные команды
 ```bash
-./deploy.sh                # Развернуть бота
-docker-compose up -d       # Запустить контейнеры
-docker-compose logs -f bot # Посмотреть логи
-docker-compose restart bot # Перезапустить бота
-docker-compose down        # Остановить контейнеры
-./backup.sh                # Создать бэкап БД
+# Запуск (первый раз с пересборкой)
+docker-compose up --build -d
+
+# Запуск (обычный)
+docker-compose up -d
+
+# Остановка
+docker-compose down
+
+# Остановка с удалением volumes (⚠️ удалит данные БД)
+docker-compose down -v
+
+# Перезапуск всех сервисов
+docker-compose restart
+
+# Перезапуск только сервера
+docker-compose restart server
+```
+
+#### Логи
+```bash
+# Логи всех сервисов в реальном времени
+docker-compose logs -f
+
+# Логи только сервера
+docker-compose logs -f server
+
+# Логи только базы данных
+docker-compose logs -f postgres
+
+# Последние 100 строк логов сервера
+docker-compose logs --tail=100 server
+```
+
+#### Состояние и диагностика
+```bash
+# Статус контейнеров
+docker-compose ps
+
+# Использование ресурсов
+docker stats
+
+# Зайти внутрь контейнера сервера
+docker-compose exec server sh
+
+# Зайти в базу данных
+docker-compose exec postgres psql -U bandboats -d bandboats_support
+
+# Проверить подключение к БД из контейнера сервера
+docker-compose exec server psql postgresql://bandboats:changeme@postgres:5432/bandboats_support -c "SELECT version();"
+```
+
+#### Управление базой данных
+```bash
+# Запустить Prisma миграции вручную
+docker-compose exec server npx prisma migrate deploy
+
+# Открыть Prisma Studio (нужен доступ к портам)
+docker-compose exec server npx prisma studio
+
+# Создать бэкап БД
+docker-compose exec postgres pg_dump -U bandboats bandboats_support > backup.sql
+
+# Восстановить из бэкапа
+docker-compose exec -T postgres psql -U bandboats bandboats_support < backup.sql
+```
+
+#### Выдача админских прав
+
+**Быстрый способ (рекомендуется):**
+```bash
+# Используйте готовый скрипт (замените YOUR_TELEGRAM_ID на ваш ID)
+./make-admin.sh YOUR_TELEGRAM_ID
+```
+
+**Ручной способ через SQL:**
+```bash
+# 1. Найти свой Telegram ID (можно получить у @userinfobot в Telegram)
+# Или посмотреть всех пользователей в базе:
+docker-compose exec postgres psql -U bandboats -d bandboats_support -c "SELECT id, telegram_id, name, role FROM users;"
+
+# 2. Выдать админку по Telegram ID (замените YOUR_TELEGRAM_ID на ваш ID)
+docker-compose exec postgres psql -U bandboats -d bandboats_support -c "UPDATE users SET role = 'ADMIN' WHERE telegram_id = 'YOUR_TELEGRAM_ID';"
+
+# 3. Проверить результат
+docker-compose exec postgres psql -U bandboats -d bandboats_support -c "SELECT id, telegram_id, name, role FROM users WHERE telegram_id = 'YOUR_TELEGRAM_ID';"
+
+# Или интерактивный режим PostgreSQL:
+docker-compose exec postgres psql -U bandboats -d bandboats_support
+# Затем выполните SQL:
+# UPDATE users SET role = 'ADMIN' WHERE telegram_id = 'YOUR_TELEGRAM_ID';
+# SELECT * FROM users WHERE telegram_id = 'YOUR_TELEGRAM_ID';
+```
+
+**Как узнать свой Telegram ID:**
+1. Напишите боту @userinfobot в Telegram — он покажет ваш ID
+2. Или сначала напишите боту этого проекта (`/start`), затем посмотрите в базе:
+   ```bash
+   docker-compose exec postgres psql -U bandboats -d bandboats_support -c "SELECT * FROM users ORDER BY created_at DESC LIMIT 5;"
+   ```
+
+#### Пересборка и обновление
+```bash
+# Пересобрать только сервер
+docker-compose build server
+
+# Пересобрать и перезапустить сервер
+docker-compose up -d --build server
+
+# Очистить неиспользуемые образы и контейнеры
+docker system prune -a
 ```
 
 ## Структура проекта
@@ -156,6 +281,32 @@ bandboats-support-bot/
 - **Domain Layer**: Rich Domain Model с бизнес-логикой
 - **Infrastructure Layer**: Работа с БД, внешними сервисами
 - **Presentation Layer**: Telegram интерфейс, команды, обработчики
+
+## Переменные окружения
+
+Полный список переменных для файла `.env`:
+
+### Обязательные
+- `TELEGRAM_BOT_TOKEN` - токен Telegram бота от @BotFather
+- `POSTGRES_USER` - пользователь PostgreSQL (по умолчанию: `bandboats`)
+- `POSTGRES_PASSWORD` - пароль PostgreSQL (⚠️ обязательно измените!)
+- `POSTGRES_DB` - имя базы данных (по умолчанию: `bandboats_support`)
+
+### Опциональные
+- `NODE_ENV` - окружение: `development`, `production`, `test` (по умолчанию: `development`)
+- `LOG_LEVEL` - уровень логирования: `error`, `warn`, `info`, `debug` (по умолчанию: `info`)
+- `PORT` - порт приложения (по умолчанию: `3000`)
+- `POSTGRES_PORT` - порт PostgreSQL (по умолчанию: `5432`)
+
+**Пример `.env` для Docker:**
+```bash
+TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+POSTGRES_USER=bandboats
+POSTGRES_PASSWORD=secure_password_here
+POSTGRES_DB=bandboats_support
+NODE_ENV=production
+LOG_LEVEL=info
+```
 
 ## Команды бота
 

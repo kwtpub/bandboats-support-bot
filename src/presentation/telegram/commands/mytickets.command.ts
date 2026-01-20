@@ -60,12 +60,12 @@ export function createMyTicketsCommand(ticketService: TicketService) {
       const tickets = await ticketService.getTicketsByAuthor(ctx.dbUser.getId());
 
       if (tickets.length === 0) {
-        await ctx.reply('📋 У вас пока нет тикетов.\n\nСоздайте новый тикет командой /newticket');
+        await ctx.reply('📋 У вас пока нет проблем.\n\nСообщите о новой проблеме командой /newticket');
         return;
       }
 
       // Формируем сообщение
-      let message = `📋 *Ваши тикеты (${tickets.length}):*\n\n💡 Выберите тикет для просмотра:`;
+      let message = `📋 *Ваши проблемы (${tickets.length}):*\n\n💡 Выберите проблему для просмотра:`;
 
       // Создаем inline-кнопки для каждого тикета
       const buttons = tickets.map((ticket) => {

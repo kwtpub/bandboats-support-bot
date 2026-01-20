@@ -31,7 +31,7 @@ export function createAdminCommand() {
       const message = `🔐 *Админ-панель*\n\nВыберите действие:`;
 
       const keyboard = Markup.inlineKeyboard([
-        [Markup.button.callback('📂 Открытые тикеты', 'admin_open_tickets')],
+        [Markup.button.callback('📂 Открытые проблемы', 'admin_open_tickets')],
       ]);
 
       await ctx.reply(message, { parse_mode: 'Markdown', ...keyboard });

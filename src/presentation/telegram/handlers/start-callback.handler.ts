@@ -34,11 +34,11 @@ export function createBackToMenuCallbackHandler() {
 
 Я бот техподдержки. Здесь вы можете получить помощь по любым вопросам.
 
-Используйте кнопку ниже для создания тикета:`;
+Используйте кнопку ниже для сообщения о проблеме:`;
 
       const keyboard = Markup.inlineKeyboard([
-        [Markup.button.callback('📝 Новый тикет', 'start_newticket')],
-        [Markup.button.callback('📋 Мои тикеты', 'start_mytickets')],
+        [Markup.button.callback('📝 Новая проблема', 'start_newticket')],
+        [Markup.button.callback('📋 Мои проблемы', 'start_mytickets')],
       ]);
 
       await ctx.answerCbQuery();
@@ -84,9 +84,9 @@ export function createMyTicketsCallbackHandler(ticketService: TicketService) {
 
       if (tickets.length === 0) {
         const message =
-          '📋 У вас пока нет тикетов.\n\nИспользуйте кнопку ниже для создания нового тикета:';
+          '📋 У вас пока нет проблем.\n\nИспользуйте кнопку ниже для сообщения о новой проблеме:';
         const keyboard = Markup.inlineKeyboard([
-          [Markup.button.callback('📝 Новый тикет', 'start_newticket')],
+          [Markup.button.callback('📝 Новая проблема', 'start_newticket')],
           [Markup.button.callback('◀️ Назад', 'ticket_back_to_menu')],
         ]);
 
@@ -130,7 +130,7 @@ export function createMyTicketsCallbackHandler(ticketService: TicketService) {
         }
       };
 
-      let message = `📋 *Ваши тикеты (${tickets.length}):*\n\n💡 Выберите тикет для просмотра:`;
+      let message = `📋 *Ваши проблемы (${tickets.length}):*\n\n💡 Выберите проблему для просмотра:`;
 
       // Создаем inline-кнопки для каждого тикета
       const buttons = tickets.map((ticket) => {
@@ -189,9 +189,9 @@ export function createBackToTitleCallbackHandler() {
         ctx.session.ticketTitle = undefined;
       }
 
-      const message = `📝 *Создание нового тикета*
+      const message = `📝 *Сообщить о проблеме*
 
-Шаг 1 из 2: Введите заголовок тикета`;
+Шаг 1 из 2: Введите заголовок проблемы`;
 
       const backButton = Markup.inlineKeyboard([
         [Markup.button.callback('◀️ Назад', 'ticket_back_to_menu')],
@@ -240,9 +240,9 @@ export function createNewTicketCallbackHandler() {
         ctx.session.ticketTitle = undefined;
       }
 
-      const message = `📝 *Создание нового тикета*
+      const message = `📝 *Сообщить о проблеме*
 
-Шаг 1 из 2: Введите заголовок тикета`;
+Шаг 1 из 2: Введите заголовок проблемы`;
 
       const backButton = Markup.inlineKeyboard([
         [Markup.button.callback('◀️ Назад', 'ticket_back_to_menu')],

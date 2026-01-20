@@ -60,31 +60,31 @@ export function createTicketCommand(ticketService: TicketService) {
 
       if (args.length === 0) {
         await ctx.reply(
-          '⚠️ Укажите ID тикета.\n\n' +
+          '⚠️ Укажите ID проблемы.\n\n' +
             'Использование: /ticket <ID>\n' +
             'Пример: /ticket 5\n\n' +
-            '💡 Или используйте /mytickets для просмотра ваших тикетов с кнопками',
+            '💡 Или используйте /mytickets для просмотра ваших проблем с кнопками',
         );
         return;
       }
 
       const ticketId = parseInt(args[0], 10);
       if (isNaN(ticketId)) {
-        await ctx.reply('❌ Некорректный ID тикета. Используйте число.');
+        await ctx.reply('❌ Некорректный ID проблемы. Используйте число.');
         return;
       }
 
       // Получаем тикет
       const ticket = await ticketService.getTicketById(ticketId);
       if (!ticket) {
-        await ctx.reply(`❌ Тикет #${ticketId} не найден.`);
+        await ctx.reply(`❌ Проблема #${ticketId} не найдена.`);
         return;
       }
 
       // Проверяем права доступа
       const canView = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
       if (!canView) {
-        await ctx.reply('⛔️ У вас нет доступа к этому тикету.');
+        await ctx.reply('⛔️ У вас нет доступа к этой проблеме.');
         return;
       }
 
@@ -92,7 +92,7 @@ export function createTicketCommand(ticketService: TicketService) {
       const statusEmoji = getStatusEmoji(ticket.status);
       const statusText = getStatusText(ticket.status);
 
-      let message = `${statusEmoji} *Тикет #${ticket.id}*\n\n`;
+      let message = `${statusEmoji} *Проблема #${ticket.id}*\n\n`;
       message += `📝 *Заголовок:* ${ticket.title}\n`;
       message += `📊 *Статус:* ${statusText}\n`;
       message += `👤 *Автор:* ID ${ticket.authorId}\n`;
@@ -120,7 +120,7 @@ export function createTicketCommand(ticketService: TicketService) {
 
         const canClose = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
         if (canClose) {
-          message += `✅ Закрыть тикет: /close ${ticketId}\n`;
+          message += `✅ Закрыть проблему: /close ${ticketId}\n`;
         }
       }
 

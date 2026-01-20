@@ -134,7 +134,7 @@ export function createBot(
   bot.action(/^user_close_ticket_\d+$/, createUserCloseTicketCallbackHandler(ticketService));
   bot.action('user_cancel_reply', createUserCancelReplyCallbackHandler());
 
-  // Обработчик текстовых сообщений (для создания тикетов)
+  // Обработчик текстовых сообщений (для сообщения о проблемах)
   bot.on('text', createTicketMessageHandler(ticketService, userService));
 
   // Глобальный обработчик ошибок (для ошибок вне middleware chain)

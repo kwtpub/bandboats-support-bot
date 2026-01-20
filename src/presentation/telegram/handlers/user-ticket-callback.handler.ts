@@ -31,18 +31,18 @@ export function createUserReplyTicketCallbackHandler(ticketService: TicketServic
 
       const ticket = await ticketService.getTicketById(ticketId);
       if (!ticket) {
-        await ctx.answerCbQuery('❌ Тикет не найден');
+        await ctx.answerCbQuery('❌ Проблема не найдена');
         return;
       }
 
       // Проверяем, что пользователь является автором тикета
       if (ticket.authorId !== ctx.dbUser.getId()) {
-        await ctx.answerCbQuery('❌ Это не ваш тикет');
+        await ctx.answerCbQuery('❌ Это не ваша проблема');
         return;
       }
 
       if (ticket.isClosed()) {
-        await ctx.answerCbQuery('❌ Тикет уже закрыт');
+        await ctx.answerCbQuery('❌ Проблема уже закрыта');
         return;
       }
 
@@ -53,7 +53,7 @@ export function createUserReplyTicketCallbackHandler(ticketService: TicketServic
       ctx.session.awaitingTicket = true;
       ctx.session.ticketStep = 'description';
 
-      const message = `💬 *Ответ на тикет #${ticketId}*\n\n📝 Напишите ваше сообщение:`;
+      const message = `💬 *Ответ на проблему #${ticketId}*\n\n📝 Напишите ваше сообщение:`;
 
       const keyboard = Markup.inlineKeyboard([
         [Markup.button.callback('❌ Отмена', 'user_cancel_reply')],
@@ -97,27 +97,27 @@ export function createUserCloseTicketCallbackHandler(ticketService: TicketServic
 
       const ticket = await ticketService.getTicketById(ticketId);
       if (!ticket) {
-        await ctx.answerCbQuery('❌ Тикет не найден');
+        await ctx.answerCbQuery('❌ Проблема не найдена');
         return;
       }
 
       // Проверяем, что пользователь является автором тикета
       if (ticket.authorId !== ctx.dbUser.getId()) {
-        await ctx.answerCbQuery('❌ Это не ваш тикет');
+        await ctx.answerCbQuery('❌ Это не ваша проблема');
         return;
       }
 
       if (ticket.isClosed()) {
-        await ctx.answerCbQuery('Тикет уже закрыт');
+        await ctx.answerCbQuery('Проблема уже закрыта');
         return;
       }
 
       // Закрываем тикет
       await ticketService.closeTicket(ticketId, ctx.dbUser.getId());
 
-      await ctx.answerCbQuery('✅ Тикет закрыт');
+      await ctx.answerCbQuery('✅ Проблема закрыта');
 
-      const message = `✅ *Тикет #${ticketId} закрыт*\n\n📌 *${ticket.title}*\n\nТикет успешно закрыт.`;
+      const message = `✅ *Проблема #${ticketId} закрыта*\n\n📌 *${ticket.title}*\n\nПроблема успешно закрыта.`;
 
       try {
         await ctx.editMessageText(message, { parse_mode: 'Markdown' });

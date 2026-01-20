@@ -35,7 +35,7 @@ export function createAdminOpenTicketsCallbackHandler(ticketService: TicketServi
 
       if (tickets.length === 0) {
         await ctx.answerCbQuery();
-        const message = '📂 *Открытые тикеты*\n\nНет открытых тикетов.';
+        const message = '📂 *Открытые проблемы*\n\nНет открытых проблем.';
 
         try {
           await ctx.editMessageText(message, { parse_mode: 'Markdown' });
@@ -113,11 +113,11 @@ async function showOpenTicketsPage(
   const endIndex = Math.min(startIndex + TICKETS_PER_PAGE, tickets.length);
   const pageTickets = tickets.slice(startIndex, endIndex);
 
-  let message = `📂 *Открытые тикеты*\n\n`;
+  let message = `📂 *Открытые проблемы*\n\n`;
   message += `Страница ${page + 1} из ${totalPages}\n`;
-  message += `Всего открытых тикетов: ${tickets.length}\n\n`;
+  message += `Всего открытых проблем: ${tickets.length}\n\n`;
 
-  // Создаём кнопки для каждого тикета на странице
+  // Создаём кнопки для каждой проблемы на странице
   const ticketButtons = pageTickets.map((ticket) => [
     Markup.button.callback(`${ticket.title}`, `admin_view_ticket_${ticket.getId()}`),
   ]);
@@ -181,7 +181,7 @@ export function createAdminPanelCallbackHandler() {
       const message = `🔐 *Админ-панель*\n\nВыберите действие:`;
 
       const keyboard = Markup.inlineKeyboard([
-        [Markup.button.callback('📂 Открытые тикеты', 'admin_open_tickets')],
+        [Markup.button.callback('📂 Открытые проблемы', 'admin_open_tickets')],
         [Markup.button.callback('📋 Мои назначенные', 'admin_assigned_to_me')],
       ]);
 
@@ -229,7 +229,7 @@ export function createAdminAssignedToMeCallbackHandler(ticketService: TicketServ
 
       if (myTickets.length === 0) {
         await ctx.answerCbQuery();
-        const message = '📋 *Мои назначенные*\n\nУ вас нет назначенных тикетов.';
+        const message = '📋 *Мои назначенные*\n\nУ вас нет назначенных проблем.';
 
         const keyboard = Markup.inlineKeyboard([
           [Markup.button.callback('◀️ Назад к админ-панели', 'admin_panel')],
@@ -267,9 +267,9 @@ async function showAssignedToMePage(ctx: BotContext, tickets: any[], page: numbe
 
   let message = `📋 *Мои назначенные*\n\n`;
   message += `Страница ${page + 1} из ${totalPages}\n`;
-  message += `Всего назначенных тикетов: ${tickets.length}\n\n`;
+  message += `Всего назначенных проблем: ${tickets.length}\n\n`;
 
-  // Создаём кнопки для каждого тикета на странице
+  // Создаём кнопки для каждой проблемы на странице
   const ticketButtons = pageTickets.map((ticket) => [
     Markup.button.callback(`${ticket.title}`, `admin_view_ticket_${ticket.getId()}`),
   ]);
@@ -375,7 +375,7 @@ export function createAdminAssignSelfCallbackHandler(ticketService: TicketServic
       // Назначаем тикет себе
       await ticketService.assignTicket(ticketId, ctx.dbUser.getId(), ctx.dbUser.getId());
 
-      await ctx.answerCbQuery('✅ Тикет назначен вам');
+      await ctx.answerCbQuery('✅ Проблема назначена вам');
 
       // Получаем обновленный тикет
       const ticket = await ticketService.getTicketById(ticketId);
@@ -387,7 +387,7 @@ export function createAdminAssignSelfCallbackHandler(ticketService: TicketServic
       const statusEmoji = ticket.isOpen() ? '🆕' : ticket.isInProgress() ? '🔄' : '✅';
       const statusText = ticket.isOpen() ? 'Открыт' : ticket.isInProgress() ? 'В работе' : 'Закрыт';
 
-      let message = `${statusEmoji} *Тикет #${ticket.getId()}*\n\n`;
+      let message = `${statusEmoji} *Проблема #${ticket.getId()}*\n\n`;
       message += `📌 *Заголовок:* ${ticket.title}\n`;
       message += `📊 *Статус:* ${statusText}\n`;
       message += `💬 *Сообщений:* ${ticket.getMessageCount()}\n`;
@@ -458,13 +458,13 @@ export function createAdminReplyTicketCallbackHandler(ticketService: TicketServi
 
       const ticket = await ticketService.getTicketById(ticketId);
       if (!ticket) {
-        await ctx.answerCbQuery('❌ Тикет не найден');
+        await ctx.answerCbQuery('❌ Проблема не найдена');
         return;
       }
 
       // Проверяем, что тикет назначен текущему админу
       if (ticket.assigneeId !== ctx.dbUser.getId()) {
-        await ctx.answerCbQuery('❌ Этот тикет назначен другому администратору');
+        await ctx.answerCbQuery('❌ Эта проблема назначена другому администратору');
         return;
       }
 
@@ -473,7 +473,7 @@ export function createAdminReplyTicketCallbackHandler(ticketService: TicketServi
       // Устанавливаем режим ответа на тикет
       ctx.session.replyingToTicketId = ticketId;
 
-      const message = `💬 *Ответ на тикет #${ticketId}*\n\n📝 Напишите ваш ответ:`;
+      const message = `💬 *Ответ на проблему #${ticketId}*\n\n📝 Напишите ваш ответ:`;
 
       const keyboard = Markup.inlineKeyboard([
         [Markup.button.callback('❌ Отмена', 'admin_cancel_reply')],
@@ -512,7 +512,7 @@ export function createAdminCancelReplyCallbackHandler() {
       const message = `🔐 *Админ-панель*\n\nВыберите действие:`;
 
       const keyboard = Markup.inlineKeyboard([
-        [Markup.button.callback('📂 Открытые тикеты', 'admin_open_tickets')],
+        [Markup.button.callback('📂 Открытые проблемы', 'admin_open_tickets')],
         [Markup.button.callback('📋 Мои назначенные', 'admin_assigned_to_me')],
       ]);
 
@@ -555,21 +555,21 @@ export function createAdminCloseTicketCallbackHandler(ticketService: TicketServi
 
       const ticket = await ticketService.getTicketById(ticketId);
       if (!ticket) {
-        await ctx.answerCbQuery('❌ Тикет не найден');
+        await ctx.answerCbQuery('❌ Проблема не найдена');
         return;
       }
 
       if (ticket.isClosed()) {
-        await ctx.answerCbQuery('Тикет уже закрыт');
+        await ctx.answerCbQuery('Проблема уже закрыта');
         return;
       }
 
       // Закрываем тикет
       await ticketService.closeTicket(ticketId, ctx.dbUser.getId());
 
-      await ctx.answerCbQuery('✅ Тикет закрыт');
+      await ctx.answerCbQuery('✅ Проблема закрыта');
 
-      const message = `✅ *Тикет #${ticketId} закрыт*\n\n📌 *${ticket.title}*\n\nТикет успешно закрыт.`;
+      const message = `✅ *Проблема #${ticketId} закрыта*\n\n📌 *${ticket.title}*\n\nПроблема успешно закрыта.`;
 
       const keyboard = Markup.inlineKeyboard([
         [Markup.button.callback('◀️ К моим назначенным', 'admin_assigned_to_me')],
@@ -618,7 +618,7 @@ export function createAdminViewTicketCallbackHandler(ticketService: TicketServic
 
       const ticket = await ticketService.getTicketById(ticketId);
       if (!ticket) {
-        await ctx.answerCbQuery('❌ Тикет не найден');
+        await ctx.answerCbQuery('❌ Проблема не найдена');
         return;
       }
 
@@ -628,7 +628,7 @@ export function createAdminViewTicketCallbackHandler(ticketService: TicketServic
       const statusEmoji = ticket.isOpen() ? '🆕' : ticket.isInProgress() ? '🔄' : '✅';
       const statusText = ticket.isOpen() ? 'Открыт' : ticket.isInProgress() ? 'В работе' : 'Закрыт';
 
-      let message = `${statusEmoji} *Тикет #${ticket.getId()}*\n\n`;
+      let message = `${statusEmoji} *Проблема #${ticket.getId()}*\n\n`;
       message += `📌 *Заголовок:* ${ticket.title}\n`;
       message += `📊 *Статус:* ${statusText}\n`;
       message += `💬 *Сообщений:* ${ticket.getMessageCount()}\n`;
@@ -657,10 +657,10 @@ export function createAdminViewTicketCallbackHandler(ticketService: TicketServic
       // Если тикет назначен текущему админу, показываем кнопку "Ответить"
       if (ticket.assigneeId === ctx.dbUser.getId() && !ticket.isClosed()) {
         buttons.push([
-          Markup.button.callback('💬 Ответить на тикет', `admin_reply_ticket_${ticketId}`),
+          Markup.button.callback('💬 Ответить на проблему', `admin_reply_ticket_${ticketId}`),
         ]);
         buttons.push([
-          Markup.button.callback('✅ Закрыть тикет', `admin_close_ticket_${ticketId}`),
+          Markup.button.callback('✅ Закрыть проблему', `admin_close_ticket_${ticketId}`),
         ]);
       } else if (ticket.isOpen() || ticket.isInProgress()) {
         // Если не назначен, показываем кнопку "Назначить себе"

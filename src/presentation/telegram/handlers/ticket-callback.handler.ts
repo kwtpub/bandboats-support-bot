@@ -71,14 +71,14 @@ export function createViewTicketCallbackHandler(ticketService: TicketService) {
       // Получаем тикет
       const ticket = await ticketService.getTicketById(ticketId);
       if (!ticket) {
-        await ctx.answerCbQuery(`❌ Тикет #${ticketId} не найден`);
+        await ctx.answerCbQuery(`❌ Проблема #${ticketId} не найдена`);
         return;
       }
 
       // Проверяем права доступа
       const canView = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
       if (!canView) {
-        await ctx.answerCbQuery('⛔️ У вас нет доступа к этому тикету');
+        await ctx.answerCbQuery('⛔️ У вас нет доступа к этой проблеме');
         return;
       }
 
@@ -86,7 +86,7 @@ export function createViewTicketCallbackHandler(ticketService: TicketService) {
       const statusEmoji = getStatusEmoji(ticket.status);
       const statusText = getStatusText(ticket.status);
 
-      let message = `${statusEmoji} *Тикет #${ticket.id}*\n\n`;
+      let message = `${statusEmoji} *Проблема #${ticket.id}*\n\n`;
       message += `📝 *Заголовок:* ${ticket.title}\n`;
       message += `📊 *Статус:* ${statusText}\n`;
       message += `👤 *Автор:* ID ${ticket.authorId}\n`;
@@ -125,7 +125,7 @@ export function createViewTicketCallbackHandler(ticketService: TicketService) {
         // Кнопка закрытия тикета
         const canClose = await ticketService.canUserViewTicket(ticketId, ctx.dbUser.getId());
         if (canClose) {
-          buttons.push([Markup.button.callback('✅ Закрыть тикет', `close_ticket_${ticketId}`)]);
+          buttons.push([Markup.button.callback('✅ Закрыть проблему', `close_ticket_${ticketId}`)]);
         }
       }
 

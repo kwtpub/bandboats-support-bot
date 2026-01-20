@@ -39,7 +39,7 @@ export function createAssignCommand(ticketService: TicketService) {
       const assigneeId = parseInt(args[1], 10);
 
       if (isNaN(ticketId) || isNaN(assigneeId)) {
-        await ctx.reply('❌ ID тикета и ID пользователя должны быть числами.');
+        await ctx.reply('❌ ID проблемы и ID пользователя должны быть числами.');
         return;
       }
 
@@ -47,8 +47,8 @@ export function createAssignCommand(ticketService: TicketService) {
       const ticket = await ticketService.assignTicket(ticketId, assigneeId, ctx.dbUser.getId());
 
       await ctx.reply(
-        `✅ *Тикет успешно назначен!*\n\n` +
-          `🆔 ID тикета: #${ticket.getId()}\n` +
+        `✅ *Проблема успешно назначена!*\n\n` +
+          `🆔 ID проблемы: #${ticket.getId()}\n` +
           `📝 Заголовок: ${ticket.title}\n` +
           `🔧 Исполнитель: ID ${assigneeId}\n` +
           `📊 Статус: ${ticket.isInProgress() ? 'В работе' : 'Открыт'}`,

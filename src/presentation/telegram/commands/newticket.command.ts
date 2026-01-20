@@ -35,7 +35,7 @@ export function createNewTicketCommand(ticketService: TicketService, userService
         [Markup.button.callback('◀️ Назад', 'ticket_back_to_menu')],
       ]);
 
-      await ctx.reply('📝 *Создание нового тикета*\n\nШаг 1 из 2: Введите заголовок тикета', {
+      await ctx.reply('📝 *Сообщить о проблеме*\n\nШаг 1 из 2: Введите заголовок проблемы', {
         parse_mode: 'Markdown',
         ...backButton,
       });
@@ -59,7 +59,7 @@ export function createCancelCommand() {
       ctx.session.ticketStep = undefined;
       ctx.session.ticketTitle = undefined;
     }
-    await ctx.reply('❌ Создание тикета отменено.');
+    await ctx.reply('❌ Сообщение о проблеме отменено.');
   };
 }
 
@@ -104,7 +104,7 @@ export function createTicketMessageHandler(
 
         // Если отвечает админ - уведомляем автора тикета
         if (isAdmin && ticket.authorId !== ctx.dbUser.getId()) {
-          const notificationText = `📬 *Новый ответ на ваш тикет #${ticketId}*\n\n📌 *${ticket.title}*\n\n💬 *Ответ ${messageCount}:*\n${text}`;
+          const notificationText = `📬 *Новый ответ на вашу проблему #${ticketId}*\n\n📌 *${ticket.title}*\n\n💬 *Ответ ${messageCount}:*\n${text}`;
 
           try {
             if (userService) {
@@ -112,7 +112,7 @@ export function createTicketMessageHandler(
               if (author) {
                 const keyboard = Markup.inlineKeyboard([
                   [Markup.button.callback('💬 Ответить', `user_reply_ticket_${ticketId}`)],
-                  [Markup.button.callback('✅ Закрыть тикет', `user_close_ticket_${ticketId}`)],
+                  [Markup.button.callback('✅ Закрыть проблему', `user_close_ticket_${ticketId}`)],
                 ]);
 
                 await ctx.telegram.sendMessage(author.telegramId, notificationText, {
@@ -126,9 +126,9 @@ export function createTicketMessageHandler(
           }
 
           await ctx.reply(
-            `✅ Ответ добавлен к тикету #${ticketId}!`,
+            `✅ Ответ добавлен к проблеме #${ticketId}!`,
             Markup.inlineKeyboard([
-              [Markup.button.callback('👁️ Посмотреть тикет', `admin_view_ticket_${ticketId}`)],
+              [Markup.button.callback('👁️ Посмотреть проблему', `admin_view_ticket_${ticketId}`)],
               [Markup.button.callback('◀️ К моим назначенным', 'admin_assigned_to_me')],
             ]),
           );
@@ -136,7 +136,7 @@ export function createTicketMessageHandler(
         // Если отвечает пользователь - уведомляем админа (assignee)
         else {
           if (ticket.assigneeId && userService) {
-            const notificationText = `📬 *Новое сообщение в тикете #${ticketId}*\n\n📌 *${ticket.title}*\n\n💬 *Сообщение ${messageCount}:*\n${text}`;
+            const notificationText = `📬 *Новое сообщение в проблеме #${ticketId}*\n\n📌 *${ticket.title}*\n\n💬 *Сообщение ${messageCount}:*\n${text}`;
 
             try {
               const assignee = await userService.getUserById(ticket.assigneeId);
@@ -157,9 +157,9 @@ export function createTicketMessageHandler(
           }
 
           await ctx.reply(
-            `✅ Сообщение добавлено к тикету #${ticketId}!`,
+            `✅ Сообщение добавлено к проблеме #${ticketId}!`,
             Markup.inlineKeyboard([
-              [Markup.button.callback('👁️ Посмотреть тикет', `view_ticket_${ticketId}`)],
+              [Markup.button.callback('👁️ Посмотреть проблему', `view_ticket_${ticketId}`)],
             ]),
           );
         }
@@ -186,9 +186,9 @@ export function createTicketMessageHandler(
           ctx.session.editingField = undefined;
 
           await ctx.reply(
-            `✅ Заголовок тикета #${ticketId} успешно изменен!`,
+            `✅ Заголовок проблемы #${ticketId} успешно изменен!`,
             Markup.inlineKeyboard([
-              [Markup.button.callback('👁️ Посмотреть тикет', `view_ticket_${ticketId}`)],
+              [Markup.button.callback('👁️ Посмотреть проблему', `view_ticket_${ticketId}`)],
             ]),
           );
           return;
@@ -207,9 +207,9 @@ export function createTicketMessageHandler(
           ctx.session.editingField = undefined;
 
           await ctx.reply(
-            `✅ Описание тикета #${ticketId} успешно изменено!`,
+            `✅ Описание проблемы #${ticketId} успешно изменено!`,
             Markup.inlineKeyboard([
-              [Markup.button.callback('👁️ Посмотреть тикет', `view_ticket_${ticketId}`)],
+              [Markup.button.callback('👁️ Посмотреть проблему', `view_ticket_${ticketId}`)],
             ]),
           );
           return;
@@ -241,7 +241,7 @@ export function createTicketMessageHandler(
         ctx.session.ticketTitle = text;
         ctx.session.ticketStep = 'description';
 
-        await ctx.reply('📝 *Создание нового тикета*\n\nШаг 2 из 2: Введите описание проблемы', {
+        await ctx.reply('📝 *Сообщить о проблеме*\n\nШаг 2 из 2: Введите описание проблемы', {
           parse_mode: 'Markdown',
           ...backButton,
         });
@@ -274,7 +274,7 @@ export function createTicketMessageHandler(
         ]);
 
         await ctx.reply(
-          `✅ *Тикет успешно создан!*\n\n` +
+          `✅ *Проблема успешно зарегистрирована!*\n\n` +
             `🆔 ID: #${ticket.id}\n` +
             `📝 Заголовок: ${ticket.title}\n` +
             `📊 Статус: Открыт\n\n` +

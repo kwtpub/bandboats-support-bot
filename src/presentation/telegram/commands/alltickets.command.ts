@@ -64,12 +64,12 @@ export function createAllTicketsCommand(ticketService: TicketService) {
       const allTickets = [...openTickets, ...inProgressTickets, ...closedTickets];
 
       if (allTickets.length === 0) {
-        await ctx.reply('📋 В системе пока нет тикетов.');
+        await ctx.reply('📋 В системе пока нет проблем.');
         return;
       }
 
       // Формируем сообщение по статусам
-      let message = `📋 *Все тикеты в системе:*\n\n`;
+      let message = `📋 *Все проблемы в системе:*\n\n`;
 
       // Открытые тикеты
       if (openTickets.length > 0) {
